@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Jessica Micro Finance</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h2>Admin Security</h2>
+    <h3>Owner Login Only</h3>
+    
+    <form id="adminLoginForm">
+        <label>Admin ID:</label><br>
+        <input type="text" id="adminId" placeholder="Enter Admin ID" required><br><br>
+        
+        <label>Password:</label><br>
+        <input type="password" id="adminPass" placeholder="Enter Password" required><br><br>
+        
+        <button type="submit">Login to Admin Panel</button>
+    </form>
+
+    <h4 id="adminMessage"></h4>
+
+    <script>
+        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('adminId').value;
+            const password = document.getElementById('adminPass').value;
+            const messageEl = document.getElementById('adminMessage');
+
+            const response = await fetch('/admin-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                // లాగిన్ సక్సెస్ అయితే బ్రౌజర్ లో లాక్ ఓపెన్ చేసి అడ్మిన్ పేజీకి పంపుతాం
+                localStorage.setItem("isAdmin", "true");
+                window.location.href = "/admin.html";
+            } else {
+                messageEl.style.color = "red";
+                messageEl.innerText = data.message;
+            }
+        });
+    </script>
+</body>
+</html>
