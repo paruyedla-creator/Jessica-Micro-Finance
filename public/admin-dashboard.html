@@ -39,44 +39,27 @@
         .btn-reject { background-color: #dc3545; }
         .btn-delete { background-color: #dc3545; }
         .whatsapp-btn { background-color: #25D366; text-decoration: none; }
-        .action-flex { display: flex; gap: 5px; }
+        .action-flex { display: flex; gap: 5px; flex-wrap: wrap; }
     </style>
 </head>
 <body>
-
     <div class="navbar">
         <h2><i class="fas fa-building-columns"></i> Admin Control Room</h2>
         <a href="/" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
-
     <div class="container">
-        
         <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon" style="color: #0056b3;"><i class="fas fa-users"></i></div>
-                <div class="stat-details"><h3 id="total-customers">0</h3><p>Total Customers</p></div>
-            </div>
-            <div class="stat-card green">
-                <div class="stat-icon" style="color: #28a745;"><i class="fas fa-hand-holding-dollar"></i></div>
-                <div class="stat-details"><h3 id="total-loan">₹0</h3><p>Total Loan Given</p></div>
-            </div>
-            <div class="stat-card teal">
-                <div class="stat-icon" style="color: #17a2b8;"><i class="fas fa-wallet"></i></div>
-                <div class="stat-details"><h3 id="total-collected">₹0</h3><p>Total Collection</p></div>
-            </div>
-            <div class="stat-card orange">
-                <div class="stat-icon" style="color: #fd7e14;"><i class="fas fa-clock-rotate-left"></i></div>
-                <div class="stat-details"><h3 id="pending-approvals-count">0</h3><p>Pending Approvals</p></div>
-            </div>
+            <div class="stat-card"><div class="stat-icon" style="color: #0056b3;"><i class="fas fa-users"></i></div><div class="stat-details"><h3 id="total-customers">0</h3><p>Total Customers</p></div></div>
+            <div class="stat-card green"><div class="stat-icon" style="color: #28a745;"><i class="fas fa-hand-holding-dollar"></i></div><div class="stat-details"><h3 id="total-loan">₹0</h3><p>Total Loan Given</p></div></div>
+            <div class="stat-card teal"><div class="stat-icon" style="color: #17a2b8;"><i class="fas fa-wallet"></i></div><div class="stat-details"><h3 id="total-collected">₹0</h3><p>Total Collection</p></div></div>
+            <div class="stat-card orange"><div class="stat-icon" style="color: #fd7e14;"><i class="fas fa-clock-rotate-left"></i></div><div class="stat-details"><h3 id="pending-approvals-count">0</h3><p>Pending Approvals</p></div></div>
         </div>
 
-        <!-- Weekly Collection Report -->
         <div class="section-card">
             <h3 class="section-title"><i class="fas fa-chart-bar" style="color:#17a2b8;"></i> Weekly Collection Report</h3>
             <div class="table-responsive" id="weekly-collection-list"></div>
         </div>
 
-        <!-- 1. Add Customer Form -->
         <div class="section-card">
             <h3 class="section-title"><i class="fas fa-user-plus"></i> Add New Customer</h3>
             <form action="/add-customer" method="POST">
@@ -93,41 +76,34 @@
             </form>
         </div>
 
-        <!-- 2. Pending Approvals -->
         <div class="section-card">
             <h3 class="section-title"><i class="fas fa-list-check"></i> Pending Approvals</h3>
             <div class="table-responsive" id="pending-payments-list"></div>
         </div>
 
-        <!-- 3. Approved Payments & WhatsApp Receipts -->
         <div class="section-card">
             <h3 class="section-title"><i class="fab fa-whatsapp" style="color:#25D366;"></i> Approved Payments & Receipts</h3>
             <div class="table-responsive" id="approved-payments-list"></div>
         </div>
 
-        <!-- 4. All Customers -->
+        <!-- SEARCH AND CUSTOMERS LIST -->
         <div class="section-card">
             <h3 class="section-title"><i class="fas fa-users-viewfinder"></i> All Customers</h3>
             <div class="table-responsive" id="all-customers-list"></div>
         </div>
-
     </div>
 
     <script>
-        fetch('/admin-data')
-        .then(response => response.json())
-        .then(data => {
+        fetch('/admin-data').then(response => response.json()).then(data => {
             document.getElementById('total-customers').innerText = data.customers.length;
-            let totalLoan = 0;
-            data.customers.forEach(c => totalLoan += c.loan_amount);
+            let totalLoan = 0; data.customers.forEach(c => totalLoan += c.loan_amount);
             document.getElementById('total-loan').innerText = '₹' + totalLoan.toLocaleString('en-IN');
             
             const pendingPayments = data.payments.filter(p => p.status === 'Pending');
             const approvedPayments = data.payments.filter(p => p.status === 'Approved');
             document.getElementById('pending-approvals-count').innerText = pendingPayments.length;
 
-            let totalCollected = 0;
-            const weeklyTotals = {};
+            let totalCollected = 0; const weeklyTotals = {};
             approvedPayments.forEach(p => {
                 totalCollected += p.amount; 
                 if(!weeklyTotals[p.week_number]) weeklyTotals[p.week_number] = 0;
@@ -136,81 +112,90 @@
             document.getElementById('total-collected').innerText = '₹' + totalCollected.toLocaleString('en-IN');
 
             const wList = document.getElementById('weekly-collection-list');
-            if(Object.keys(weeklyTotals).length === 0) {
-                wList.innerHTML = "<p>No collections recorded yet.</p>";
-            } else {
+            if(Object.keys(weeklyTotals).length === 0) { wList.innerHTML = "<p>No collections recorded yet.</p>"; } 
+            else {
                 let wHtml = '<table><tr><th>Week Name</th><th>Total Amount Collected</th></tr>';
-                for (const week in weeklyTotals) {
-                    wHtml += `<tr><td><strong>${week}</strong></td><td style="color:#17a2b8; font-weight:bold; font-size:16px;">₹${weeklyTotals[week].toLocaleString('en-IN')}</td></tr>`;
-                }
+                for (const week in weeklyTotals) { wHtml += `<tr><td><strong>${week}</strong></td><td style="color:#17a2b8; font-weight:bold; font-size:16px;">₹${weeklyTotals[week].toLocaleString('en-IN')}</td></tr>`; }
                 wList.innerHTML = wHtml + '</table>';
             }
 
             const pList = document.getElementById('pending-payments-list');
-            if(pendingPayments.length === 0) {
-                pList.innerHTML = "<p style='color:green;'>No pending payments.</p>";
-            } else {
+            if(pendingPayments.length === 0) { pList.innerHTML = "<p style='color:green;'>No pending payments.</p>"; } 
+            else {
                 let html = '<table><tr><th>Name</th><th>Phone</th><th>Week</th><th>Amount</th><th>Trx ID</th><th>Action</th></tr>';
                 pendingPayments.forEach(p => {
-                    html += `<tr>
-                        <td><strong>${p.customer_name}</strong></td>
-                        <td>${p.customer_phone}</td>
-                        <td>${p.week_number}</td>
-                        <td style="color:#28a745; font-weight:bold;">₹${p.amount}</td>
-                        <td><code>${p.transaction_id}</code></td>
-                        <td>
-                            <div class="action-flex">
-                                <form action="/approve-payment" method="POST" style="margin:0;">
-                                    <input type="hidden" name="payment_id" value="${p.id}">
-                                    <button type="submit" class="btn btn-approve"><i class="fas fa-check"></i> Approve</button>
-                                </form>
-                                <form action="/reject-payment" method="POST" style="margin:0;">
-                                    <input type="hidden" name="payment_id" value="${p.id}">
-                                    <button type="submit" class="btn btn-reject"><i class="fas fa-times"></i> Reject</button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>`;
+                    html += `<tr><td><strong>${p.customer_name}</strong></td><td>${p.customer_phone}</td><td>${p.week_number}</td><td style="color:#28a745; font-weight:bold;">₹${p.amount}</td><td><code>${p.transaction_id}</code></td>
+                        <td><div class="action-flex"><form action="/approve-payment" method="POST" style="margin:0;"><input type="hidden" name="payment_id" value="${p.id}"><button type="submit" class="btn btn-approve"><i class="fas fa-check"></i> Approve</button></form>
+                        <form action="/reject-payment" method="POST" style="margin:0;"><input type="hidden" name="payment_id" value="${p.id}"><button type="submit" class="btn btn-reject"><i class="fas fa-times"></i> Reject</button></form></div></td></tr>`;
                 });
                 pList.innerHTML = html + '</table>';
             }
 
             const aList = document.getElementById('approved-payments-list');
-            if(approvedPayments.length === 0) {
-                aList.innerHTML = "<p>No approved payments yet.</p>";
-            } else {
+            if(approvedPayments.length === 0) { aList.innerHTML = "<p>No approved payments yet.</p>"; } 
+            else {
                 let aHtml = '<table><tr><th>Name</th><th>Week</th><th>Amount</th><th>Status</th><th>WhatsApp Receipt</th></tr>';
                 approvedPayments.forEach(p => {
-                    const waMessage = `🏦 *Jessica Micro Finance*\n\nHello *${p.customer_name}*,\n\nYour payment for *${p.week_number}* has been successfully received and approved! ✅\n\n💰 *Amount Paid:* ₹${p.amount}\n📝 *Transaction ID:* ${p.transaction_id}\n\nThank you! 🙏`;
-                    const encodedMessage = encodeURIComponent(waMessage);
-                    const waLink = `https://wa.me/91${p.customer_phone}?text=${encodedMessage}`;
+                    const waLink = `https://wa.me/91${p.customer_phone}?text=${encodeURIComponent(`🏦 *Jessica Micro Finance*\n\nHello *${p.customer_name}*,\n\nYour payment for *${p.week_number}* has been successfully received and approved! ✅\n\n💰 *Amount Paid:* ₹${p.amount}\n📝 *Transaction ID:* ${p.transaction_id}\n\nThank you! 🙏`)}`;
                     aHtml += `<tr><td><strong>${p.customer_name}</strong></td><td>${p.week_number}</td><td style="color:#28a745; font-weight:bold;">₹${p.amount}</td><td><span class="status-badge status-approved">Approved</span></td><td><a href="${waLink}" target="_blank" class="btn whatsapp-btn"><i class="fab fa-whatsapp"></i> Send Receipt</a></td></tr>`;
                 });
                 aList.innerHTML = aHtml + '</table>';
             }
 
             const cList = document.getElementById('all-customers-list');
-            if(data.customers.length === 0) {
-                cList.innerHTML = "<p>No customers added yet.</p>";
-            } else {
-                let cHtml = '<table><tr><th>Name</th><th>Phone</th><th>Aadhaar</th><th>Loan Amount</th><th>Action</th></tr>';
+            if(data.customers.length === 0) { cList.innerHTML = "<p>No customers added yet.</p>"; } 
+            else {
+                let cHtml = `<input type="text" id="searchInput" placeholder="🔍 Search by Name or Phone..." onkeyup="searchCustomers()" style="margin-bottom: 15px; width: 100%; max-width: 300px; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">`;
+                cHtml += '<table id="customersTable"><tr><th>Name</th><th>Phone</th><th>Aadhaar</th><th>Total Loan (inc. Penalty)</th><th>Action</th></tr>';
                 data.customers.forEach(c => {
-                    cHtml += `<tr>
-                        <td><strong>${c.name}</strong></td>
-                        <td>${c.phone}</td>
-                        <td>${c.aadhaar}</td>
-                        <td>₹${c.loan_amount}</td>
-                        <td>
-                            <form action="/delete-customer" method="POST" style="margin:0;" onsubmit="return confirm('Are you sure you want to permanently delete this customer? All their records will be lost.');">
-                                <input type="hidden" name="phone" value="${c.phone}">
-                                <button type="submit" class="btn btn-delete"><i class="fas fa-trash"></i> Delete</button>
-                            </form>
-                        </td>
-                    </tr>`;
+                    cHtml += `<tr><td><strong>${c.name}</strong></td><td>${c.phone}</td><td>${c.aadhaar}</td><td style="font-weight:bold;">₹${c.loan_amount}</td>
+                        <td><div class="action-flex">
+                                <button onclick="printAgreement('${c.name}', '${c.phone}', '${c.aadhaar}', '${c.loan_amount}', '${c.total_weeks}')" class="btn btn-approve" style="background-color: #17a2b8;"><i class="fas fa-file-pdf"></i> Agreement</button>
+                                <form action="/add-penalty" method="POST" style="margin:0;" onsubmit="return promptForPenalty(this);"><input type="hidden" name="phone" value="${c.phone}"><input type="hidden" name="penalty_amount" class="penalty-input"><button type="submit" class="btn btn-reject" style="background-color: #fd7e14;"><i class="fas fa-exclamation-triangle"></i> Penalty</button></form>
+                                <form action="/delete-customer" method="POST" style="margin:0;" onsubmit="return confirm('Are you sure you want to permanently delete this customer?');"><input type="hidden" name="phone" value="${c.phone}"><button type="submit" class="btn btn-delete"><i class="fas fa-trash"></i> Delete</button></form>
+                            </div></td></tr>`;
                 });
                 cList.innerHTML = cHtml + '</table>';
             }
         });
+
+        function searchCustomers() {
+            const input = document.getElementById("searchInput").value.toLowerCase();
+            const tr = document.getElementById("customersTable").getElementsByTagName("tr");
+            for (let i = 1; i < tr.length; i++) {
+                const name = tr[i].getElementsByTagName("td")[0].innerText.toLowerCase();
+                const phone = tr[i].getElementsByTagName("td")[1].innerText.toLowerCase();
+                tr[i].style.display = (name.indexOf(input) > -1 || phone.indexOf(input) > -1) ? "" : "none";
+            }
+        }
+
+        function promptForPenalty(form) {
+            const amount = prompt("కస్టమర్ కి ఎంత పెనాల్టీ వేయాలి అనుకుంటున్నారు? (ఉదాహరణకు: 100):");
+            if(amount && !isNaN(amount) && amount > 0) { form.querySelector('.penalty-input').value = amount; return true; }
+            return false;
+        }
+
+        function printAgreement(name, phone, aadhaar, loanAmount, weeks) {
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html><head><title>Loan Agreement</title><style>
+                    body { font-family: 'Times New Roman', serif; padding: 40px; line-height: 1.8; color: #000; }
+                    h1 { text-align: center; text-transform: uppercase; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 40px; letter-spacing: 2px; }
+                    .details { margin-bottom: 30px; } .details p { margin: 12px 0; font-size: 18px; }
+                    .content { font-size: 16px; text-align: justify; }
+                    .signatures { margin-top: 100px; display: flex; justify-content: space-between; }
+                    .sign-box { border-top: 1px solid #000; width: 250px; text-align: center; padding-top: 10px; font-weight: bold; }
+                </style></head><body>
+                    <h1>Loan Agreement</h1>
+                    <p class="content">This document serves as a formal and legally binding agreement for the micro-finance loan details provided below.</p>
+                    <div class="details"><p><strong>Customer Name:</strong> ${name}</p><p><strong>Phone Number:</strong> ${phone}</p><p><strong>Aadhaar Number:</strong> ${aadhaar}</p><p><strong>Total Loan Amount:</strong> ₹${loanAmount}</p><p><strong>Duration:</strong> ${weeks} Weeks</p></div>
+                    <p class="content">I, <strong>${name}</strong>, hereby acknowledge that I have received the loan amount of ₹${loanAmount} and I agree to repay it in weekly installments over a period of ${weeks} weeks. I accept all terms and conditions, including any penalties applicable for late payments.</p>
+                    <div class="signatures"><div class="sign-box">Customer Signature</div><div class="sign-box">Authorized Signatory</div></div>
+                </body></html>
+            `);
+            printWindow.document.close();
+            setTimeout(() => { printWindow.print(); }, 500);
+        }
     </script>
 </body>
 </html>

@@ -145,6 +145,14 @@ app.post('/delete-customer', (req, res) => {
         res.redirect('/admin-dashboard.html');
     });
 });
+// Add Manual Penalty
+app.post('/add-penalty', (req, res) => {
+    const { phone, penalty_amount } = req.body;
+    db.run("UPDATE customers SET loan_amount = loan_amount + ? WHERE phone = ?", [Number(penalty_amount), phone], (err) => {
+        if (err) console.error(err);
+        res.redirect('/admin-dashboard.html');
+    });
+});
 // Start Server
 app.listen(port, () => {
     console.log(`🚀 Server is running! Open http://localhost:${port}`);
