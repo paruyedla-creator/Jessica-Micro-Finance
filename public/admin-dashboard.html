@@ -4,30 +4,58 @@
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
     <style>
-        .section-card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        th { background-color: #f8f9fa; }
+        th { background-color: #eee; }
+        input { padding: 8px; margin: 5px; width: 150px; }
+        button { padding: 8px 15px; cursor: pointer; }
+        .btn-approve { background: green; color: white; border: none; }
+        .btn-reject { background: red; color: white; border: none; }
     </style>
 </head>
 <body>
     <h2>Admin Dashboard</h2>
-    <div id="customers-container"></div>
+
+    <!-- Add Customer Form -->
+    <div class="card">
+        <h3>Add New Customer</h3>
+        <form action="/add-customer" method="POST">
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="number" name="phone" placeholder="Phone" required>
+            <input type="text" name="password" placeholder="Password" required>
+            <input type="number" name="aadhaar" placeholder="Aadhaar" required>
+            <input type="text" name="pan" placeholder="PAN" required>
+            <input type="number" name="loan_amount" placeholder="Loan Amount" required>
+            <button type="submit">Save Customer</button>
+        </form>
+    </div>
+
+    <div id="admin-content"></div>
+
     <script>
         fetch('/admin-data').then(res => res.json()).then(data => {
-            const container = document.getElementById('customers-container');
-            container.innerHTML = "";
-            data.customers.forEach(c => {
-                const cPayments = data.payments.filter(p => p.customer_phone == c.phone);
-                let html = `<div class="section-card"><h3>${c.name} (Ph: ${c.phone})</h3>
-                <p><strong>Loan Taken Date:</strong> ${c.loan_taken_date || 'N/A'} | <strong>Total Loan:</strong> ₹${c.loan_amount}</p>
-                <table><tr><th>Week</th><th>Amount</th><th>Date & Time</th><th>Status</th></tr>`;
-                cPayments.forEach(p => {
-                    html += `<tr><td>${p.week_number}</td><td>₹${p.amount}</td><td>${p.created_at || '-'}</td><td>${p.status}</td></tr>`;
-                });
-                html += `</table></div>`;
-                container.innerHTML += html;
+            const content = document.getElementById('admin-content');
+            
+            // Pending Payments
+            let html = '<div class="card"><h3>Pending Approvals</h3><table><tr><th>Name</th><th>Week</th><th>Amount</th><th>Action</th></tr>';
+            data.payments.filter(p => p.status === 'Pending').forEach(p => {
+                html += `<tr><td>${p.customer_name}</td><td>${p.week_number}</td><td>₹${p.amount}</td>
+                <td>
+                    <form action="/approve-payment" method="POST" style="display:inline"><input type="hidden" name="payment_id" value="${p.id}"><button class="btn-approve">Approve</button></form>
+                    <form action="/reject-payment" method="POST" style="display:inline"><input type="hidden" name="payment_id" value="${p.id}"><button class="btn-reject">Reject</button></form>
+                </td></tr>`;
             });
+            html += '</table></div>';
+
+            // All Customers
+            html += '<div class="card"><h3>Customers List</h3><table><tr><th>Name</th><th>Phone</th><th>Loan Amount</th></tr>';
+            data.customers.forEach(c => {
+                html += `<tr><td>${c.name}</td><td>${c.phone}</td><td>₹${c.loan_amount}</td></tr>`;
+            });
+            html += '</table></div>';
+            content.innerHTML = html;
         });
     </script>
 </body>
