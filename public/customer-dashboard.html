@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard - Jessica Micro Finance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f0f2f5; color: #333; }
+        
+        /* Navbar */
+        .navbar { background-color: #0056b3; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .navbar h2 { font-size: 18px; font-weight: 600; }
+        .logout-btn { color: white; text-decoration: none; font-size: 14px; font-weight: bold; background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 4px; }
+        
+        .container { padding: 20px; max-width: 600px; margin: auto; }
+
+        /* Profile Card */
+        .profile-card { background: white; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid #0056b3; }
+        .profile-card h3 { color: #333; font-size: 20px; margin-bottom: 5px; }
+        .profile-card p { color: #666; font-size: 14px; }
+
+        /* Loan Summary Stats */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .stat-box { background: white; padding: 15px; border-radius: 8px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .stat-box h4 { font-size: 12px; color: #666; text-transform: uppercase; margin-bottom: 5px; }
+        .stat-box .amount { font-size: 20px; font-weight: bold; color: #0056b3; }
+        .stat-box.balance .amount { color: #dc3545; } /* Red for pending balance */
+        .stat-box.paid .amount { color: #28a745; } /* Green for paid */
+
+        /* Sections */
+        .section-card { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .section-title { font-size: 16px; color: #333; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 8px; font-weight: 600; }
+
+        /* QR Code */
+        .qr-section { text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px dashed #ccc; margin-bottom: 20px; }
+        .qr-section img { max-width: 200px; border-radius: 8px; margin-bottom: 10px; }
+        .qr-section p { font-size: 13px; color: #555; }
+
+        /* Form */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
+        .submit-btn { background-color: #28a745; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; font-size: 15px; }
+        .submit-btn:hover { background-color: #218838; }
+
+        /* History Table */
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #eee; padding: 10px; text-align: left; font-size: 13px; }
+        th { background-color: #f8f9fa; }
+        .badge { padding: 3px 6px; border-radius: 3px; font-size: 11px; font-weight: bold; }
+        .badge-pending { background-color: #ffeeba; color: #856404; }
+        .badge-approved { background-color: #d4edda; color: #155724; }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <h2><i class="fas fa-wallet"></i> My Finance</h2>
+        <a href="/" class="logout-btn">Logout</a>
+    </div>
+
+    <div class="container">
+        
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <h3 id="customer-name">Loading...</h3>
+            <p><i class="fas fa-phone-alt"></i> <span id="customer-phone">...</span></p>
+            <p style="margin-top:5px; font-size:12px; color:#888;">Customer ID: #<span id="customer-id">...</span></p>
+        </div>
+
+        <!-- Loan Summary Stats -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <h4>Total Loan</h4>
+                <div class="amount" id="total-loan">₹0</div>
+            </div>
+            <div class="stat-box paid">
+                <h4>Amount Paid</h4>
+                <div class="amount" id="amount-paid">₹0</div>
+            </div>
+            <div class="stat-box balance">
+                <h4>Balance Due</h4>
+                <div class="amount" id="balance-due">₹0</div>
+            </div>
+            <div class="stat-box">
+                <h4>Duration</h4>
+                <div class="amount" style="color:#333;"><span id="total-weeks">0</span> Wks</div>
+            </div>
+        </div>
+
+        <!-- Submit Payment Section -->
+        <div class="section-card">
+            <div class="section-title"><i class="fas fa-qrcode"></i> Make a Payment</div>
+            
+            <div class="qr-section">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=y.parusharam82@kotak&pn=Y%20PARUSHARAM" alt="Pay Here">
+                <p>Scan with PhonePe, GPay, or Paytm</p>
+            </div>
+
+            <form action="/submit-payment" method="POST">
+                <input type="hidden" name="phone" id="form-phone">
+                
+                <div class="form-group">
+                    <label>Select Week</label>
+                    <select name="week_number" required>
+                        <option value="">-- Choose Week --</option>
+                        <option value="Week 1">Week 1</option>
+                        <option value="Week 2">Week 2</option>
+                        <option value="Week 3">Week 3</option>
+                        <option value="Week 4">Week 4</option>
+                        <option value="Week 5">Week 5</option>
+                        <option value="Week 6">Week 6</option>
+                        <option value="Week 7">Week 7</option>
+                        <option value="Week 8">Week 8</option>
+                        <option value="Week 9">Week 9</option>
+                        <option value="Week 10">Week 10</option>
+                        <option value="Week 11">Week 11</option>
+                        <option value="Week 12">Week 12</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Amount Paid (₹)</label>
+                    <input type="number" name="amount" placeholder="e.g. 5000" required>
+                </div>
+                <div class="form-group">
+                    <label>Transaction ID / UTR</label>
+                    <input type="text" name="transaction_id" placeholder="12-digit UTR number" required>
+                </div>
+                <button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> Submit Payment Details</button>
+            </form>
+        </div>
+
+        <!-- Payment History Section -->
+        <div class="section-card">
+            <div class="section-title"><i class="fas fa-history"></i> Payment History</div>
+            <div class="table-responsive" id="history-list">
+                <p style="font-size: 13px; color: #666;">Loading history...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script to Fetch Customer Data -->
+    <script>
+        // URL లో ఉన్న ఫోన్ నంబర్ తీసుకోవడం
+        const urlParams = new URLSearchParams(window.location.search);
+        const phone = urlParams.get('phone');
+        
+        if(phone) {
+            document.getElementById('form-phone').value = phone;
+
+            fetch(`/customer-data/${phone}`)
+            .then(res => res.json())
+            .then(data => {
+                if(data.error) {
+                    alert("Customer not found!");
+                    window.location.href = "/";
+                    return;
+                }
+
+                const c = data.customer;
+                const payments = data.payments;
+
+                // 1. Profile Data
+                document.getElementById('customer-name').innerText = c.name;
+                document.getElementById('customer-phone').innerText = c.phone;
+                document.getElementById('customer-id').innerText = c.id;
+                document.getElementById('total-loan').innerText = '₹' + c.loan_amount.toLocaleString('en-IN');
+                document.getElementById('total-weeks').innerText = c.total_weeks;
+
+                // 2. Calculate Paid Amount and Balance
+                let totalPaid = 0;
+                // 'Approved' అయిన పేమెంట్స్ మాత్రమే లెక్కలోకి వస్తాయి
+                payments.forEach(p => {
+                    if(p.status === 'Approved') {
+                        totalPaid += p.amount;
+                    }
+                });
+                
+                let balance = c.loan_amount - totalPaid;
+
+                document.getElementById('amount-paid').innerText = '₹' + totalPaid.toLocaleString('en-IN');
+                document.getElementById('balance-due').innerText = '₹' + balance.toLocaleString('en-IN');
+
+                // 3. Payment History Table
+                const historyList = document.getElementById('history-list');
+                if(payments.length === 0) {
+                    historyList.innerHTML = "<p style='font-size:13px;'>No payments made yet.</p>";
+                } else {
+                    let html = '<table>';
+                    html += '<tr><th>Week</th><th>Amount</th><th>Trx ID</th><th>Status</th></tr>';
+                    payments.forEach(p => {
+                        const badgeClass = p.status === 'Approved' ? 'badge-approved' : 'badge-pending';
+                        html += `<tr>
+                            <td>${p.week_number}</td>
+                            <td>₹${p.amount}</td>
+                            <td style="font-size:11px;">${p.transaction_id}</td>
+                            <td><span class="badge ${badgeClass}">${p.status}</span></td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                    historyList.innerHTML = html;
+                }
+            })
+            .catch(err => console.error("Error fetching data:", err));
+        } else {
+            window.location.href = "/";
+        }
+    </script>
+</body>
+</html>
