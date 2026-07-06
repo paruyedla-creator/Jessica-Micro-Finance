@@ -124,7 +124,27 @@ app.post('/submit-payment', (req, res) => {
         });
     });
 });
+// --- NEW FEATURES: Reject Payment & Delete Customer ---
 
+// Reject Payment
+app.post('/reject-payment', (req, res) => {
+    const { payment_id } = req.body;
+    db.run("UPDATE payments SET status = 'Rejected' WHERE id = ?", [payment_id], (err) => {
+        if (err) console.error(err);
+        res.redirect('/admin-dashboard.html');
+    });
+});
+
+// Delete Customer (This deletes the customer and all their payments)
+app.post('/delete-customer', (req, res) => {
+    const { phone } = req.body;
+    db.run("DELETE FROM customers WHERE phone = ?", [phone], (err) => {
+        if (!err) {
+            db.run("DELETE FROM payments WHERE customer_phone = ?", [phone]);
+        }
+        res.redirect('/admin-dashboard.html');
+    });
+});
 // Start Server
 app.listen(port, () => {
     console.log(`🚀 Server is running! Open http://localhost:${port}`);
