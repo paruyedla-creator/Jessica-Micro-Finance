@@ -15,13 +15,14 @@
         
         .container { padding: 30px; max-width: 1200px; margin: auto; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
         .stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid #0056b3; display: flex; align-items: center; }
         .stat-card.green { border-left-color: #28a745; }
         .stat-card.orange { border-left-color: #fd7e14; }
+        .stat-card.teal { border-left-color: #17a2b8; }
         .stat-icon { font-size: 30px; color: #6c757d; margin-right: 15px; width: 40px; text-align: center; }
-        .stat-details h3 { font-size: 24px; color: #333; }
-        .stat-details p { color: #666; font-size: 14px; font-weight: 600; text-transform: uppercase; }
+        .stat-details h3 { font-size: 22px; color: #333; }
+        .stat-details p { color: #666; font-size: 13px; font-weight: 600; text-transform: uppercase; }
 
         .section-card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px; }
         .section-title { font-size: 18px; color: #0056b3; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; display: flex; align-items: center; gap: 10px; }
@@ -43,7 +44,6 @@
         
         .approve-btn { background-color: #0056b3; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; }
         .whatsapp-btn { background-color: #25D366; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; }
-        .whatsapp-btn:hover { background-color: #1ebe57; }
     </style>
 </head>
 <body>
@@ -70,6 +70,14 @@
                     <p>Total Loan Given</p>
                 </div>
             </div>
+            <!-- NEW CARD: Total Collection -->
+            <div class="stat-card teal">
+                <div class="stat-icon" style="color: #17a2b8;"><i class="fas fa-wallet"></i></div>
+                <div class="stat-details">
+                    <h3 id="total-collected">₹0</h3>
+                    <p>Total Collection</p>
+                </div>
+            </div>
             <div class="stat-card orange">
                 <div class="stat-icon" style="color: #fd7e14;"><i class="fas fa-clock-rotate-left"></i></div>
                 <div class="stat-details">
@@ -79,39 +87,24 @@
             </div>
         </div>
 
+        <!-- NEW SECTION: Weekly Collection Report -->
+        <div class="section-card">
+            <h3 class="section-title"><i class="fas fa-chart-bar" style="color:#17a2b8;"></i> Weekly Collection Report</h3>
+            <div class="table-responsive" id="weekly-collection-list"></div>
+        </div>
+
         <!-- 1. Add Customer Form -->
         <div class="section-card">
             <h3 class="section-title"><i class="fas fa-user-plus"></i> Add New Customer</h3>
             <form action="/add-customer" method="POST">
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label>Customer Name</label>
-                        <input type="text" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Phone Number</label>
-                        <input type="number" name="phone" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="text" name="password" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Aadhaar Number</label>
-                        <input type="number" name="aadhaar" required>
-                    </div>
-                    <div class="form-group">
-                        <label>PAN Card</label>
-                        <input type="text" name="pan" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Loan Amount (₹)</label>
-                        <input type="number" name="loan_amount" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Total Weeks</label>
-                        <input type="number" name="total_weeks" value="12" required>
-                    </div>
+                    <div class="form-group"><label>Customer Name</label><input type="text" name="name" required></div>
+                    <div class="form-group"><label>Phone Number</label><input type="number" name="phone" required></div>
+                    <div class="form-group"><label>Password</label><input type="text" name="password" required></div>
+                    <div class="form-group"><label>Aadhaar Number</label><input type="number" name="aadhaar" required></div>
+                    <div class="form-group"><label>PAN Card</label><input type="text" name="pan" required></div>
+                    <div class="form-group"><label>Loan Amount (₹)</label><input type="number" name="loan_amount" required></div>
+                    <div class="form-group"><label>Total Weeks</label><input type="number" name="total_weeks" value="12" required></div>
                 </div>
                 <button type="submit" class="submit-btn" style="width: 200px;"><i class="fas fa-save"></i> Save Customer</button>
             </form>
@@ -123,7 +116,7 @@
             <div class="table-responsive" id="pending-payments-list"></div>
         </div>
 
-        <!-- 3. Approved Payments & WhatsApp Receipts (NEW SECTION) -->
+        <!-- 3. Approved Payments & WhatsApp Receipts -->
         <div class="section-card">
             <h3 class="section-title"><i class="fab fa-whatsapp" style="color:#25D366;"></i> Approved Payments & Receipts</h3>
             <div class="table-responsive" id="approved-payments-list"></div>
@@ -141,6 +134,7 @@
         fetch('/admin-data')
         .then(response => response.json())
         .then(data => {
+            // Customer & Loan Stats
             document.getElementById('total-customers').innerText = data.customers.length;
             let totalLoan = 0;
             data.customers.forEach(c => totalLoan += c.loan_amount);
@@ -149,6 +143,38 @@
             const pendingPayments = data.payments.filter(p => p.status === 'Pending');
             const approvedPayments = data.payments.filter(p => p.status === 'Approved');
             document.getElementById('pending-approvals-count').innerText = pendingPayments.length;
+
+            // Calculate Total Collection & Weekly Breakdown
+            let totalCollected = 0;
+            const weeklyTotals = {};
+
+            approvedPayments.forEach(p => {
+                totalCollected += p.amount; // Grand Total
+                
+                // Group by Week Number
+                if(!weeklyTotals[p.week_number]) {
+                    weeklyTotals[p.week_number] = 0;
+                }
+                weeklyTotals[p.week_number] += p.amount;
+            });
+
+            // Update Total Collected Card
+            document.getElementById('total-collected').innerText = '₹' + totalCollected.toLocaleString('en-IN');
+
+            // Render Weekly Collection Report Table
+            const wList = document.getElementById('weekly-collection-list');
+            if(Object.keys(weeklyTotals).length === 0) {
+                wList.innerHTML = "<p>No collections recorded yet.</p>";
+            } else {
+                let wHtml = '<table><tr><th>Week Name</th><th>Total Amount Collected</th></tr>';
+                for (const week in weeklyTotals) {
+                    wHtml += `<tr>
+                        <td><strong>${week}</strong></td>
+                        <td style="color:#17a2b8; font-weight:bold; font-size:16px;">₹${weeklyTotals[week].toLocaleString('en-IN')}</td>
+                    </tr>`;
+                }
+                wList.innerHTML = wHtml + '</table>';
+            }
 
             // Pending Payments Table
             const pList = document.getElementById('pending-payments-list');
@@ -174,14 +200,13 @@
                 pList.innerHTML = html + '</table>';
             }
 
-            // Approved Payments & WhatsApp Table (NEW)
+            // Approved Payments & WhatsApp Table
             const aList = document.getElementById('approved-payments-list');
             if(approvedPayments.length === 0) {
                 aList.innerHTML = "<p>No approved payments yet.</p>";
             } else {
                 let aHtml = '<table><tr><th>Name</th><th>Week</th><th>Amount</th><th>Status</th><th>WhatsApp Receipt</th></tr>';
                 approvedPayments.forEach(p => {
-                    // WhatsApp Message Generation
                     const waMessage = `🏦 *Jessica Micro Finance*\n\nHello *${p.customer_name}*,\n\nYour payment for *${p.week_number}* has been successfully received and approved! ✅\n\n💰 *Amount Paid:* ₹${p.amount}\n📝 *Transaction ID:* ${p.transaction_id}\n\nThank you! 🙏`;
                     const encodedMessage = encodeURIComponent(waMessage);
                     const waLink = `https://wa.me/91${p.customer_phone}?text=${encodedMessage}`;
