@@ -50,7 +50,7 @@ app.post('/login', (req, res) => {
     const { phone, password } = req.body;
     
     // Admin Login
-    if (phone === '9999999999' && password === 'admin123') {
+    if (phone === '7569532152' && password === 'ramu@2026') {
         return res.redirect('/admin-dashboard.html');
     }
 
