@@ -9,10 +9,11 @@
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
         th { background-color: #eee; }
-        input { padding: 8px; margin: 5px; width: 150px; }
-        button { padding: 8px 15px; cursor: pointer; }
-        .btn-approve { background: green; color: white; border: none; }
-        .btn-reject { background: red; color: white; border: none; }
+        .btn { padding: 5px 10px; cursor: pointer; border: none; margin-right: 5px; }
+        .btn-approve { background: green; color: white; }
+        .btn-reject { background: red; color: white; }
+        .btn-penalty { background: orange; color: white; }
+        .btn-agreement { background: blue; color: white; }
     </style>
 </head>
 <body>
@@ -43,16 +44,20 @@
             data.payments.filter(p => p.status === 'Pending').forEach(p => {
                 html += `<tr><td>${p.customer_name}</td><td>${p.week_number}</td><td>₹${p.amount}</td>
                 <td>
-                    <form action="/approve-payment" method="POST" style="display:inline"><input type="hidden" name="payment_id" value="${p.id}"><button class="btn-approve">Approve</button></form>
-                    <form action="/reject-payment" method="POST" style="display:inline"><input type="hidden" name="payment_id" value="${p.id}"><button class="btn-reject">Reject</button></form>
+                    <form action="/approve-payment" method="POST" style="display:inline"><input type="hidden" name="payment_id" value="${p.id}"><button class="btn btn-approve">Approve</button></form>
+                    <form action="/reject-payment" method="POST" style="display:inline"><input type="hidden" name="payment_id" value="${p.id}"><button class="btn btn-reject">Reject</button></form>
                 </td></tr>`;
             });
             html += '</table></div>';
 
             // All Customers
-            html += '<div class="card"><h3>Customers List</h3><table><tr><th>Name</th><th>Phone</th><th>Loan Amount</th></tr>';
+            html += '<div class="card"><h3>Customers List</h3><table><tr><th>Name</th><th>Phone</th><th>Loan</th><th>Action</th></tr>';
             data.customers.forEach(c => {
-                html += `<tr><td>${c.name}</td><td>${c.phone}</td><td>₹${c.loan_amount}</td></tr>`;
+                html += `<tr><td>${c.name}</td><td>${c.phone}</td><td>₹${c.loan_amount}</td>
+                <td>
+                    <button class="btn btn-agreement" onclick="alert('Agreement for ${c.name}')">Agreement</button>
+                    <form action="/add-penalty" method="POST" style="display:inline"><input type="hidden" name="phone" value="${c.phone}"><button class="btn btn-penalty">Penalty</button></form>
+                </td></tr>`;
             });
             html += '</table></div>';
             content.innerHTML = html;
