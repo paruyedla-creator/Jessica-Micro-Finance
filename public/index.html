@@ -3,46 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Jessica Micro Finance</title>
+    <title>Jessica Finance - Secure Banking Portal</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .login-card { background: white; padding: 40px 30px; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        .logo { font-size: 24px; font-weight: bold; color: #0056b3; margin-bottom: 10px; }
-        .subtitle { color: #666; font-size: 14px; margin-bottom: 30px; }
-        .form-group { text-align: left; margin-bottom: 20px; }
-        label { display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px; }
-        input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; transition: 0.3s; }
-        input:focus { border-color: #0056b3; outline: none; box-shadow: 0 0 5px rgba(0, 86, 179, 0.2); }
-        button { width: 100%; padding: 14px; background-color: #0056b3; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { background-color: #004494; }
-        .footer-text { margin-top: 20px; font-size: 12px; color: #888; }
+        body {
+            background-color: #f4f6f9; /* ప్రశాంతమైన బ్యాంకింగ్ బ్యాక్ గ్రౌండ్ */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+        }
+        
+        /* పైన వచ్చే సన్నని కార్పొరేట్ బ్లూ లైన్ */
+        .top-bar {
+            background-color: #003366; 
+            height: 6px;
+            width: 100%;
+        }
+
+        /* లాగిన్ బాక్స్ ని మధ్యలో ఉంచే కంటైనర్ */
+        .main-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* ప్రొఫెషనల్ లాగిన్ కార్డ్ */
+        .login-box {
+            background: #ffffff;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e9ecef;
+            overflow: hidden;
+        }
+
+        .login-header {
+            padding: 40px 30px 20px;
+            text-align: center;
+        }
+
+        .bank-logo {
+            font-size: 40px;
+            color: #003366; /* Bank Blue */
+            margin-bottom: 15px;
+        }
+
+        .bank-name {
+            font-size: 26px;
+            font-weight: 700;
+            color: #212529;
+            letter-spacing: -0.5px;
+            margin-bottom: 5px;
+        }
+
+        .bank-subtitle {
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .login-body {
+            padding: 0 30px 40px;
+        }
+
+        /* మోడ్రన్ ఫ్లోటింగ్ ఇన్పుట్స్ */
+        .form-control {
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+            font-weight: 500;
+        }
+        .form-control:focus {
+            border-color: #003366;
+            box-shadow: 0 0 0 0.25rem rgba(0, 51, 102, 0.1);
+        }
+
+        /* సెక్యూర్ లాగిన్ బటన్ */
+        .btn-secure {
+            background-color: #003366;
+            color: white;
+            font-weight: 600;
+            padding: 14px;
+            border-radius: 6px;
+            width: 100%;
+            border: none;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .btn-secure:hover {
+            background-color: #002244;
+            transform: translateY(-1px);
+        }
+
+        /* కింద వచ్చే సెక్యూరిటీ బ్యాడ్జ్ */
+        .security-badge {
+            text-align: center;
+            font-size: 12px;
+            color: #198754;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+
+        /* 2026 కాపీరైట్ ఫుటర్ */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        #errorMsg {
+            display: none;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
-
-    <div class="login-card">
-        <div class="logo">🏦 Jessica Micro Finance</div>
-        <div class="subtitle">Secure Finance Management System</div>
-
-        <form action="/login" method="POST">
-            <div class="form-group">
-                <label>Phone Number (Login ID)</label>
-                <input type="number" name="phone" placeholder="Enter 10-digit mobile number" required>
+    
+    <!-- టాప్ కార్పొరేట్ బార్ -->
+    <div class="top-bar"></div>
+    
+    <div class="main-container">
+        <div class="login-box">
+            <div class="login-header">
+                <i class="fas fa-university bank-logo"></i>
+                <h2 class="bank-name">Jessica Finance</h2>
+                <div class="bank-subtitle">Secure Corporate Portal</div>
             </div>
             
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" placeholder="Enter your password" required>
-            </div>
+            <div class="login-body">
+                <form id="loginForm">
+                    <!-- User ID (Floating Label) -->
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="userId" placeholder="User ID" required autocomplete="off">
+                        <label for="userId text-muted">User ID / Phone Number</label>
+                    </div>
+                    
+                    <!-- Password (Floating Label) -->
+                    <div class="form-floating mb-4">
+                        <input type="password" class="form-control" id="password" placeholder="Password" required>
+                        <label for="password text-muted">Password</label>
+                    </div>
+                    
+                    <!-- Login Button -->
+                    <button type="submit" class="btn btn-secure">
+                        <i class="fas fa-lock me-2"></i> Secure Login
+                    </button>
+                    
+                    <!-- Error Message -->
+                    <div id="errorMsg" class="alert alert-danger mt-3 py-2 text-center fw-bold">
+                        <i class="fas fa-exclamation-triangle"></i> Invalid User ID or Password
+                    </div>
 
-            <button type="submit">Secure Login</button>
-        </form>
-        
-        <div class="footer-text">
-            &copy; 2026 Jessica Micro Finance. All rights reserved.
+                    <!-- Security Text -->
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> 256-Bit SSL Encrypted Connection
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
+    <!-- 2026 Footer -->
+    <div class="footer">
+        &copy; 2026 Jessica Finance Ltd. All rights reserved. <br>
+        <span style="font-size: 11px;">Strictly for Authorized Users Only.</span>
+    </div>
+
+    <!-- జావాస్క్రిప్ట్ లాగిన్ లాజిక్ (ఎలాంటి మార్పు లేదు) -->
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const userId = document.getElementById('userId').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, password })
+                });
+                
+                const data = await response.json();
+
+                if (data.success) {
+                    if (data.role === 'admin') {
+                        window.location.href = 'admin-dashboard.html';
+                    } else {
+                        localStorage.setItem('loggedInCustomer', JSON.stringify(data.customerData));
+                        window.location.href = 'customer-dashboard.html';
+                    }
+                } else {
+                    errorMsg.style.display = 'block';
+                }
+            } catch (err) {
+                alert("Server Error! టెర్మినల్ లో 'node server.js' రన్ అవుతుందో లేదో చూడండి.");
+            }
+        });
+    </script>
 </body>
 </html>

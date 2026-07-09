@@ -1,51 +1,146 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - Jessica Micro Finance</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <h2>Admin Security</h2>
-    <h3>Owner Login Only</h3>
-    
-    <form id="adminLoginForm">
-        <label>Admin ID:</label><br>
-        <input type="text" id="adminId" placeholder="Enter Admin ID" required><br><br>
-        
-        <label>Password:</label><br>
-        <input type="password" id="adminPass" placeholder="Enter Password" required><br><br>
-        
-        <button type="submit">Login to Admin Panel</button>
-    </form>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
 
-    <h4 id="adminMessage"></h4>
+body{
 
-    <script>
-        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('adminId').value;
-            const password = document.getElementById('adminPass').value;
-            const messageEl = document.getElementById('adminMessage');
+height:100vh;
 
-            const response = await fetch('/admin-login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
+display:flex;
 
-            const data = await response.json();
-            
-            if (data.success) {
-                // లాగిన్ సక్సెస్ అయితే బ్రౌజర్ లో లాక్ ఓపెన్ చేసి అడ్మిన్ పేజీకి పంపుతాం
-                localStorage.setItem("isAdmin", "true");
-                window.location.href = "/admin.html";
-            } else {
-                messageEl.style.color = "red";
-                messageEl.innerText = data.message;
-            }
-        });
-    </script>
-</body>
-</html>
+justify-content:center;
+
+align-items:center;
+
+background:linear-gradient(135deg,#0F172A,#1D4ED8,#14B8A6);
+
+}
+
+.container{
+
+width:100%;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+}
+
+.login-card{
+
+width:430px;
+
+background:#fff;
+
+padding:45px;
+
+border-radius:25px;
+
+text-align:center;
+
+box-shadow:0 20px 60px rgba(0,0,0,.25);
+
+}
+
+.logo{
+
+width:90px;
+
+height:90px;
+
+margin:auto;
+
+border-radius:50%;
+
+background:linear-gradient(135deg,#2563EB,#10B981);
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:35px;
+
+color:white;
+
+margin-bottom:20px;
+
+}
+
+h1{
+
+font-size:28px;
+
+color:#0F172A;
+
+margin-bottom:8px;
+
+}
+
+p{
+
+color:#64748B;
+
+margin-bottom:30px;
+
+}
+
+input{
+
+width:100%;
+
+padding:15px;
+
+margin-bottom:18px;
+
+border:1px solid #CBD5E1;
+
+border-radius:12px;
+
+font-size:16px;
+
+outline:none;
+
+}
+
+input:focus{
+
+border:2px solid #2563EB;
+
+}
+
+button{
+
+width:100%;
+
+padding:15px;
+
+border:none;
+
+border-radius:12px;
+
+background:linear-gradient(135deg,#2563EB,#10B981);
+
+color:white;
+
+font-size:18px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+button:hover{
+
+transform:scale(1.03);
+
+}

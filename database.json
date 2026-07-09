@@ -1,0 +1,55 @@
+{
+  "admin": {
+    "id": "admin",
+    "password": "admin123"
+  },
+  "customers": [
+    {
+      "name": "himaja",
+      "phone": "7569532152",
+      "password": "7702",
+      "category": "Weekly Finance",
+      "amount": "100000",
+      "duration": "12",
+      "date": "09/07/2026",
+      "paidWeeks": 2,
+      "penalty": 1000,
+      "history": [
+        {
+          "week": 1,
+          "amount": 10000,
+          "date": "09/07/2026"
+        },
+        {
+          "week": 2,
+          "amount": 10000,
+          "date": "09/07/2026"
+        }
+      ],
+      "pendingApproval": false,
+      "referralCode": "REF98813",
+      "requestAmount": 10000
+    },
+    {
+      "name": "yedla",
+      "phone": "8919845699",
+      "password": "0000",
+      "category": "Weekly Finance",
+      "amount": "10000",
+      "duration": "12",
+      "date": "09/07/2026",
+      "paidWeeks": 1,
+      "penalty": 0,
+      "history": [
+        {
+          "week": 1,
+          "amount": 1000,
+          "date": "09/07/2026"
+        }
+      ],
+      "pendingApproval": false,
+      "referralCode": "REF61779",
+      "requestAmount": 1000
+    }
+  ]
+}

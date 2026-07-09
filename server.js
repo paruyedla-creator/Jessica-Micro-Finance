@@ -1,159 +1,132 @@
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
-const bodyParser = require('body-parser');
+const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const port = 3000;
+const PORT = 3000;
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public'))); 
 
-// 1. Professional Database Connection
-const db = new sqlite3.Database('./database.db', (err) => {
-    if (err) console.error(err.message);
-    else console.log('✅ Professional Database created successfully, Ram!');
-});
+// 1. మెయిన్ డేటాబేస్ ఫైల్
+const dbPath = path.join(__dirname, 'database.json');
 
-// 2. Create Tables (Customers & Payments)
-db.serialize(() => {
-    // Customers Table
-    db.run(`CREATE TABLE IF NOT EXISTS customers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        phone TEXT UNIQUE,
-        password TEXT,
-        aadhaar TEXT,
-        pan TEXT,
-        loan_amount INTEGER,
-        total_weeks INTEGER,
-        date_added DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`);
+// 2. బ్యాకప్స్ కోసం కొత్త ఫోల్డర్ సెటప్
+const backupDir = path.join(__dirname, 'Backups');
+if (!fs.existsSync(backupDir)) {
+    fs.mkdirSync(backupDir); // బ్యాకప్ ఫోల్డర్ లేకపోతే కొత్తది క్రియేట్ చేస్తుంది
+    console.log("📁 కొత్త Backups ఫోల్డర్ క్రియేట్ అయ్యింది.");
+}
 
-    // Payments Table
-    db.run(`CREATE TABLE IF NOT EXISTS payments (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        customer_id INTEGER,
-        customer_name TEXT,
-        customer_phone TEXT,
-        week_number TEXT,
-        amount INTEGER,
-        transaction_id TEXT,
-        status TEXT DEFAULT 'Pending',
-        payment_date DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`);
-});
-
-// 3. Login Logic
-app.post('/login', (req, res) => {
-    const { phone, password } = req.body;
+// 3. ప్యూర్ కోడింగ్ తో ఆటో-బ్యాకప్ తీసే ఫంక్షన్
+function autoBackupDatabase() {
+    const date = new Date();
+    // తేదీని ఫార్మాట్ చేయడం (ఉదా: 09-07-2026)
+    const dateString = date.toLocaleDateString('en-GB').replace(/\//g, '-'); 
+    const backupPath = path.join(backupDir, `backup_${dateString}.json`);
     
-    // Admin Login
-    if (phone === '7569532152' && password === 'ramu@2026') {
-        return res.redirect('/admin-dashboard.html');
+    // మెయిన్ డేటాని బ్యాకప్ ఫైల్ లోకి కాపీ చేస్తుంది
+    fs.copyFileSync(dbPath, backupPath);
+    console.log(`💾 ఆటో-బ్యాకప్ సేవ్ అయ్యింది: backup_${dateString}.json`);
+}
+
+// స్టార్టింగ్ డేటాబేస్ క్రియేషన్
+if (!fs.existsSync(dbPath)) {
+    const initialData = { admin: { id: "admin", password: "admin123" }, customers: [] };
+    fs.writeFileSync(dbPath, JSON.stringify(initialData, null, 2));
+}
+
+// --- API ROUTES ---
+
+app.post('/api/login', (req, res) => {
+    const { userId, password } = req.body;
+    const db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+
+    if (userId === db.admin.id && password === db.admin.password) return res.json({ success: true, role: 'admin' });
+    
+    const customer = db.customers.find(c => c.phone === userId && c.password === password);
+    if (customer) return res.json({ success: true, role: 'customer', customerData: customer });
+
+    return res.json({ success: false, message: "Invalid Details" });
+});
+
+app.get('/api/customers', (req, res) => {
+    const db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+    res.json(db.customers);
+});
+
+// కస్టమర్ ని యాడ్ చేసినప్పుడు
+app.post('/api/customers', (req, res) => {
+    const newCustomer = req.body;
+    const db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+    
+    if (db.customers.find(c => c.phone === newCustomer.phone)) {
+        return res.json({ success: false, message: "Phone number already exists!" });
+    }
+    
+    newCustomer.paidWeeks = 0;
+    newCustomer.penalty = 0;
+    newCustomer.history = [];
+    newCustomer.pendingApproval = false;
+    newCustomer.referralCode = 'REF' + Math.floor(Math.random() * 90000 + 10000);
+
+    db.customers.push(newCustomer);
+    fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
+    
+    // డేటా మారగానే ఆటోమేటిక్ గా బ్యాకప్ తీసుకుంటుంది
+    autoBackupDatabase();
+    
+    res.json({ success: true, message: "Account Created!" });
+});
+
+// అడ్మిన్ అప్రూవ్ చేసినప్పుడు లేదా పేమెంట్ చేసినప్పుడు
+app.post('/api/action', (req, res) => {
+    const { phone, action, amount } = req.body;
+    let db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+    let customer = db.customers.find(c => c.phone === phone);
+
+    if(!customer) return res.json({success: false});
+
+    if(!customer.paidWeeks) customer.paidWeeks = 0;
+    if(!customer.penalty) customer.penalty = 0;
+    if(!customer.history) customer.history = [];
+
+    if(action === 'request_payment') {
+        customer.pendingApproval = true;
+        customer.requestAmount = amount;
+    } 
+    else if(action === 'approve_payment') {
+        customer.pendingApproval = false;
+        customer.paidWeeks += 1;
+        customer.history.push({
+            week: customer.paidWeeks,
+            amount: customer.requestAmount || amount,
+            date: new Date().toLocaleDateString('en-GB')
+        });
+    } 
+    else if(action === 'add_penalty') {
+        customer.penalty += Number(amount);
     }
 
-    // Customer Login
-    db.get("SELECT * FROM customers WHERE phone = ? AND password = ?", [phone, password], (err, customer) => {
-        if (customer) {
-            return res.redirect(`/customer-dashboard.html?phone=${phone}`);
-        } else {
-            return res.send("<h2>Login Failed! Incorrect Phone Number or Password. Please try again.</h2>");
-        }
-    });
-});
-
-// 4. Admin - Add New Customer
-app.post('/add-customer', (req, res) => {
-    const { name, phone, password, aadhaar, pan, loan_amount, total_weeks } = req.body;
-    const stmt = db.prepare("INSERT INTO customers (name, phone, password, aadhaar, pan, loan_amount, total_weeks) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
     
-    stmt.run([name, phone, password, aadhaar, pan, loan_amount, total_weeks], function(err) {
-        if (err) return res.send("Account with this phone number already exists!");
-        res.redirect('/admin-dashboard.html');
-    });
-});
-
-// 5. Admin - Fetch All Data
-app.get('/admin-data', (req, res) => {
-    db.all("SELECT * FROM customers", [], (err, customers) => {
-        db.all("SELECT * FROM payments ORDER BY id DESC", [], (err, payments) => {
-            res.json({ customers, payments });
-        });
-    });
-});
-
-// 6. Admin - Approve Payment
-app.post('/approve-payment', (req, res) => {
-    const { payment_id } = req.body;
-    db.run("UPDATE payments SET status = 'Approved' WHERE id = ?", [payment_id], (err) => {
-        res.redirect('/admin-dashboard.html');
-    });
-});
-
-// 7. Customer - Fetch Dashboard Data
-app.get('/customer-data/:phone', (req, res) => {
-    const phone = req.params.phone;
-    db.get("SELECT * FROM customers WHERE phone = ?", [phone], (err, customer) => {
-        if (!customer) return res.json({ error: "Customer not found" });
-        
-        db.all("SELECT * FROM payments WHERE customer_phone = ? ORDER BY id DESC", [phone], (err, payments) => {
-            res.json({ customer, payments });
-        });
-    });
-});
-
-// 8. Customer - Submit New Payment
-app.post('/submit-payment', (req, res) => {
-    const { phone, week_number, amount, transaction_id } = req.body;
+    // ట్రాన్సాక్షన్ జరిగిన వెంటనే ఫైల్ ని సేఫ్ గా బ్యాకప్ చేస్తుంది
+    autoBackupDatabase();
     
-    db.get("SELECT id, name FROM customers WHERE phone = ?", [phone], (err, customer) => {
-        if (!customer) return res.send("Invalid phone number.");
-
-        const stmt = db.prepare("INSERT INTO payments (customer_id, customer_name, customer_phone, week_number, amount, transaction_id) VALUES (?, ?, ?, ?, ?, ?)");
-        stmt.run([customer.id, customer.name, phone, week_number, amount, transaction_id], function(err) {
-            if (err) return res.send("An error occurred while submitting payment.");
-            res.send(`
-                <div style="text-align:center; font-family:Arial; margin-top:50px;">
-                    <h2 style="color:green;">Success! Your payment of ₹${amount} has been submitted ✅</h2>
-                    <p>Please wait for Admin approval.</p>
-                    <a href="/customer-dashboard.html?phone=${phone}" style="padding:10px 20px; background:#007bff; color:white; text-decoration:none; border-radius:5px; font-weight:bold;">Go to Dashboard</a>
-                </div>
-            `);
-        });
-    });
-});
-// --- NEW FEATURES: Reject Payment & Delete Customer ---
-
-// Reject Payment
-app.post('/reject-payment', (req, res) => {
-    const { payment_id } = req.body;
-    db.run("UPDATE payments SET status = 'Rejected' WHERE id = ?", [payment_id], (err) => {
-        if (err) console.error(err);
-        res.redirect('/admin-dashboard.html');
-    });
+    res.json({ success: true, customerData: customer });
 });
 
-// Delete Customer (This deletes the customer and all their payments)
-app.post('/delete-customer', (req, res) => {
-    const { phone } = req.body;
-    db.run("DELETE FROM customers WHERE phone = ?", [phone], (err) => {
-        if (!err) {
-            db.run("DELETE FROM payments WHERE customer_phone = ?", [phone]);
-        }
-        res.redirect('/admin-dashboard.html');
-    });
+app.delete('/api/customers/:phone', (req, res) => {
+    let db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+    db.customers = db.customers.filter(c => c.phone !== req.params.phone);
+    fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
+    
+    autoBackupDatabase(); // డిలీట్ చేసినప్పుడు కూడా బ్యాకప్ అప్‌డేట్ అవుతుంది
+    
+    res.json({ success: true });
 });
-// Add Manual Penalty
-app.post('/add-penalty', (req, res) => {
-    const { phone, penalty_amount } = req.body;
-    db.run("UPDATE customers SET loan_amount = loan_amount + ? WHERE phone = ?", [Number(penalty_amount), phone], (err) => {
-        if (err) console.error(err);
-        res.redirect('/admin-dashboard.html');
-    });
-});
-// Start Server
-app.listen(port, () => {
-    console.log(`🚀 Server is running! Open http://localhost:${port}`);
+
+app.listen(PORT, () => {
+    console.log(`🚀 Server ON: http://localhost:${PORT}`);
+    console.log(`🛡️ Auto-Backup System is Active!`);
 });
