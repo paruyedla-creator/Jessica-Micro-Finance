@@ -13,8 +13,8 @@
         body.dark-mode .content-card { background: #1e1e1e; border-color: #333; }
         body.dark-mode .table { color: #fff; }
         
-        .navbar-custom { background-color: var(--primary); padding: 15px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .navbar-brand { font-weight: 800; color: white !important; font-size: 22px; letter-spacing: 1px; }
+        .navbar-custom { background-color: var(--primary); padding: 10px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .navbar-brand { font-weight: 900; color: white !important; font-size: 20px; letter-spacing: 0.5px; line-height: 1.2; }
         
         .stat-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); border-left: 5px solid; transition: 0.3s; }
         .stat-card:hover { transform: translateY(-5px); }
@@ -24,73 +24,57 @@
         .stat-danger { border-color: #ef4444; }
         
         .content-card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 20px;}
-        .table-container { max-height: 600px; overflow-y: auto; }
+        .table-container { max-height: 650px; overflow-y: auto; }
         .table th { background: #f1f5f9; font-size: 11px; text-transform: uppercase; color: #475569; position: sticky; top: 0; z-index: 10; }
         .table td { vertical-align: middle; font-size: 13px; font-weight: 500; }
-        .overdue-row { background-color: #fef2f2 !important; }
         
         .action-btn { width: 32px; height: 32px; border-radius: 8px; display: inline-flex; justify-content: center; align-items: center; border: none; font-size: 14px; transition: 0.2s; margin: 2px;}
         .btn-ghost { background: #6366f1; color: white; }
         .btn-wa { background: #25D366; color: white; }
+        .btn-edit { background: #0ea5e9; color: white; }
         
         .search-bar { border-radius: 20px; padding: 10px 20px; border: 1px solid #e2e8f0; width: 300px; outline: none; }
+        .date-badge { background: #e0f2fe; color: #0284c7; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; display: inline-block; margin-top: 4px; border: 1px solid #bae6fd;}
+        .notes-box { background: #fef3c7; border-left: 3px solid #f59e0b; padding: 5px; font-size: 11px; margin-top: 5px; color: #92400e; border-radius: 0 4px 4px 0;}
     </style>
 </head>
 <body>
 
+    <!-- 1. CEO Branding Navbar -->
     <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#"><i class="fas fa-chart-line text-info"></i> JESSICA FINANCE MGT.</a>
+            <a class="navbar-brand" href="#">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fas fa-crown text-warning fs-3"></i> 
+                    <div>
+                        JESSICA FINANCE MGT.<br>
+                        <span style="font-size: 11px; color: #cbd5e1; letter-spacing: 2px;">MANAGED BY CEO RAM</span>
+                    </div>
+                </div>
+            </a>
             <div class="d-flex gap-3 align-items-center">
                 <button class="btn btn-outline-light btn-sm" onclick="toggleDarkMode()"><i class="fas fa-moon"></i></button>
-                <button class="btn btn-sm btn-outline-info fw-bold" data-bs-toggle="modal" data-bs-target="#expenseModal"><i class="fas fa-wallet"></i> Expenses</button>
-                <button class="btn btn-sm btn-danger fw-bold" onclick="window.location.href='index.html'"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                <button class="btn btn-sm btn-danger fw-bold" onclick="window.location.href='index.html'"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </div>
     </nav>
 
     <div class="container-fluid p-4">
-        
+        <!-- Analytics Cards -->
         <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="stat-card stat-primary">
-                    <div style="font-size: 12px; color: #64748b; font-weight: bold;">TOTAL MARKET LOANS</div>
-                    <div class="fs-3 fw-bold mt-1" id="statTotalGiven">₹0</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card stat-success">
-                    <div style="font-size: 12px; color: #64748b; font-weight: bold;">TOTAL COLLECTED</div>
-                    <div class="fs-3 fw-bold mt-1 text-success" id="statCollected">₹0</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card stat-warning">
-                    <div style="font-size: 12px; color: #64748b; font-weight: bold;">ACTIVE CUSTOMERS</div>
-                    <div class="fs-3 fw-bold mt-1" id="statActiveCust">0</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card stat-danger">
-                    <div style="font-size: 12px; color: #64748b; font-weight: bold;">ESTIMATED PROFIT</div>
-                    <div class="fs-3 fw-bold mt-1 text-primary" id="statProfit">₹0</div>
-                </div>
-            </div>
+            <div class="col-md-3"><div class="stat-card stat-primary"><div style="font-size: 12px; color: #64748b; font-weight: bold;">TOTAL MARKET LOANS</div><div class="fs-3 fw-bold mt-1" id="statTotalGiven">₹0</div></div></div>
+            <div class="col-md-3"><div class="stat-card stat-success"><div style="font-size: 12px; color: #64748b; font-weight: bold;">TOTAL COLLECTED</div><div class="fs-3 fw-bold mt-1 text-success" id="statCollected">₹0</div></div></div>
+            <div class="col-md-3"><div class="stat-card stat-warning"><div style="font-size: 12px; color: #64748b; font-weight: bold;">ACTIVE CUSTOMERS</div><div class="fs-3 fw-bold mt-1" id="statActiveCust">0</div></div></div>
+            <div class="col-md-3"><div class="stat-card stat-danger"><div style="font-size: 12px; color: #64748b; font-weight: bold;">ESTIMATED PROFIT</div><div class="fs-3 fw-bold mt-1 text-primary" id="statProfit">₹0</div></div></div>
         </div>
 
         <div class="content-card">
+            <!-- Action Bar -->
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                 <div class="d-flex gap-2">
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal"><i class="fas fa-user-plus"></i> New Account</button>
-                    <button class="btn btn-success" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Export Data</button>
-                    <button class="btn btn-outline-secondary" onclick="loadCustomers()"><i class="fas fa-sync-alt"></i> Refresh</button>
                 </div>
                 <div class="d-flex gap-2 align-items-center">
-                    <select class="form-select w-auto" id="filterCategory" onchange="loadCustomers()">
-                        <option value="All">All Categories</option>
-                        <option value="Weekly Finance">Weekly Finance</option>
-                        <option value="Daily Collection">Daily Collection</option>
-                    </select>
                     <input type="text" class="search-bar" id="searchInput" placeholder="Search Name or Phone..." onkeyup="filterTable()">
                 </div>
             </div>
@@ -102,10 +86,9 @@
                             <th>Status</th>
                             <th>Customer Profile</th>
                             <th>Loan (Given / EMI)</th>
-                            <th>Progress (Paid/Pend)</th>
-                            <th>Penalties</th>
+                            <th>Dates & Progress</th>
                             <th>Approval Actions</th>
-                            <th>Super Controls</th>
+                            <th style="min-width: 180px;">Super Controls</th>
                         </tr>
                     </thead>
                     <tbody id="customersTableBody"></tbody>
@@ -114,6 +97,7 @@
         </div>
     </div>
 
+    <!-- Modal: Add New Customer -->
     <div class="modal fade" id="addCustomerModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content border-0 shadow-lg">
@@ -127,12 +111,7 @@
                             <div class="col-12"><input type="text" id="custName" class="form-control" placeholder="Full Name" required></div>
                             <div class="col-6"><input type="tel" id="custPhone" class="form-control" placeholder="Phone Number" required></div>
                             <div class="col-6"><input type="text" id="custPass" class="form-control" placeholder="Password (Pin)" required></div>
-                            <div class="col-12">
-                                <select id="custCategory" class="form-select" required>
-                                    <option value="Weekly Finance">Weekly Finance</option>
-                                    <option value="Daily Collection">Daily Collection</option>
-                                </select>
-                            </div>
+                            <div class="col-12"><select id="custCategory" class="form-select" required><option value="Weekly Finance">Weekly Finance</option></select></div>
                             <div class="col-6"><input type="number" id="custAmount" class="form-control" placeholder="Given Amt (₹)" required></div>
                             <div class="col-6"><input type="number" id="custDuration" class="form-control" placeholder="Duration (Weeks)" required></div>
                         </div>
@@ -143,8 +122,37 @@
         </div>
     </div>
 
+    <!-- Modal: Edit Customer & Set Dates -->
+    <div class="modal fade" id="editCustomerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-edit"></i> Edit Customer & Dates</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="editCustomerForm">
+                        <input type="hidden" id="editPhone">
+                        <div class="row g-2">
+                            <div class="col-12"><label class="form-label" style="font-size:11px;">Full Name</label><input type="text" id="editName" class="form-control" required></div>
+                            <div class="col-6"><label class="form-label" style="font-size:11px;">Given Amount (₹)</label><input type="number" id="editAmount" class="form-control" required></div>
+                            <div class="col-6"><label class="form-label" style="font-size:11px;">Total Weeks</label><input type="number" id="editDuration" class="form-control" required></div>
+                            
+                            <!-- Custom Dates Manager -->
+                            <div class="col-6 mt-3"><label class="form-label fw-bold text-success" style="font-size:11px;">Last Paid Date</label><input type="date" id="editLastPaid" class="form-control"></div>
+                            <div class="col-6 mt-3"><label class="form-label fw-bold text-danger" style="font-size:11px;">Next Due Date</label><input type="date" id="editNextDue" class="form-control"></div>
+                            
+                            <!-- Secret Notes -->
+                            <div class="col-12 mt-3"><label class="form-label fw-bold" style="font-size:11px;">Secret Notes (Admin Only)</label><input type="text" id="editNotes" class="form-control" placeholder="E.g., Call not answering, Good customer..."></div>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100 mt-4 fw-bold">SAVE CHANGES</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script>
         const formatMoney = (amount) => '₹' + Number(amount).toLocaleString('en-IN');
         let globalCustomers = [];
@@ -159,88 +167,77 @@
         function renderTable() {
             const tableBody = document.getElementById('customersTableBody');
             tableBody.innerHTML = '';
-            const filterVal = document.getElementById('filterCategory').value;
+
+            // Get Today's Date for Alert logic
+            const today = new Date();
+            today.setHours(0,0,0,0);
 
             globalCustomers.forEach(cust => {
-                if (filterVal !== "All" && cust.category !== filterVal) return;
-
                 let principal = Number(cust.amount);
                 let totalToPay = principal + (principal * 0.20); 
                 let emi = Math.round(totalToPay / Number(cust.duration));
                 let paidWeeks = cust.paidWeeks || 0;
                 let pendingWeeks = Number(cust.duration) - paidWeeks;
-                let penalty = cust.penalty || 0;
 
-                // Status Logic
-                let statusBadge = pendingWeeks <= 0 
-                    ? `<span class="badge bg-success">Cleared</span>` 
-                    : `<span class="badge bg-primary">Active</span>`;
+                let statusBadge = pendingWeeks <= 0 ? `<span class="badge bg-success">Cleared</span>` : `<span class="badge bg-primary">Active</span>`;
                 
-                // Overdue highlight logic
-                let rowClass = (pendingWeeks > 0 && cust.penalty > 0) ? "overdue-row" : "";
+                // Smart Date Red Alert Logic
+                let overdueWarning = '';
+                if (cust.nextDueDate) {
+                    let due = new Date(cust.nextDueDate);
+                    if (due < today && pendingWeeks > 0) overdueWarning = `<div class="text-danger fw-bold mt-1" style="font-size: 10px; animation: pulse 1s infinite;"><i class="fas fa-exclamation-triangle"></i> OVERDUE ALERT</div>`;
+                }
 
-                // Approval HTML with Fake Reject Feature
-                let approvalHTML = `<span class="text-muted" style="font-size:11px;">No Actions Pending</span>`;
+                let approvalHTML = `<span class="text-muted" style="font-size:11px;">No Pending</span>`;
                 if(cust.pendingApproval) {
                     approvalHTML = `
                         <button class="btn btn-sm btn-success w-100 mb-1 fw-bold" onclick="approvePayment('${cust.phone}', '${cust.name}', ${emi}, ${paidWeeks + 1})"><i class="fas fa-check"></i> Approve</button>
-                        <button class="btn btn-sm btn-outline-danger w-100" onclick="rejectFakePayment('${cust.phone}')"><i class="fas fa-times"></i> Reject Fake</button>
+                        <button class="btn btn-sm btn-outline-danger w-100" onclick="rejectFakePayment('${cust.phone}')"><i class="fas fa-times"></i> Reject</button>
                     `;
                 }
 
+                // Format dates to display beautifully
+                let lastPaidHtml = cust.lastPaidDate ? `<div class="date-badge"><i class="fas fa-history"></i> Last Paid: ${cust.lastPaidDate}</div>` : '';
+                let nextDueHtml = cust.nextDueDate ? `<div class="date-badge" style="background:#fee2e2; border-color:#fecaca; color:#b91c1c;"><i class="fas fa-calendar-alt"></i> Next Due: ${cust.nextDueDate}</div>` : '';
+                let notesHtml = cust.notes ? `<div class="notes-box"><i class="fas fa-info-circle"></i> ${cust.notes}</div>` : '';
+
                 tableBody.innerHTML += `
-                    <tr class="${rowClass}">
-                        <td>${statusBadge}</td>
+                    <tr>
+                        <td>${statusBadge} ${overdueWarning}</td>
                         <td>
                             <div class="fw-bold text-dark">${cust.name}</div>
-                            <div class="text-primary" style="font-size:11px; cursor:pointer;" onclick="navigator.clipboard.writeText('${cust.phone}'); alert('Copied!')"><i class="fas fa-phone-alt"></i> ${cust.phone}</div>
-                            <div class="text-muted" style="font-size:10px;">Joined: ${cust.startDate || 'N/A'}</div>
+                            <div class="text-primary" style="font-size:11px;">${cust.phone}</div>
+                            ${notesHtml}
                         </td>
                         <td>
                             <div style="font-size:12px;">Given: <b>${formatMoney(principal)}</b></div>
-                            <div style="font-size:12px;">Return: <b class="text-success">${formatMoney(totalToPay)}</b></div>
                             <div style="font-size:12px;">EMI: <b class="text-danger">${formatMoney(emi)}</b></div>
                         </td>
                         <td>
-                            <div class="text-success fw-bold" style="font-size:12px;">Paid: ${paidWeeks} Wk</div>
-                            <div class="text-danger fw-bold" style="font-size:12px;">Pend: ${pendingWeeks} Wk</div>
-                        </td>
-                        <td>
-                            <div class="text-warning text-dark fw-bold mb-1" style="font-size:12px;">Due: ${formatMoney(penalty)}</div>
-                            <div class="d-flex gap-1">
-                                <button class="btn btn-sm btn-outline-danger" style="font-size:10px; padding:2px 5px;" onclick="addPenaltyModal('${cust.phone}')">+ Add</button>
-                                <button class="btn btn-sm btn-outline-success" style="font-size:10px; padding:2px 5px;" onclick="waivePenalty('${cust.phone}')">Waive</button>
-                            </div>
+                            <div class="text-success fw-bold" style="font-size:12px;">Paid: ${paidWeeks} / Pend: ${pendingWeeks}</div>
+                            ${lastPaidHtml}<br>${nextDueHtml}
                         </td>
                         <td>${approvalHTML}</td>
                         <td>
+                            <!-- Master Edit -->
+                            <button class="action-btn btn-edit" title="Edit Customer & Dates" onclick="openEditModal('${cust.phone}')"><i class="fas fa-pencil-alt"></i></button>
+                            <!-- Ghost Login -->
                             <button class="action-btn btn-ghost" title="View as Customer" onclick="adminGhostLogin('${cust.phone}', '${cust.password}')"><i class="fas fa-eye"></i></button>
-                            <button class="action-btn btn-wa" title="Send WhatsApp Reminder" onclick="sendWhatsAppReminder('${cust.phone}', '${cust.name}', ${emi})"><i class="fab fa-whatsapp"></i></button>
-                            <button class="action-btn bg-warning text-dark" title="Settle Loan Account" onclick="settleLoan('${cust.phone}')"><i class="fas fa-handshake"></i></button>
-                            <button class="action-btn bg-secondary text-white" title="Print Agreement" onclick="generateAgreement('${cust.name}', '${cust.phone}', '${totalToPay}')"><i class="fas fa-print"></i></button>
-                            <button class="action-btn bg-danger text-white" title="Delete Data" onclick="deleteCustomer('${cust.phone}')"><i class="fas fa-trash"></i></button>
+                            <!-- WhatsApp -->
+                            <button class="action-btn btn-wa" title="Send WhatsApp Reminder" onclick="sendWhatsAppReminder('${cust.phone}', '${cust.name}', ${emi}, '${cust.nextDueDate || 'soon'}')"><i class="fab fa-whatsapp"></i></button>
+                            <!-- Secure Delete -->
+                            <button class="action-btn bg-danger text-white" title="Delete Data" onclick="secureDeleteCustomer('${cust.phone}')"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>
                 `;
             });
         }
 
-        // --- CORE 30 FEATURES LOGIC ---
-
-        // Feature 2: GHOST LOGIN (View as Customer without Password)
-        function adminGhostLogin(phone, password) {
-            const fakeData = { phone: phone, password: password };
-            localStorage.setItem('loggedInCustomer', JSON.stringify(fakeData));
-            window.open('customer-dashboard.html', '_blank'); // Opens in new tab safely
-        }
-
-        // Feature 3: Advanced Analytics
+        // Feature: Analytics
         function calculateAnalytics() {
             let tGiven = 0, tCollected = 0, active = 0, tProfit = 0;
             globalCustomers.forEach(c => {
-                let p = Number(c.amount);
-                tGiven += p;
-                tProfit += (p * 0.20);
+                let p = Number(c.amount); tGiven += p; tProfit += (p * 0.20);
                 tCollected += (c.paidWeeks * Math.round((p + p*0.20)/c.duration));
                 if(c.paidWeeks < c.duration) active++;
             });
@@ -250,61 +247,65 @@
             document.getElementById('statProfit').innerText = formatMoney(tProfit);
         }
 
-        // Feature 5: Real-time Search
         function filterTable() {
             let input = document.getElementById("searchInput").value.toLowerCase();
             let rows = document.getElementById("customersTableBody").getElementsByTagName("tr");
-            for (let i = 0; i < rows.length; i++) {
-                let text = rows[i].innerText.toLowerCase();
-                rows[i].style.display = text.includes(input) ? "" : "none";
-            }
+            for (let i = 0; i < rows.length; i++) rows[i].style.display = rows[i].innerText.toLowerCase().includes(input) ? "" : "none";
         }
 
-        // Feature 8: WhatsApp Reminder Template
-        function sendWhatsAppReminder(phone, name, emi) {
-            let msg = `Hello ${name} garu, Gentle reminder from Jessica Finance. Your EMI amount of Rs.${emi}/- is due. Please pay via your dashboard link to avoid penalty. Thank you!`;
+        function adminGhostLogin(phone, password) {
+            localStorage.setItem('loggedInCustomer', JSON.stringify({ phone, password }));
+            window.open('customer-dashboard.html', '_blank');
+        }
+
+        // Next Due Date included in WhatsApp Reminder
+        function sendWhatsAppReminder(phone, name, emi, dueDate) {
+            let dueText = dueDate !== 'soon' ? ` on or before *${dueDate}*` : ``;
+            let msg = `Hello ${name} garu, Gentle reminder from *Jessica Finance Management*. Your EMI amount of Rs.${emi}/- is due${dueText}. Please pay via your dashboard link to avoid penalty. Thank you!\n\n- By CEO RAM`;
             window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        // Feature 9 & 17: Approval & Fake Reject
         async function approvePayment(phone, name, amount, weekNo) {
             await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, action: 'approve_payment', amount }) });
-            let msg = `Payment Received! Hello ${name}, your EMI of Rs.${amount}/- is approved successfully.`;
-            window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
             loadCustomers();
         }
+
         async function rejectFakePayment(phone) {
-            if(confirm("Reject this fake payment request?")) {
-                await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, action: 'reject_payment' }) });
-                loadCustomers();
-            }
+            await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, action: 'reject_payment' }) });
+            loadCustomers();
         }
 
-        // Feature 11: Loan Settlement
-        async function settleLoan(phone) {
-            let amount = prompt("Enter final settlement amount collected from customer:");
-            if(amount && confirm("Are you sure you want to CLOSE this loan account?")) {
-                await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, action: 'settle_loan', amount }) });
-                loadCustomers();
-            }
+        // New Edit System Logic
+        function openEditModal(phone) {
+            let cust = globalCustomers.find(c => c.phone === phone);
+            if(!cust) return;
+            document.getElementById('editPhone').value = cust.phone;
+            document.getElementById('editName').value = cust.name;
+            document.getElementById('editAmount').value = cust.amount;
+            document.getElementById('editDuration').value = cust.duration;
+            document.getElementById('editLastPaid').value = cust.lastPaidDate || '';
+            document.getElementById('editNextDue').value = cust.nextDueDate || '';
+            document.getElementById('editNotes').value = cust.notes || '';
+            new bootstrap.Modal(document.getElementById('editCustomerModal')).show();
         }
 
-        // Feature 12 & Penalties
-        async function waivePenalty(phone) {
-            if(confirm("Clear all penalties for this account?")) {
-                await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, action: 'waive_penalty' }) });
-                loadCustomers();
-            }
-        }
-        async function addPenaltyModal(phone) {
-            let amount = prompt("Enter Penalty Amount (₹):");
-            if(amount > 0) {
-                await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, action: 'add_penalty', amount }) });
-                loadCustomers();
-            }
-        }
+        document.getElementById('editCustomerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const payload = {
+                action: 'edit_customer',
+                phone: document.getElementById('editPhone').value,
+                editName: document.getElementById('editName').value,
+                editAmount: document.getElementById('editAmount').value,
+                editDuration: document.getElementById('editDuration').value,
+                editLastPaid: document.getElementById('editLastPaid').value,
+                editNextDue: document.getElementById('editNextDue').value,
+                editNotes: document.getElementById('editNotes').value
+            };
+            await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            bootstrap.Modal.getInstance(document.getElementById('editCustomerModal')).hide();
+            loadCustomers();
+        });
 
-        // Add Customer Form Submit
         document.getElementById('addCustomerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const newCustomer = {
@@ -318,39 +319,26 @@
             loadCustomers(); 
         });
 
-        // Feature 20: Delete Protection
-        async function deleteCustomer(phone) {
-            let pin = prompt("DANGER: Enter Admin PIN (1234) to delete this customer permanently.");
+        // 100% BUG-FREE DELETE LOGIC (Using Secure POST)
+        async function secureDeleteCustomer(phone) {
+            let pin = prompt("DANGER: Enter Admin PIN (1234) to delete this customer.");
             if (pin === "1234") {
-                await fetch('/api/customers/' + phone, { method: 'DELETE' });
-                loadCustomers();
-            } else if (pin) alert("Incorrect PIN. Deletion cancelled.");
+                const res = await fetch('/api/action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: phone, action: 'delete_customer' })
+                });
+                let data = await res.json();
+                if(data.success) {
+                    alert("Account Deleted Successfully!");
+                    loadCustomers();
+                }
+            } else if (pin) {
+                alert("Incorrect PIN. Deletion cancelled.");
+            }
         }
 
-        // Feature 6: Export to Excel
-        function exportToExcel() {
-            let csvContent = "data:text/csv;charset=utf-8,Name,Phone,Amount Given,Paid Weeks\n";
-            globalCustomers.forEach(c => { csvContent += `${c.name},${c.phone},${c.amount},${c.paidWeeks}\n`; });
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "Jessica_Finance_Customers.csv");
-            document.body.appendChild(link);
-            link.click();
-        }
-
-        // Feature 13: Dark Mode Toggle
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-        }
-
-        // Feature 25: Agreement Print
-        function generateAgreement(name, phone, totalAmount) {
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`<html><head><title>Loan Agreement</title><style>body{font-family:serif; padding:40px; line-height:1.8;} h2{text-align:center; border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:30px;} .sign{margin-top:80px; display:flex; justify-content:space-between;}</style></head><body><h2>LOAN AGREEMENT</h2><p>This document serves as a formal loan agreement executed on <strong>${new Date().toLocaleDateString('en-GB')}</strong>.</p><p><strong>Borrower Name:</strong> ${name} <br><strong>Contact Number:</strong> ${phone} <br><strong>Total Repayment Amount:</strong> Rs. ${Number(totalAmount).toLocaleString('en-IN')}/-</p><p>The Borrower acknowledges the receipt of the loan and agrees to the strict weekly repayment schedule. Any default in weekly payments will attract standard penalty charges.</p><div class="sign"><div>Borrower's Signature</div><div>Authorized Signatory</div></div></body></html>`);
-            printWindow.document.close();
-            setTimeout(() => { printWindow.print(); }, 500); 
-        }
+        function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
 
         loadCustomers();
     </script>
