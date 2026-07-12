@@ -23,7 +23,7 @@ function autoBackupDatabase() {
 }
 
 if (!fs.existsSync(dbPath)) {
-    const initialData = { admin: { id: "admin", password: "admin123" }, customers: [], expenses: [] };
+    const initialData = { admin: { id: "CEO JF", password: "JF 2026" }, customers: [], expenses: [] };
     fs.writeFileSync(dbPath, JSON.stringify(initialData, null, 2));
 }
 
