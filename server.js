@@ -29,10 +29,23 @@ if (!fs.existsSync(dbPath)) {
 
 app.post('/api/login', (req, res) => {
     const { userId, password } = req.body;
-    const db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
-    if (userId === db.admin.id && password === db.admin.password) return res.json({ success: true, role: 'admin' });
-    const customer = db.customers.find(c => c.phone === userId && c.password === password);
-    if (customer) return res.json({ success: true, role: 'customer', customerData: customer });
+    
+    // 1. మీ అడ్మిన్ లాగిన్ (ఇది పక్కాగా వర్క్ అవుతుంది)
+    if (userId === "CEO JF" && password === "JF 2026") {
+        return res.json({ success: true, role: 'admin' });
+    }
+    
+    // 2. కస్టమర్ లాగిన్
+    let db = { customers: [] };
+    if (fs.existsSync(dbPath)) {
+        db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+    }
+    
+    if (db.customers) {
+        const customer = db.customers.find(c => c.phone === userId && c.password === password);
+        if (customer) return res.json({ success: true, role: 'customer', customerData: customer });
+    }
+
     return res.json({ success: false, message: "Invalid Details" });
 });
 
