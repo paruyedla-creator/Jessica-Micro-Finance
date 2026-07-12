@@ -1,20 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head> 
-    <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#071b34">
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js');
-  }
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jessica Finance - Secure Banking Portal</title>
+    
+    <!-- PWA App Links (ఇక్కడ ఉండాలి కరెక్ట్ గా) -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#071b34">
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         body {
             background-color: #f4f6f9; /* ప్రశాంతమైన బ్యాంకింగ్ బ్యాక్ గ్రౌండ్ */
@@ -153,13 +152,13 @@
                     <!-- User ID (Floating Label) -->
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="userId" placeholder="User ID" required autocomplete="off">
-                        <label for="userId text-muted">User ID / Phone Number</label>
+                        <label for="userId" class="text-muted">User ID / Phone Number</label>
                     </div>
                     
                     <!-- Password (Floating Label) -->
                     <div class="form-floating mb-4">
                         <input type="password" class="form-control" id="password" placeholder="Password" required>
-                        <label for="password text-muted">Password</label>
+                        <label for="password" class="text-muted">Password</label>
                     </div>
                     
                     <!-- Login Button -->
@@ -186,6 +185,13 @@
         &copy; 2026 Jessica Finance Ltd. All rights reserved. <br>
         <span style="font-size: 11px;">Strictly for Authorized Users Only.</span>
     </div>
+
+    <!-- యాప్ ఇన్స్టాల్ అవ్వడానికి సర్వీస్ వర్కర్ (ఇక్కడ ఉంటే ఫాస్ట్ గా లోడ్ అవుతుంది) -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js');
+      }
+    </script>
 
     <!-- జావాస్క్రిప్ట్ లాగిన్ లాజిక్ (ఎలాంటి మార్పు లేదు) -->
     <script>
