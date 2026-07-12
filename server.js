@@ -1,5 +1,4 @@
 const express = require('express');
-const fs = require('fs');
 const path = require('path');
 
 const app = express();
@@ -8,55 +7,69 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public'))); 
 
-const dbPath = path.join(__dirname, 'database.json');
-const backupDir = path.join(__dirname, 'Backups');
+// --- CLOUD DATABASE SETUP (JSONBin) ---
+const BIN_ID = '6a53982ada38895dfe52ba5a';
+const API_KEY = '$2a$10$e2nyXRn87ZTYmmx1xTnlyO4GhxNGkZC0SCAAVKhV2vWVFQv36TgV6';
+const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
-if (!fs.existsSync(backupDir)) {
-    fs.mkdirSync(backupDir);
+// క్లౌడ్ నుంచి డేటా తెచ్చుకునే ఫంక్షన్
+async function getDB() {
+    try {
+        const response = await fetch(`${BIN_URL}/latest`, {
+            headers: { 'X-Master-Key': API_KEY }
+        });
+        const data = await response.json();
+        return data.record || { customers: [], expenses: [] }; 
+    } catch (error) {
+        console.error("Error reading DB:", error);
+        return { customers: [], expenses: [] };
+    }
 }
 
-function autoBackupDatabase() {
-    const date = new Date();
-    const dateString = date.toLocaleDateString('en-GB').replace(/\//g, '-'); 
-    const backupPath = path.join(backupDir, `backup_${dateString}.json`);
-    fs.copyFileSync(dbPath, backupPath);
+// క్లౌడ్ లోకి డేటా సేవ్ చేసే ఫంక్షన్
+async function saveDB(db) {
+    try {
+        await fetch(BIN_URL, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-Key': API_KEY
+            },
+            body: JSON.stringify(db)
+        });
+    } catch (error) {
+        console.error("Error saving DB:", error);
+    }
 }
 
-if (!fs.existsSync(dbPath)) {
-    const initialData = { admin: { id: "CEO JF", password: "JF 2026" }, customers: [], expenses: [] };
-    fs.writeFileSync(dbPath, JSON.stringify(initialData, null, 2));
-}
-
-app.post('/api/login', (req, res) => {
+// 1. లాగిన్ సిస్టం
+app.post('/api/login', async (req, res) => {
     const { userId, password } = req.body;
     
-    // 1. మీ అడ్మిన్ లాగిన్ (ఇది పక్కాగా వర్క్ అవుతుంది)
+    // అడ్మిన్ లాగిన్
     if (userId === "CEO JF" && password === "JF 2026") {
         return res.json({ success: true, role: 'admin' });
     }
     
-    // 2. కస్టమర్ లాగిన్
-    let db = { customers: [] };
-    if (fs.existsSync(dbPath)) {
-        db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
-    }
-    
+    // కస్టమర్ లాగిన్
+    const db = await getDB();
     if (db.customers) {
         const customer = db.customers.find(c => c.phone === userId && c.password === password);
         if (customer) return res.json({ success: true, role: 'customer', customerData: customer });
     }
-
     return res.json({ success: false, message: "Invalid Details" });
 });
 
-app.get('/api/customers', (req, res) => {
-    const db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
-    res.json(db.customers);
+// 2. కస్టమర్ల లిస్ట్ పంపడం
+app.get('/api/customers', async (req, res) => {
+    const db = await getDB();
+    res.json(db.customers || []);
 });
 
-app.post('/api/customers', (req, res) => {
+// 3. కొత్త కస్టమర్ ని యాడ్ చేయడం
+app.post('/api/customers', async (req, res) => {
     const newCustomer = req.body;
-    const db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+    let db = await getDB();
     
     if (db.customers.find(c => c.phone === newCustomer.phone)) {
         return res.json({ success: false, message: "Phone number already exists!" });
@@ -70,20 +83,19 @@ app.post('/api/customers', (req, res) => {
     newCustomer.startDate = new Date().toLocaleDateString('en-GB'); 
 
     db.customers.push(newCustomer);
-    fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
-    autoBackupDatabase();
+    await saveDB(db);
     res.json({ success: true, message: "Account Created!" });
 });
 
-app.post('/api/action', (req, res) => {
+// 4. యాక్షన్స్ (Approve, Reject, Delete, Edit)
+app.post('/api/action', async (req, res) => {
     const { phone, action, amount } = req.body;
-    let db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+    let db = await getDB();
     
-    // Feature 6: Bug-Free Delete System
+    // కస్టమర్ డిలీట్
     if (action === 'delete_customer') {
         db.customers = db.customers.filter(c => c.phone !== phone);
-        fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
-        autoBackupDatabase();
+        await saveDB(db);
         return res.json({ success: true });
     }
 
@@ -100,7 +112,7 @@ app.post('/api/action', (req, res) => {
     } else if (action === 'approve_payment') {
         customer.pendingApproval = false;
         customer.paidWeeks += 1;
-        customer.lastPaidDate = new Date().toLocaleDateString('en-GB'); // Auto set on approve
+        customer.lastPaidDate = new Date().toLocaleDateString('en-GB'); 
         customer.history.push({
             week: customer.paidWeeks, amount: customer.requestAmount || amount, date: customer.lastPaidDate
         });
@@ -115,9 +127,7 @@ app.post('/api/action', (req, res) => {
         customer.pendingApproval = false;
         customer.paidWeeks = Number(customer.duration); 
         customer.history.push({ week: 'SETTLED', amount: amount, date: new Date().toLocaleDateString('en-GB') });
-    } 
-    // Features 2, 3 & 4: Master Edit System (Updates Name, Loan, Dates, Notes)
-    else if (action === 'edit_customer') {
+    } else if (action === 'edit_customer') {
         customer.name = req.body.editName || customer.name;
         customer.amount = req.body.editAmount || customer.amount;
         customer.duration = req.body.editDuration || customer.duration;
@@ -126,26 +136,26 @@ app.post('/api/action', (req, res) => {
         customer.notes = req.body.editNotes || customer.notes || '';
     }
 
-    fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
-    autoBackupDatabase();
+    await saveDB(db);
     res.json({ success: true, customerData: customer });
 });
 
-app.get('/api/expenses', (req, res) => {
-    const db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+// 5. ఖర్చులు (Expenses)
+app.get('/api/expenses', async (req, res) => {
+    const db = await getDB();
     res.json(db.expenses || []);
 });
 
-app.post('/api/expenses', (req, res) => {
+app.post('/api/expenses', async (req, res) => {
     const { reason, amount } = req.body;
-    const db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+    let db = await getDB();
     if(!db.expenses) db.expenses = [];
     db.expenses.push({ id: Date.now().toString(), reason: reason, amount: Number(amount), date: new Date().toLocaleDateString('en-GB') });
-    fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
-    autoBackupDatabase();
+    await saveDB(db);
     res.json({ success: true });
 });
 
+// సర్వర్ ఆన్
 app.listen(PORT, () => {
     console.log(`🚀 Server ON: http://localhost:${PORT}`);
 });
