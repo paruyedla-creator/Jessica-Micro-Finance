@@ -1,7 +1,7 @@
 {
   "name": "Jessica Finance",
   "short_name": "JF App",
-  "start_url": "/",
+  "start_url": "/admin-login.html",
   "display": "standalone",
   "background_color": "#071b34",
   "theme_color": "#071b34",
