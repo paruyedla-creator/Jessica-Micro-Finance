@@ -6,71 +6,113 @@
     <title>My Loan Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="/manifest.json">
     <style>
-        body { background-color: #f4f7f9; font-family: 'Segoe UI', sans-serif; }
-        .header-bg { background: linear-gradient(135deg, #0f172a, #1e293b); padding: 20px 20px 50px; color: white; border-radius: 0 0 25px 25px; }
-        .main-card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-top: -30px; position: relative; z-index: 10; }
-        .info-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; text-align: center; }
+        body { background-color: #f4f7f9; font-family: 'Segoe UI', sans-serif; padding-bottom: 70px; }
+        .header-bg { background: linear-gradient(135deg, #0f172a, #1e293b); padding: 20px 20px 40px; color: white; border-radius: 0 0 25px 25px; }
+        .marquee-container { background: #dc2626; color: white; padding: 5px; font-size: 12px; font-weight: bold; }
+        .main-card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-top: -20px; position: relative; z-index: 10; }
+        .info-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; text-align: center; }
+        
+        .progress-bar-custom { height: 8px; border-radius: 10px; background: #e2e8f0; margin-top: 10px; overflow: hidden;}
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); width: 0%; transition: 1s; }
         
         .pay-btn { font-weight: bold; border-radius: 8px; padding: 12px; width: 100%; border: none; transition: 0.3s; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px;}
         .pay-btn:hover { transform: translateY(-2px); }
-        .pay-btn:disabled { background-color: #94a3b8 !important; color: white !important; cursor: not-allowed; border: none !important;}
-        
         .phonepe-btn { background-color: #5f259f; color: white; }
         .gpay-btn { background-color: #ffffff; color: #3c4043; border: 1px solid #dadce0; }
         .paytm-btn { background-color: #00b9f5; color: white; }
         
         .history-table th { font-size: 11px; text-transform: uppercase; color: #64748b; }
         .history-table td { font-size: 13px; font-weight: 500; }
-        .referral-box { border: 2px dashed #3b82f6; background: #eff6ff; padding: 15px; border-radius: 10px; text-align: center; margin-top: 20px;}
+        .referral-box { border: 2px dashed #3b82f6; background: #eff6ff; padding: 15px; border-radius: 10px; text-align: center; margin-top: 20px; cursor: pointer;}
+        
+        /* Floating Buttons for WhatsApp & Call */
+        .fab-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 100; }
+        .fab { width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 24px; text-decoration: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .fab-wa { background: #25D366; }
+        .fab-call { background: #007bff; }
     </style>
 </head>
 <body>
 
-    <div class="header-bg d-flex justify-content-between align-items-center">
-        <div>
-            <div style="font-size: 12px; color: #cbd5e1;">Welcome,</div>
-            <h5 class="fw-bold mb-0" id="cName">Loading...</h5>
-        </div>
-        <button class="btn btn-sm btn-outline-light" onclick="logoutCustomer()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    <!-- Feature 6: Marquee Notice -->
+    <div class="marquee-container">
+        <marquee behavior="scroll" direction="left">గమనిక: దయచేసి ప్రతి వారం మీ EMI ని సమయానికి చెల్లించండి. ఆలస్యమైతే పెనాల్టీ వర్తిస్తుంది.</marquee>
     </div>
 
-    <div class="container pb-4 max-w-100">
+    <div class="header-bg d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+            <!-- Feature 5: Avatar -->
+            <div style="width: 45px; height: 45px; background: white; color: #0f172a; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; font-weight: bold;">
+                <i class="fas fa-user"></i>
+            </div>
+            <div>
+                <div style="font-size: 12px; color: #cbd5e1;">Welcome back,</div>
+                <h5 class="fw-bold mb-0" id="cName">Loading...</h5>
+            </div>
+        </div>
+        <button class="btn btn-sm btn-outline-light" onclick="logoutCustomer()"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+
+    <div class="container max-w-100">
         <div class="main-card">
             
-            <div class="row g-2 mb-3">
-                <div class="col-4"><div class="info-box"><div style="font-size: 10px; color: #64748b;">TOTAL WEEKS</div><div class="fw-bold" id="cTotalWeeks">0</div></div></div>
-                <div class="col-4"><div class="info-box"><div style="font-size: 10px; color: #10b981;">PAID WEEKS</div><div class="fw-bold text-success" id="cPaidWeeks">0</div></div></div>
-                <div class="col-4"><div class="info-box"><div style="font-size: 10px; color: #dc3545;">PENDING</div><div class="fw-bold text-danger" id="cPendingWeeks">0</div></div></div>
+            <!-- Feature 1: Progress Bar -->
+            <div class="mb-3">
+                <div class="d-flex justify-content-between" style="font-size: 12px; font-weight: bold; color: #64748b;">
+                    <span>Loan Progress (లోన్ కంప్లీట్)</span>
+                    <span id="progressText">0%</span>
+                </div>
+                <div class="progress-bar-custom"><div class="progress-fill" id="loanProgress"></div></div>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded border">
+            <!-- Feature 2: Bilingual UI -->
+            <div class="row g-2 mb-3">
+                <div class="col-4"><div class="info-box"><div style="font-size: 10px; color: #64748b;">TOTAL WEEKS<br>(మొత్తం)</div><div class="fw-bold" id="cTotalWeeks">0</div></div></div>
+                <div class="col-4"><div class="info-box"><div style="font-size: 10px; color: #10b981;">PAID WEEKS<br>(కట్టినవి)</div><div class="fw-bold text-success" id="cPaidWeeks">0</div></div></div>
+                <div class="col-4"><div class="info-box"><div style="font-size: 10px; color: #dc3545;">PENDING<br>(కట్టాల్సినవి)</div><div class="fw-bold text-danger" id="cPendingWeeks">0</div></div></div>
+            </div>
+
+            <!-- Feature 9: Loan Cleared Banner -->
+            <div id="loanClearedBanner" style="display: none; background: #d1fae5; color: #065f46; padding: 15px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 15px; border: 1px solid #34d399;">
+                🎉 Congratulations! Your loan is fully cleared. (మీ లోన్ పూర్తయింది)
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded border" id="paymentDetailsBox">
                 <div>
-                    <div style="font-size: 11px; color: #64748b; font-weight: bold;">WEEKLY EMI</div>
+                    <div style="font-size: 11px; color: #64748b; font-weight: bold;">WEEKLY EMI (కట్టాల్సిన అమౌంట్)</div>
                     <div class="fw-bold fs-4 text-primary" id="cEmi">₹0</div>
+                    <!-- Feature 7: Next Due Date -->
+                    <div style="font-size: 11px; color: #d97706; font-weight: bold; margin-top: 5px;"><i class="fas fa-calendar-alt"></i> Due: <span id="nextDueDate">Loading...</span></div>
                 </div>
                 <div class="text-end">
-                    <div style="font-size: 11px; color: #64748b; font-weight: bold;">PENALTY DUE</div>
+                    <div style="font-size: 11px; color: #64748b; font-weight: bold;">PENALTY (పెనాల్టీ)</div>
                     <div class="fw-bold fs-5 text-danger" id="cPenalty">₹0</div>
                 </div>
             </div>
 
-            <!-- Direct UPI Payment Buttons -->
+            <!-- Feature 10: Fixed Payment Logic -->
             <div id="paymentSection">
                 <div style="font-size: 12px; font-weight: bold; color: #64748b; margin-bottom: 10px; text-align: center;">PAY SECURELY VIA UPI</div>
-                
-                <button class="pay-btn phonepe-btn payment-btn" onclick="payViaUPI('phonepe')">Pay with PhonePe</button>
-                <button class="pay-btn gpay-btn payment-btn" onclick="payViaUPI('gpay')"><img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" alt="GPay" style="height: 16px;"> Pay with GPay</button>
-                <button class="pay-btn paytm-btn payment-btn" onclick="payViaUPI('paytm')">Pay with Paytm</button>
+                <button class="pay-btn phonepe-btn payment-btn" onclick="openUPIApp('phonepe')">Pay with PhonePe</button>
+                <button class="pay-btn gpay-btn payment-btn" onclick="openUPIApp('gpay')"><img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" alt="GPay" style="height: 16px;"> Pay with GPay</button>
+                <button class="pay-btn paytm-btn payment-btn" onclick="openUPIApp('paytm')">Pay with Paytm</button>
+            </div>
+
+            <div id="confirmSection" style="display: none; text-align: center; border: 1px solid #ccc; padding: 15px; border-radius: 10px; background: #fff;">
+                <p style="font-size: 13px; color: #d9534f; font-weight: bold;">పేమెంట్ పూర్తయ్యాక మాత్రమే కన్ఫర్మ్ బటన్ నొక్కండి</p>
+                <button class="btn btn-success w-100 fw-bold mb-2" onclick="sendAdminRequest()">✅ I Have Paid (నేను కట్టేశాను)</button>
+                <button class="btn btn-outline-secondary w-100" onclick="cancelPaymentProcess()">❌ Cancel (క్యాన్సిల్)</button>
             </div>
 
             <div id="pendingStatus" class="text-center fw-bold mt-3" style="display: none; font-size: 13px; color: #d97706; background: #fef3c7; padding: 10px; border-radius: 8px; border: 1px solid #fcd34d;">
-                <i class="fas fa-spinner fa-spin me-1"></i> Payment initiated! Waiting for Admin Approval...
+                <i class="fas fa-spinner fa-spin me-1"></i> Payment verifying! Waiting for Admin Approval...
             </div>
         </div>
 
         <div class="main-card mt-3">
-            <h6 class="fw-bold mb-3" style="color: #0f172a;"><i class="fas fa-history text-primary"></i> Payment History</h6>
+            <h6 class="fw-bold mb-3" style="color: #0f172a;"><i class="fas fa-history text-primary"></i> Payment History (చరిత్ర)</h6>
             <div class="table-responsive">
                 <table class="table history-table">
                     <thead><tr><th>Week</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead>
@@ -79,10 +121,17 @@
             </div>
         </div>
 
-        <div class="referral-box">
-            <div style="font-size: 12px; font-weight: bold; color: #1e3a8a; margin-bottom: 5px;">Share with friends & earn rewards!</div>
-            <div style="font-size: 16px; font-weight: 900; color: #2563eb; letter-spacing: 2px;" id="cReferral">REF-XXXXX</div>
+        <!-- Feature 8: Click to Copy Referral -->
+        <div class="referral-box" onclick="copyReferral()">
+            <div style="font-size: 12px; font-weight: bold; color: #1e3a8a; margin-bottom: 5px;">Share with friends & earn rewards! <br>(Click to Copy)</div>
+            <div style="font-size: 18px; font-weight: 900; color: #2563eb; letter-spacing: 2px;" id="cReferral">REF-XXXXX</div>
         </div>
+    </div>
+
+    <!-- Feature 3 & 4: Floating Action Buttons -->
+    <div class="fab-container">
+        <a href="tel:+917569532152" class="fab fab-call"><i class="fas fa-phone-alt"></i></a>
+        <a href="https://wa.me/917569532152?text=Hi Admin, I have a doubt regarding my loan account." target="_blank" class="fab fab-wa"><i class="fab fa-whatsapp"></i></a>
     </div>
 
     <script>
@@ -95,21 +144,18 @@
 
         async function fetchMyData() {
             try {
-                // 1. లోకల్ డేటా చెక్
                 const localDataString = localStorage.getItem('loggedInCustomer');
                 if (!localDataString) return logoutCustomer();
                 
                 const localData = JSON.parse(localDataString);
                 if (!localData.phone) return logoutCustomer();
 
-                // 2. ఫ్రెష్ డేటా కోసం సర్వర్ కి రిక్వెస్ట్
                 const response = await fetch('/api/login', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ userId: localData.phone, password: localData.password })
                 });
                 const data = await response.json();
                 
-                // 3. కస్టమర్ డేటాబేస్ లో ఉంటేనే డాష్ బోర్డ్ ఓపెన్ అవుతుంది, లేకపోతే లాగౌట్!
                 if(data.success && data.role === 'customer') {
                     currentCustomer = data.customerData;
                     localStorage.setItem('loggedInCustomer', JSON.stringify(currentCustomer)); 
@@ -119,7 +165,6 @@
                 }
             } catch (error) {
                 console.error("Error loading data:", error);
-                logoutCustomer();
             }
         }
 
@@ -134,6 +179,7 @@
             let paidWeeks = cust.paidWeeks || 0;
             let pendingWeeks = duration - paidWeeks;
 
+            // Update Text Data
             document.getElementById('cName').innerText = cust.name || 'User';
             document.getElementById('cTotalWeeks').innerText = duration;
             document.getElementById('cPaidWeeks').innerText = paidWeeks;
@@ -142,12 +188,33 @@
             document.getElementById('cPenalty').innerText = formatMoney(cust.penalty || 0);
             document.getElementById('cReferral').innerText = cust.referralCode || 'REF-XXXXX';
 
-            if(cust.pendingApproval) {
+            // Progress Bar Logic
+            let progressPercent = Math.round((paidWeeks / duration) * 100);
+            document.getElementById('loanProgress').style.width = progressPercent + '%';
+            document.getElementById('progressText').innerText = progressPercent + '%';
+
+            // Next Due Date Logic (Showing current date + 7 days for now)
+            let d = new Date(); d.setDate(d.getDate() + 7);
+            document.getElementById('nextDueDate').innerText = d.toLocaleDateString('en-GB');
+
+            // Loan Cleared Banner Logic
+            if(pendingWeeks <= 0) {
+                document.getElementById('loanClearedBanner').style.display = 'block';
                 document.getElementById('paymentSection').style.display = 'none';
-                document.getElementById('pendingStatus').style.display = 'block';
-            } else {
-                document.getElementById('paymentSection').style.display = 'block';
+                document.getElementById('confirmSection').style.display = 'none';
                 document.getElementById('pendingStatus').style.display = 'none';
+            } else {
+                document.getElementById('loanClearedBanner').style.display = 'none';
+                
+                if(cust.pendingApproval) {
+                    document.getElementById('paymentSection').style.display = 'none';
+                    document.getElementById('confirmSection').style.display = 'none';
+                    document.getElementById('pendingStatus').style.display = 'block';
+                } else {
+                    document.getElementById('paymentSection').style.display = 'block';
+                    document.getElementById('confirmSection').style.display = 'none';
+                    document.getElementById('pendingStatus').style.display = 'none';
+                }
             }
 
             const tbody = document.getElementById('historyBody');
@@ -168,30 +235,50 @@
             }
         }
 
-        async function payViaUPI(appType) {
-            const buttons = document.querySelectorAll('.payment-btn');
-            buttons.forEach(btn => btn.disabled = true);
+        // --- NEW PAYMENT LOGIC ---
+
+        function openUPIApp(appType) {
+            let upiId = adminUPI_Number + "@ybl"; 
+            
+            if (appType === 'phonepe') {
+                window.location.href = `intent://pay?pa=${upiId}&pn=${encodeURIComponent(businessName)}&am=${emiAmount}&cu=INR&tn=EMI_Payment#Intent;package=com.phonepe.app;scheme=upi;end`;
+            } else if (appType === 'gpay') {
+                window.location.href = `intent://pay?pa=${upiId}&pn=${encodeURIComponent(businessName)}&am=${emiAmount}&cu=INR&tn=EMI_Payment#Intent;package=com.google.android.apps.nbu.paisa.user;scheme=upi;end`;
+            } else {
+                window.location.href = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(businessName)}&am=${emiAmount}&cu=INR&tn=EMI_Payment`;
+            }
+
+            // Hide buttons & Show Confirm Section after 1.5 seconds
+            setTimeout(() => {
+                document.getElementById('paymentSection').style.display = 'none';
+                document.getElementById('confirmSection').style.display = 'block';
+            }, 1500);
+        }
+
+        async function sendAdminRequest() {
+            document.getElementById('confirmSection').innerHTML = `<i class="fas fa-spinner fa-spin text-primary"></i> Sending...`;
             
             await fetch('/api/action', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ phone: currentCustomer.phone, action: 'request_payment', amount: emiAmount })
             });
+            fetchMyData(); 
+        }
 
-            let upiId = "";
-            if (appType === 'phonepe') upiId = adminUPI_Number + "@ybl";
-            else if (appType === 'gpay') upiId = adminUPI_Number + "@okicici"; 
-            else if (appType === 'paytm') upiId = adminUPI_Number + "@paytm";
-            else upiId = adminUPI_Number + "@ybl";
+        function cancelPaymentProcess() {
+            document.getElementById('paymentSection').style.display = 'block';
+            document.getElementById('confirmSection').style.display = 'none';
+        }
 
-            let upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(businessName)}&am=${emiAmount}&cu=INR&tn=EMI Payment`;
-            window.location.href = upiLink;
-
-            setTimeout(() => { fetchMyData(); }, 1000);
+        function copyReferral() {
+            const refCode = document.getElementById('cReferral').innerText;
+            navigator.clipboard.writeText(refCode);
+            alert("Referral Code Copied: " + refCode);
         }
 
         function logoutCustomer() {
             localStorage.removeItem('loggedInCustomer');
-            window.location.href = 'index.html'; // పాత డేటా ఉంటే నేరుగా లాగిన్ పేజీకి పంపేస్తుంది
+            window.location.href = 'index.html'; 
         }
 
         fetchMyData();
