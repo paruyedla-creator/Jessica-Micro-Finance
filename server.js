@@ -75,6 +75,12 @@ app.post('/api/customers', async (req, res) => {
         return res.json({ success: false, message: "Phone number already exists!" });
     }
     
+    // NEW FEATURES ADDED: పాతవి పోకుండా కొత్తవి సేవ్ చేస్తున్నాం
+    newCustomer.customerId = 'JF-' + Math.floor(1000 + Math.random() * 9000); // Unique ID Generate
+    newCustomer.village = newCustomer.village || '';
+    newCustomer.address = newCustomer.address || '';
+    newCustomer.aadhaar = newCustomer.aadhaar || '';
+    
     newCustomer.paidWeeks = 0;
     newCustomer.penalty = 0;
     newCustomer.history = [];
@@ -87,9 +93,10 @@ app.post('/api/customers', async (req, res) => {
     res.json({ success: true, message: "Account Created!" });
 });
 
-// 4. యాక్షన్స్ (Approve, Reject, Delete, Edit)
+// 4. యాక్షన్స్ (Approve, Reject, Delete, Edit, Penalty)
 app.post('/api/action', async (req, res) => {
-    const { phone, action, amount } = req.body;
+    // NEW: "mode" ని కూడా తీసుకుంటున్నాం
+    const { phone, action, amount, mode } = req.body; 
     let db = await getDB();
     
     // కస్టమర్ డిలీట్
@@ -109,24 +116,39 @@ app.post('/api/action', async (req, res) => {
     if (action === 'request_payment') {
         customer.pendingApproval = true;
         customer.requestAmount = amount;
+        
     } else if (action === 'approve_payment') {
         customer.pendingApproval = false;
         customer.paidWeeks += 1;
         customer.lastPaidDate = new Date().toLocaleDateString('en-GB'); 
+        
+        // NEW FEATURE: పేమెంట్ మోడ్ ని హిస్టరీలో సేవ్ చేయడం
         customer.history.push({
-            week: customer.paidWeeks, amount: customer.requestAmount || amount, date: customer.lastPaidDate
+            week: customer.paidWeeks, 
+            amount: customer.requestAmount || amount, 
+            date: customer.lastPaidDate,
+            mode: mode || 'online' // (e.g., Cash, GPay)
         });
+
+        // SMART BUSINESS LOGIC: డబ్బులు కట్టేశాడు కాబట్టి పెనాల్టీ జీరో చేయాలి
+        customer.penalty = 0; 
+        
     } else if (action === 'reject_payment') {
         customer.pendingApproval = false;
         customer.requestAmount = 0;
+        
     } else if (action === 'add_penalty') {
-        customer.penalty += Number(amount);
+        customer.penalty += Number(amount); // పెనాల్టీ ప్లస్ అవుతుంది
+        
     } else if (action === 'waive_penalty') {
         customer.penalty = 0;
+        
     } else if (action === 'settle_loan') {
         customer.pendingApproval = false;
         customer.paidWeeks = Number(customer.duration); 
-        customer.history.push({ week: 'SETTLED', amount: amount, date: new Date().toLocaleDateString('en-GB') });
+        customer.history.push({ week: 'SETTLED', amount: amount, date: new Date().toLocaleDateString('en-GB'), mode: mode || 'settlement' });
+        customer.penalty = 0;
+        
     } else if (action === 'edit_customer') {
         customer.name = req.body.editName || customer.name;
         customer.amount = req.body.editAmount || customer.amount;
@@ -134,6 +156,11 @@ app.post('/api/action', async (req, res) => {
         customer.lastPaidDate = req.body.editLastPaid || customer.lastPaidDate || '';
         customer.nextDueDate = req.body.editNextDue || customer.nextDueDate || '';
         customer.notes = req.body.editNotes || customer.notes || '';
+        
+        // NEW FIELDS IN EDIT: ఎడిట్ లో కూడా ఈ డీటెయిల్స్ సేవ్ అవుతాయి
+        customer.village = req.body.editVillage || customer.village || '';
+        customer.address = req.body.editAddress || customer.address || '';
+        customer.aadhaar = req.body.editAadhaar || customer.aadhaar || '';
     }
 
     await saveDB(db);
