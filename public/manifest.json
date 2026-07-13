@@ -3,13 +3,13 @@
   "short_name": "JF App",
   "start_url": "/index.html",
   "display": "standalone",
-  "background_color": "#f4f6f9",
+  "background_color": "#000000",
   "theme_color": "#003366",
   "icons": [
     {
-      "src": "icon.svg",
+      "src": "logo.jpg",
       "sizes": "192x192 512x512",
-      "type": "image/svg+xml",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     }
   ]
