@@ -7,7 +7,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="manifest" href="/manifest.json">
-    <!-- Confetti Animation Library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         body { background-color: #f4f7f9; font-family: 'Segoe UI', sans-serif; padding-bottom: 70px; }
@@ -29,13 +28,11 @@
         .history-table td { font-size: 13px; font-weight: 500; vertical-align: middle; }
         .referral-box { border: 2px dashed #3b82f6; background: #eff6ff; padding: 15px; border-radius: 10px; text-align: center; margin-top: 20px; cursor: pointer;}
         
-        /* Floating Buttons for WhatsApp & Call */
         .fab-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 100; }
         .fab { width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 24px; text-decoration: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .fab-wa { background: #25D366; }
         .fab-call { background: #007bff; }
 
-        /* NEW FEATURES CSS */
         .kyc-badge { background: #d1fae5; color: #065f46; font-size: 10px; font-weight: bold; padding: 2px 8px; border-radius: 12px; display: inline-block; margin-top: 3px; border: 1px solid #34d399; }
         .trust-meter { height: 5px; background: #e2e8f0; border-radius: 5px; width: 100px; margin-top: 5px; overflow: hidden; }
         .trust-fill { height: 100%; width: 100%; background: #10b981; }
@@ -46,7 +43,6 @@
         .notification-bell { position: relative; font-size: 20px; color: #fff; cursor: pointer; }
         .bell-dot { position: absolute; top: 0; right: -2px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; }
 
-        /* Print Mode for Passbook */
         @media print {
             body * { visibility: hidden; }
             .print-area, .print-area * { visibility: visible; }
@@ -57,14 +53,12 @@
 </head>
 <body>
 
-    <!-- Feature 6: Marquee Notice -->
     <div class="marquee-container">
-        <marquee behavior="scroll" direction="left">గమనిక: దయచేసి ప్రతి వారం మీ EMI ని సమయానికి చెల్లించండి. కంటిన్యూగా కడితే టాప్-అప్ లోన్ (Top-up Loan) ఇవ్వబడుతుంది!</marquee>
+        <marquee behavior="scroll" direction="left">Note: Please pay your weekly EMI on time. Consistent payments will make you eligible for a Top-up Loan!</marquee>
     </div>
 
     <div class="header-bg d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center gap-3">
-            <!-- Feature 5: Avatar with Gold Star Logic -->
             <div style="position: relative;">
                 <div style="width: 48px; height: 48px; background: white; color: #0f172a; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 22px; font-weight: bold; border: 2px solid #3b82f6;">
                     <i class="fas fa-user-tie"></i>
@@ -74,12 +68,10 @@
             <div>
                 <div style="font-size: 11px; color: #94a3b8; font-weight: bold;">ID: <span id="cId">JF-XXXX</span></div>
                 <h5 class="fw-bold mb-0 text-white" id="cName" style="letter-spacing: 0.5px;">Loading...</h5>
-                <!-- KYC Badge -->
                 <div class="kyc-badge"><i class="fas fa-check-circle"></i> KYC Verified</div>
             </div>
         </div>
         <div class="d-flex gap-3 align-items-center">
-            <!-- Notification Bell -->
             <div class="notification-bell" onclick="alert('Stay on time to avoid penalties!')">
                 <i class="fas fa-bell"></i>
                 <div class="bell-dot" id="alertDot" style="display: none;"></div>
@@ -91,7 +83,6 @@
     <div class="container max-w-100 print-area">
         <div class="main-card">
             
-            <!-- NEW FEATURE: Customer Full Profile (Address & Trust Score) -->
             <div class="profile-card d-flex justify-content-between align-items-center">
                 <div>
                     <div style="font-size: 12px; font-weight: bold; color: #475569;"><i class="fas fa-map-marker-alt text-danger"></i> <span id="cVillage">Update Pending</span></div>
@@ -104,49 +95,43 @@
                 </div>
             </div>
 
-            <!-- NEW FEATURE: Top-Up Loan Banner -->
             <div class="topup-banner" id="topUpBanner" style="display: none;">
                 <div><i class="fas fa-gift fs-5"></i> <b>Congratulations!</b><br><span style="font-size: 11px;">You are eligible for a Top-Up Loan.</span></div>
                 <button class="btn btn-sm btn-light fw-bold text-warning" onclick="window.location.href='https://wa.me/917569532152?text=Hi Admin, I saw I am eligible for a Top-up loan. Please provide details.'">Apply Now</button>
             </div>
 
-            <!-- Feature 1: Progress Bar -->
             <div class="mb-3">
                 <div class="d-flex justify-content-between" style="font-size: 12px; font-weight: bold; color: #64748b;">
-                    <span>Loan Progress (లోన్ కంప్లీట్)</span>
+                    <span>Loan Progress</span>
                     <span id="progressText" class="text-primary">0%</span>
                 </div>
                 <div class="progress-bar-custom"><div class="progress-fill" id="loanProgress"></div></div>
             </div>
 
-            <!-- Feature 2: Bilingual UI -->
             <div class="row g-2 mb-3">
-                <div class="col-4"><div class="info-box"><div style="font-size: 10px; color: #64748b;">TOTAL WEEKS<br>(మొత్తం)</div><div class="fw-bold fs-5" id="cTotalWeeks">0</div></div></div>
-                <div class="col-4"><div class="info-box"><div style="font-size: 10px; color: #10b981;">PAID WEEKS<br>(కట్టినవి)</div><div class="fw-bold fs-5 text-success" id="cPaidWeeks">0</div></div></div>
-                <div class="col-4"><div class="info-box"><div style="font-size: 10px; color: #dc3545;">PENDING<br>(కట్టాల్సినవి)</div><div class="fw-bold fs-5 text-danger" id="cPendingWeeks">0</div></div></div>
+                <div class="col-4"><div class="info-box"><div style="font-size: 10px; color: #64748b;">TOTAL WEEKS</div><div class="fw-bold fs-5" id="cTotalWeeks">0</div></div></div>
+                <div class="col-4"><div class="info-box"><div style="font-size: 10px; color: #10b981;">PAID WEEKS</div><div class="fw-bold fs-5 text-success" id="cPaidWeeks">0</div></div></div>
+                <div class="col-4"><div class="info-box"><div style="font-size: 10px; color: #dc3545;">PENDING WEEKS</div><div class="fw-bold fs-5 text-danger" id="cPendingWeeks">0</div></div></div>
             </div>
 
-            <!-- Feature 9: Loan Cleared Banner -->
             <div id="loanClearedBanner" style="display: none; background: #d1fae5; color: #065f46; padding: 15px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 15px; border: 1px solid #34d399;">
-                🎉 Congratulations! Your loan is fully cleared. (మీ లోన్ పూర్తయింది)
+                🎉 Congratulations! Your loan is fully cleared.
             </div>
 
             <div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded border" id="paymentDetailsBox">
                 <div>
-                    <div style="font-size: 11px; color: #64748b; font-weight: bold;">WEEKLY EMI (కట్టాల్సిన అమౌంట్)</div>
+                    <div style="font-size: 11px; color: #64748b; font-weight: bold;">WEEKLY EMI</div>
                     <div class="fw-bold fs-4 text-primary" id="cEmi">₹0</div>
-                    <!-- NEW FEATURE: Live Countdown for Next Due -->
                     <div style="font-size: 11px; color: #d97706; font-weight: bold; margin-top: 5px; background: #fef3c7; padding: 2px 6px; border-radius: 4px; display: inline-block;">
                         <i class="fas fa-clock"></i> Due: <span id="nextDueDate">Loading...</span> <span id="countdownText" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="text-end">
-                    <div style="font-size: 11px; color: #64748b; font-weight: bold;">PENALTY (పెనాల్టీ)</div>
+                    <div style="font-size: 11px; color: #64748b; font-weight: bold;">PENALTY</div>
                     <div class="fw-bold fs-5 text-danger" id="cPenalty">₹0</div>
                 </div>
             </div>
 
-            <!-- Feature 10: Fixed Payment Logic -->
             <div id="paymentSection">
                 <div style="font-size: 12px; font-weight: bold; color: #64748b; margin-bottom: 10px; text-align: center;">PAY SECURELY VIA UPI</div>
                 <button class="pay-btn phonepe-btn payment-btn shadow-sm" onclick="openUPIApp('phonepe')">Pay with PhonePe</button>
@@ -155,9 +140,9 @@
             </div>
 
             <div id="confirmSection" style="display: none; text-align: center; border: 1px dashed #10b981; padding: 15px; border-radius: 10px; background: #f0fdf4;">
-                <p style="font-size: 13px; color: #065f46; font-weight: bold;">పేమెంట్ పూర్తయ్యాక మాత్రమే కన్ఫర్మ్ బటన్ నొక్కండి</p>
-                <button class="btn btn-success w-100 fw-bold mb-2 shadow" onclick="sendAdminRequest()">✅ I Have Paid (నేను కట్టేశాను)</button>
-                <button class="btn btn-outline-secondary w-100 fw-bold" onclick="cancelPaymentProcess()">❌ Cancel (క్యాన్సిల్)</button>
+                <p style="font-size: 13px; color: #065f46; font-weight: bold;">Please click confirm only after the payment is successful</p>
+                <button class="btn btn-success w-100 fw-bold mb-2 shadow" onclick="sendAdminRequest()">✅ I Have Paid</button>
+                <button class="btn btn-outline-secondary w-100 fw-bold" onclick="cancelPaymentProcess()">❌ Cancel</button>
             </div>
 
             <div id="pendingStatus" class="text-center fw-bold mt-3 shadow-sm" style="display: none; font-size: 13px; color: #d97706; background: #fef3c7; padding: 12px; border-radius: 8px; border: 1px solid #fcd34d;">
@@ -168,7 +153,6 @@
         <div class="main-card mt-3">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h6 class="fw-bold mb-0" style="color: #0f172a;"><i class="fas fa-history text-primary"></i> Payment History</h6>
-                <!-- NEW FEATURE: Digital Passbook Download -->
                 <button class="passbook-btn" onclick="window.print()"><i class="fas fa-download"></i> Passbook</button>
             </div>
             
@@ -180,14 +164,12 @@
             </div>
         </div>
 
-        <!-- Feature 8: Click to Copy Referral -->
         <div class="referral-box shadow-sm" onclick="copyReferral()">
             <div style="font-size: 12px; font-weight: bold; color: #1e3a8a; margin-bottom: 5px;"><i class="fas fa-share-alt"></i> Share with friends & earn rewards!</div>
             <div style="font-size: 18px; font-weight: 900; color: #2563eb; letter-spacing: 2px;" id="cReferral">REF-XXXXX</div>
         </div>
     </div>
 
-    <!-- Feature 3 & 4: Floating Action Buttons -->
     <div class="fab-container">
         <a href="tel:+917569532152" class="fab fab-call" title="Call Admin"><i class="fas fa-headset"></i></a>
         <a href="https://wa.me/917569532152?text=Hi Admin, I need some help regarding my loan account." target="_blank" class="fab fab-wa" title="WhatsApp Admin"><i class="fab fa-whatsapp"></i></a>
@@ -199,7 +181,7 @@
         let emiAmount = 0;
         
         const adminUPI_Number = "7569532152";
-        const businessName = "Jessica Finance"; 
+        const businessName = "Jessica Finance Management"; 
 
         async function fetchMyData() {
             try {
@@ -232,16 +214,14 @@
             
             let principal = Number(cust.amount) || 0;
             let duration = Number(cust.duration) || 1;
-            let totalToPay = principal + (principal * 0.20) + Number(cust.penalty || 0); 
             let baseEmi = Math.round((principal + (principal * 0.20)) / duration);
             emiAmount = baseEmi + Number(cust.penalty || 0);
             
             let paidWeeks = cust.paidWeeks || 0;
             let pendingWeeks = duration - paidWeeks;
 
-            // Advanced Text Data Mappings (Mocks until backend is updated)
             document.getElementById('cName').innerText = cust.name || 'User';
-            document.getElementById('cId').innerText = cust.customerId || ('JF-' + cust.phone.slice(-4)); // Auto Generate ID
+            document.getElementById('cId').innerText = cust.customerId || ('JF-' + cust.phone.slice(-4)); 
             document.getElementById('cVillage').innerText = cust.village || 'Location Unknown';
             document.getElementById('cAddress').innerText = cust.address || 'Address pending in records.';
             
@@ -252,20 +232,17 @@
             document.getElementById('cPenalty').innerText = formatMoney(cust.penalty || 0);
             document.getElementById('cReferral').innerText = cust.referralCode || ('REF-' + cust.phone.slice(-5));
 
-            // Logic: Notification Bell Alert
             if (Number(cust.penalty || 0) > 0) document.getElementById('alertDot').style.display = 'block';
 
-            // Logic: Trust Score & Gold Star
             let trustScoreBar = document.getElementById('trustScoreBar');
             let trustScoreText = document.getElementById('trustScoreText');
             if (Number(cust.penalty || 0) > 0) {
                 trustScoreBar.style.width = '30%'; trustScoreBar.style.background = '#ef4444'; trustScoreText.innerText = 'Poor'; trustScoreText.style.color = '#ef4444';
             } else if (paidWeeks > 0) {
                 trustScoreBar.style.width = '100%'; trustScoreBar.style.background = '#10b981'; trustScoreText.innerText = 'Excellent'; trustScoreText.style.color = '#10b981';
-                if(paidWeeks >= 3) document.getElementById('goldStar').style.display = 'block'; // Reward ⭐
+                if(paidWeeks >= 3) document.getElementById('goldStar').style.display = 'block';
             }
 
-            // Logic: Top-Up Eligibility (if 70% paid)
             let progressPercent = Math.round((paidWeeks / duration) * 100);
             document.getElementById('loanProgress').style.width = progressPercent + '%';
             document.getElementById('progressText').innerText = progressPercent + '%';
@@ -273,13 +250,32 @@
                 document.getElementById('topUpBanner').style.display = 'flex';
             }
 
-            // Logic: Live Countdown for Next Due
-            let dueDate = cust.nextDueDate ? new Date(cust.nextDueDate) : null;
-            if (dueDate) {
+            let dueDate = null;
+            if (cust.nextDueDate) {
+                dueDate = new Date(cust.nextDueDate);
+            } else if (cust.lastPaidDate) {
+                let parts = cust.lastPaidDate.split('/');
+                if(parts.length === 3) {
+                    dueDate = new Date(parts[2], parts[1] - 1, parts[0]);
+                    dueDate.setDate(dueDate.getDate() + 7);
+                }
+            } else if (cust.startDate) {
+                let parts = cust.startDate.split('/');
+                if(parts.length === 3) {
+                    dueDate = new Date(parts[2], parts[1] - 1, parts[0]);
+                    dueDate.setDate(dueDate.getDate() + 7);
+                }
+            } else {
+                dueDate = new Date();
+                dueDate.setDate(dueDate.getDate() + 7);
+            }
+
+            if (dueDate && !isNaN(dueDate)) {
                 document.getElementById('nextDueDate').innerText = dueDate.toLocaleDateString('en-GB');
                 let today = new Date(); today.setHours(0,0,0,0);
-                let diffTime = dueDate - today;
+                let diffTime = dueDate.getTime() - today.getTime();
                 let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
                 if (diffDays < 0) document.getElementById('countdownText').innerText = `(Overdue!)`;
                 else if (diffDays === 0) document.getElementById('countdownText').innerText = `(Due Today!)`;
                 else document.getElementById('countdownText').innerText = `(${diffDays} days left)`;
@@ -287,14 +283,13 @@
                 document.getElementById('nextDueDate').innerText = 'Not Set';
             }
 
-            // Banner visibility logic
             if(pendingWeeks <= 0) {
                 document.getElementById('loanClearedBanner').style.display = 'block';
                 document.getElementById('paymentSection').style.display = 'none';
                 document.getElementById('confirmSection').style.display = 'none';
                 document.getElementById('pendingStatus').style.display = 'none';
                 if(!localStorage.getItem('confettiFired')) {
-                    fireSuccessConfetti(); localStorage.setItem('confettiFired', 'true'); // Celebration!
+                    fireSuccessConfetti(); localStorage.setItem('confettiFired', 'true'); 
                 }
             } else {
                 document.getElementById('loanClearedBanner').style.display = 'none';
@@ -311,16 +306,14 @@
                 }
             }
 
-            // History with Icons (Cash/GPay/PhonePe logic)
             const tbody = document.getElementById('historyBody');
             tbody.innerHTML = '';
             if(cust.history && cust.history.length > 0) {
-                [...cust.history].reverse().forEach((record, index) => {
-                    // Logic to show generic icons based on amount/history (Mocking Mode until Admin backend sends it)
+                [...cust.history].reverse().forEach((record) => {
                     let iconHtml = `<i class="fas fa-check-circle text-success" title="Paid"></i>`;
-                    if(record.mode === 'cash' || index % 3 === 0) iconHtml = `<i class="fas fa-money-bill-wave text-success" title="Cash"></i>`; // Just to show variety
-                    else if (index % 2 === 0) iconHtml = `<img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" style="height:12px;" title="GPay">`;
-                    
+                    if(record.mode === 'cash') iconHtml = `<i class="fas fa-money-bill-wave text-success" title="Cash"></i>`; 
+                    else if(record.mode === 'gpay' || record.mode === 'phonepe') iconHtml = `<i class="fas fa-mobile-alt text-primary" title="${record.mode}"></i>`;
+
                     tbody.innerHTML += `
                         <tr>
                             <td>Wk-${record.week}</td>
@@ -334,8 +327,6 @@
                 tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4"><i class="fas fa-folder-open fs-3 mb-2 text-light"></i><br>No payments made yet.</td></tr>';
             }
         }
-
-        // --- PAYMENT LOGIC WITH ANIMATION ---
 
         function openUPIApp(appType) {
             let upiId = adminUPI_Number + "@ybl"; 
@@ -355,7 +346,6 @@
         }
 
         async function sendAdminRequest() {
-            // NEW FEATURE: Instant Gratification Confetti before waiting!
             fireSuccessConfetti();
             document.getElementById('confirmSection').innerHTML = `<i class="fas fa-spinner fa-spin text-primary fs-5"></i> <span class="fw-bold mt-2 d-block">Sending Request...</span>`;
             
@@ -382,7 +372,6 @@
             window.location.href = 'index.html'; 
         }
 
-        // Confetti Animation Function
         function fireSuccessConfetti() {
             var duration = 2000; var end = Date.now() + duration;
             (function frame() {

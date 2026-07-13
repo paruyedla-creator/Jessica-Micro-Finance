@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jessica Finance - CEO Dashboard</title>
+    <title>Jessica Finance - Admin Pro Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -26,9 +26,11 @@
         
         .content-card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 20px;}
         .table-container { max-height: 650px; overflow-y: auto; }
-        .table th { background: #f1f5f9; font-size: 11px; text-transform: uppercase; color: #475569; position: sticky; top: 0; z-index: 10; }
-        .table td { vertical-align: middle; font-size: 13px; font-weight: 500; transition: all 0.2s; }
-        .table tbody tr:hover { background-color: #f8fafc; transform: scale(1.002); }
+        .table th { background: #f1f5f9; font-size: 11px; text-transform: uppercase; color: #475569; position: sticky; top: 0; z-index: 10; cursor: pointer; transition: 0.2s; }
+        .table th:hover { background: #e2e8f0; }
+        .table td { vertical-align: middle; font-size: 13px; font-weight: 500; transition: all 0.2s; border-bottom: 1px solid #f1f5f9; }
+        .table tbody tr:hover { background-color: #f8fafc; transform: scale(1.001); box-shadow: 0 2px 10px rgba(0,0,0,0.02); z-index: 2; position: relative;}
+        .row-overdue { background-color: #fef2f2 !important; } /* Highlighting overdue rows */
         
         .action-btn { width: 32px; height: 32px; border-radius: 8px; display: inline-flex; justify-content: center; align-items: center; border: none; font-size: 14px; transition: 0.2s; margin: 2px;}
         .action-btn:hover { filter: brightness(0.9); transform: translateY(-2px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
@@ -38,14 +40,17 @@
         .btn-penalty { background: #f59e0b; color: #fff; }
         .btn-agreement { background: #334155; color: white; }
         .btn-statement { background: #8b5cf6; color: white; }
+        .btn-pin { background: #cbd5e1; color: #0f172a; } /* New PIN button */
         
-        .search-bar { border-radius: 20px; padding: 10px 20px; border: 1px solid #e2e8f0; width: 280px; outline: none; }
+        .search-bar { border-radius: 20px; padding: 10px 20px; border: 1px solid #e2e8f0; width: 280px; outline: none; transition: 0.3s;}
+        .search-bar:focus { width: 320px; border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
         .date-badge { background: #e0f2fe; color: #0284c7; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; display: inline-block; margin-top: 4px; border: 1px solid #bae6fd;}
         .notes-box { background: #fef3c7; border-left: 3px solid #f59e0b; padding: 5px; font-size: 11px; margin-top: 5px; color: #92400e; border-radius: 0 4px 4px 0;}
         
-        /* 20 NEW FEATURES CSS */
         .fa-spin-fast { animation: fa-spin 0.5s infinite linear; }
-        .avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 15px; background: linear-gradient(135deg, #3b82f6, #0ea5e9); color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 15px; background: linear-gradient(135deg, #3b82f6, #0ea5e9); color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: relative;}
+        .vip-star { position: absolute; bottom: -5px; right: -5px; color: #fbbf24; font-size: 12px; filter: drop-shadow(0 0 2px #000); } /* VIP Badge */
+        
         .blur-mode .sensitive { filter: blur(5px); user-select: none; transition: 0.3s; }
         .blur-mode .sensitive:hover { filter: blur(0px); }
         .filter-chip { border-radius: 20px; padding: 6px 15px; cursor: pointer; border: 1px solid #cbd5e1; background: #fff; font-size: 12px; font-weight: bold; transition: 0.3s; color: #475569;}
@@ -55,14 +60,14 @@
         .progress-fill { height: 100%; background: linear-gradient(90deg, #10b981, #34d399); transition: width 0.5s ease; }
         .pulse-dot { width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%; display: inline-block; animation: pulse 1s infinite; margin-right: 5px; }
         
-        /* Floating Scroll to Top */
         #scrollTopBtn { display: none; position: fixed; bottom: 20px; right: 20px; z-index: 99; border: none; outline: none; background-color: var(--primary); color: white; cursor: pointer; padding: 12px 15px; border-radius: 50%; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         #scrollTopBtn:hover { background-color: #000; }
+        
+        .shortcuts-guide { position: fixed; bottom: 20px; left: 20px; background: rgba(0,0,0,0.8); color: white; padding: 10px; border-radius: 8px; font-size: 11px; z-index: 100; display: none; }
     </style>
 </head>
 <body>
 
-    <!-- 1. CEO Branding Navbar with Live Clock & Privacy Mode -->
     <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
@@ -70,11 +75,12 @@
                     <i class="fas fa-crown text-warning fs-3"></i> 
                     <div>
                         JESSICA FINANCE MGT.<br>
-                        <span style="font-size: 11px; color: #cbd5e1; letter-spacing: 2px;" id="greetingText">WELCOME, CEO RAM</span>
+                        <span style="font-size: 11px; color: #cbd5e1; letter-spacing: 2px;" id="greetingText">WELCOME, ADMIN</span>
                     </div>
                 </div>
             </a>
             <div class="d-flex gap-3 align-items-center">
+                <button class="btn btn-outline-info btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#calculatorModal" title="EMI Calculator"><i class="fas fa-calculator"></i></button>
                 <div class="text-white fw-bold d-none d-md-block" style="font-size: 12px; background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 5px;" id="liveClock">00:00:00</div>
                 <button class="btn btn-outline-warning btn-sm" onclick="togglePrivacyMode()" title="Privacy Blur Mode"><i class="fas fa-eye-slash" id="privacyIcon"></i></button>
                 <button class="btn btn-outline-light btn-sm" onclick="toggleDarkMode()" title="Dark Mode"><i class="fas fa-moon"></i></button>
@@ -84,7 +90,6 @@
     </nav>
 
     <div class="container-fluid p-4">
-        <!-- Analytics Cards -->
         <div class="row mb-3">
             <div class="col-md-3"><div class="stat-card stat-primary"><div style="font-size: 12px; color: #64748b; font-weight: bold;">TOTAL MARKET LOANS</div><div class="fs-3 fw-bold mt-1 sensitive" id="statTotalGiven">₹0</div></div></div>
             <div class="col-md-3"><div class="stat-card stat-success"><div style="font-size: 12px; color: #64748b; font-weight: bold;">TOTAL COLLECTED</div><div class="fs-3 fw-bold mt-1 text-success sensitive" id="statCollected">₹0</div></div></div>
@@ -93,15 +98,14 @@
         </div>
 
         <div class="content-card">
-            <!-- Advanced Action & Filter Bar -->
             <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
                 <div class="d-flex gap-2">
-                    <button class="btn btn-primary fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#addCustomerModal"><i class="fas fa-user-plus"></i> Sanction Loan</button>
+                    <button class="btn btn-primary fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#addCustomerModal" id="addBtn"><i class="fas fa-user-plus"></i> Sanction Loan</button>
                     <button class="btn btn-success fw-bold shadow-sm" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Export CSV</button>
                     <button class="btn btn-secondary fw-bold shadow-sm" onclick="window.print()"><i class="fas fa-print"></i> Print Ledger</button>
+                    <button class="btn btn-dark fw-bold shadow-sm" onclick="backupDatabase()" title="Download Full Database Backup"><i class="fas fa-database"></i> Backup DB</button>
                 </div>
                 
-                <!-- Smart Filters -->
                 <div class="d-flex gap-2 d-none d-md-flex">
                     <div class="filter-chip active" onclick="applySmartFilter('all', this)">All Accounts</div>
                     <div class="filter-chip text-primary" onclick="applySmartFilter('active', this)">Active</div>
@@ -111,7 +115,7 @@
 
                 <div class="d-flex gap-2 align-items-center position-relative">
                     <button class="btn btn-outline-secondary" id="refreshBtn" onclick="liveRefresh()" title="Sync Data"><i class="fas fa-sync-alt" id="refreshIcon"></i></button>
-                    <input type="text" class="search-bar shadow-sm" id="searchInput" placeholder="Search Name, Phone, Village..." onkeyup="filterTable()">
+                    <input type="text" class="search-bar shadow-sm" id="searchInput" placeholder="Search (Press Ctrl+F)..." onkeyup="filterTable()">
                     <i class="fas fa-times text-muted position-absolute" style="right: 15px; cursor: pointer; display: none;" id="clearSearchBtn" onclick="clearSearch()"></i>
                 </div>
             </div>
@@ -120,22 +124,32 @@
                 <table class="table" id="dataTable">
                     <thead>
                         <tr>
-                            <th>Profile & Status</th>
-                            <th>Financials (Loan / Next EMI)</th>
-                            <th>Progress & Dates</th>
+                            <th onclick="sortTable(0)">Profile & Status <i class="fas fa-sort text-muted ms-1"></i></th>
+                            <th onclick="sortTable(1)">Financials (Loan/EMI) <i class="fas fa-sort text-muted ms-1"></i></th>
+                            <th onclick="sortTable(2)">Progress & Dates <i class="fas fa-sort text-muted ms-1"></i></th>
                             <th>Approvals</th>
-                            <th style="min-width: 270px; text-align: center;">Master Controls</th>
+                            <th style="min-width: 320px; text-align: center;">Master Controls</th>
                         </tr>
                     </thead>
                     <tbody id="customersTableBody"></tbody>
                 </table>
+                <div id="emptyState" style="display:none; text-align:center; padding: 40px; color: #64748b;">
+                    <i class="fas fa-search fs-1 mb-3 text-light"></i><br><h4>No Customers Found</h4><p>Try searching for a different name, village, or ID.</p>
+                </div>
             </div>
         </div>
     </div>
 
     <button onclick="scrollToTop()" id="scrollTopBtn" title="Go to top"><i class="fas fa-arrow-up"></i></button>
+    
+    <div class="shortcuts-guide" id="shortcutsGuide">
+        <b>Keyboard Shortcuts:</b><br>
+        <code>Ctrl + F</code> : Search<br>
+        <code>Ctrl + B</code> : Sanction Loan<br>
+        <code>Esc</code> : Close Modals/Search
+    </div>
+    <button class="btn btn-sm btn-outline-secondary" style="position:fixed; bottom:20px; left:20px; z-index:98;" onmouseover="document.getElementById('shortcutsGuide').style.display='block'" onmouseout="document.getElementById('shortcutsGuide').style.display='none'"><i class="fas fa-keyboard"></i></button>
 
-    <!-- Modal: Add New Customer (UPDATED WITH VILLAGE, AADHAAR, ADDRESS) -->
     <div class="modal fade" id="addCustomerModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-0 shadow-lg">
@@ -146,9 +160,9 @@
                 <div class="modal-body p-4">
                     <form id="addCustomerForm">
                         <div class="row g-3">
-                            <div class="col-md-4"><label style="font-size:11px; font-weight:bold;">Full Name</label><input type="text" id="custName" class="form-control" placeholder="Name" required></div>
+                            <div class="col-md-4"><label style="font-size:11px; font-weight:bold;">Full Name</label><input type="text" id="custName" class="form-control" placeholder="Name" style="text-transform: capitalize;" required></div>
                             <div class="col-md-4"><label style="font-size:11px; font-weight:bold;">Phone Number</label><input type="tel" id="custPhone" class="form-control" placeholder="Phone" required></div>
-                            <div class="col-md-4"><label style="font-size:11px; font-weight:bold;">Village / Town</label><input type="text" id="custVillage" class="form-control" placeholder="Village Name"></div>
+                            <div class="col-md-4"><label style="font-size:11px; font-weight:bold;">Village / Town</label><input type="text" id="custVillage" class="form-control" placeholder="Village Name" style="text-transform: capitalize;"></div>
                             
                             <div class="col-md-4"><label style="font-size:11px; font-weight:bold;">Aadhaar (KYC)</label><input type="text" id="custAadhaar" class="form-control" placeholder="12 Digit Aadhaar"></div>
                             <div class="col-md-4"><label style="font-size:11px; font-weight:bold;">Login PIN</label><input type="text" id="custPass" class="form-control" placeholder="Create PIN" required></div>
@@ -166,7 +180,6 @@
         </div>
     </div>
 
-    <!-- Modal: Edit Customer & Set Dates (UPDATED WITH NEW FIELDS) -->
     <div class="modal fade" id="editCustomerModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-0 shadow-lg">
@@ -178,8 +191,8 @@
                     <form id="editCustomerForm">
                         <input type="hidden" id="editPhone">
                         <div class="row g-3">
-                            <div class="col-md-4"><label class="form-label fw-bold" style="font-size:11px;">Full Name</label><input type="text" id="editName" class="form-control" required></div>
-                            <div class="col-md-4"><label class="form-label fw-bold" style="font-size:11px;">Village</label><input type="text" id="editVillage" class="form-control"></div>
+                            <div class="col-md-4"><label class="form-label fw-bold" style="font-size:11px;">Full Name</label><input type="text" id="editName" class="form-control" style="text-transform: capitalize;" required></div>
+                            <div class="col-md-4"><label class="form-label fw-bold" style="font-size:11px;">Village</label><input type="text" id="editVillage" class="form-control" style="text-transform: capitalize;"></div>
                             <div class="col-md-4"><label class="form-label fw-bold" style="font-size:11px;">Aadhaar (KYC)</label><input type="text" id="editAadhaar" class="form-control"></div>
                             
                             <div class="col-12"><label class="form-label fw-bold" style="font-size:11px;">Full Address</label><input type="text" id="editAddress" class="form-control"></div>
@@ -187,15 +200,36 @@
                             <div class="col-md-6"><label class="form-label fw-bold" style="font-size:11px;">Principal Amount (₹)</label><input type="number" id="editAmount" class="form-control" required></div>
                             <div class="col-md-6"><label class="form-label fw-bold" style="font-size:11px;">Total Installments</label><input type="number" id="editDuration" class="form-control" required></div>
                             
-                            <!-- Custom Dates Manager -->
                             <div class="col-md-6 mt-3"><label class="form-label fw-bold text-success" style="font-size:11px;">Last Paid Date</label><input type="date" id="editLastPaid" class="form-control"></div>
                             <div class="col-md-6 mt-3"><label class="form-label fw-bold text-danger" style="font-size:11px;">Next Due Date</label><input type="date" id="editNextDue" class="form-control"></div>
                             
-                            <!-- Secret Notes -->
                             <div class="col-12 mt-3"><label class="form-label fw-bold" style="font-size:11px;">Secret Notes (Admin Only)</label><input type="text" id="editNotes" class="form-control" placeholder="E.g., Call not answering, Good customer..."></div>
                         </div>
                         <button type="submit" class="btn btn-warning w-100 mt-4 fw-bold shadow">SAVE CHANGES</button>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="calculatorModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-info text-dark">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-calculator"></i> Quick EMI Calculator</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <div class="row g-2">
+                        <div class="col-12"><input type="number" id="calcPrincipal" class="form-control text-center" placeholder="Principal Amount (₹)" oninput="runCalculator()"></div>
+                        <div class="col-6"><input type="number" id="calcInterest" class="form-control text-center" value="20" placeholder="Interest %" oninput="runCalculator()"></div>
+                        <div class="col-6"><input type="number" id="calcWeeks" class="form-control text-center" placeholder="Total Weeks" oninput="runCalculator()"></div>
+                    </div>
+                    <div class="mt-4 p-3 bg-light rounded border">
+                        <h6 class="text-muted mb-1" style="font-size:12px; font-weight:bold;">Estimated Weekly EMI</h6>
+                        <h2 class="text-primary fw-bold" id="calcResult">₹0</h2>
+                        <div style="font-size: 11px; color:#64748b; margin-top:5px;" id="calcTotal">Total Recovery: ₹0</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -207,22 +241,36 @@
         let globalCustomers = [];
         let currentFilter = 'all';
 
-        // Advanced Feature: Live Clock & Greeting
         setInterval(() => {
             const now = new Date();
             document.getElementById('liveClock').innerText = now.toLocaleTimeString('en-IN', { hour12: true });
             let hour = now.getHours();
             let greet = hour < 12 ? 'GOOD MORNING' : (hour < 17 ? 'GOOD AFTERNOON' : 'GOOD EVENING');
-            document.getElementById('greetingText').innerText = `${greet}, CEO RAM`;
+            document.getElementById('greetingText').innerText = `${greet}, ADMIN`;
         }, 1000);
 
-        // Advanced Feature: Privacy Mode Toggle
         let isPrivacyMode = false;
         function togglePrivacyMode() {
             isPrivacyMode = !isPrivacyMode;
             document.body.classList.toggle('blur-mode');
-            let icon = document.getElementById('privacyIcon');
-            icon.className = isPrivacyMode ? 'fas fa-eye text-success' : 'fas fa-eye-slash';
+            document.getElementById('privacyIcon').className = isPrivacyMode ? 'fas fa-eye text-success' : 'fas fa-eye-slash';
+        }
+
+        // Global Keyboard Shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
+            if (e.ctrlKey && e.key === 'b') { e.preventDefault(); document.getElementById('addBtn').click(); }
+            if (e.key === 'Escape') { document.getElementById('searchInput').blur(); }
+        });
+
+        // Built-in Calculator Logic
+        function runCalculator() {
+            let p = Number(document.getElementById('calcPrincipal').value) || 0;
+            let i = Number(document.getElementById('calcInterest').value) || 0;
+            let w = Number(document.getElementById('calcWeeks').value) || 1;
+            let total = p + (p * (i / 100));
+            document.getElementById('calcResult').innerText = formatMoney(Math.round(total / w));
+            document.getElementById('calcTotal').innerText = `Total Recovery: ${formatMoney(total)}`;
         }
 
         async function loadCustomers() {
@@ -246,15 +294,14 @@
             tableBody.innerHTML = '';
             const today = new Date();
             today.setHours(0,0,0,0);
+            
+            let visibleCount = 0;
 
             globalCustomers.forEach(cust => {
                 let principal = Number(cust.amount);
-                
-                // === PENALTY CALCULATION: 100% PERFECT LOGIC ===
                 let penalty = Number(cust.penalty || 0);
                 let baseEmi = Math.round((principal + (principal * 0.20)) / Number(cust.duration));
-                let nextEmiToPay = baseEmi + penalty; // PENALTY ADDED TO NEXT WEEK AMOUNT AUTOMATICALLY
-                // ===============================================
+                let nextEmiToPay = baseEmi + penalty; 
 
                 let paidWeeks = cust.paidWeeks || 0;
                 let pendingWeeks = Number(cust.duration) - paidWeeks;
@@ -266,13 +313,15 @@
                     if (due < today && pendingWeeks > 0) isOverdue = true;
                 }
 
-                // Smart Filters Logic
                 if(currentFilter === 'active' && pendingWeeks <= 0) return;
                 if(currentFilter === 'cleared' && pendingWeeks > 0) return;
                 if(currentFilter === 'overdue' && !isOverdue) return;
+                
+                visibleCount++;
 
                 let statusBadge = pendingWeeks <= 0 ? `<span class="badge bg-success">Cleared</span>` : `<span class="badge bg-primary">Active</span>`;
                 let overdueWarning = isOverdue ? `<div class="text-danger fw-bold mt-1" style="font-size: 10px;"><span class="pulse-dot"></span> OVERDUE</div>` : '';
+                let rowClass = isOverdue ? 'row-overdue' : 'customer-row'; // Row Highlight Feature
                 
                 let approvalHTML = `<span class="text-muted" style="font-size:11px;">No Pending</span>`;
                 if(cust.pendingApproval) {
@@ -284,25 +333,25 @@
 
                 let lastPaidHtml = cust.lastPaidDate ? `<div class="date-badge"><i class="fas fa-history"></i> Last: ${cust.lastPaidDate}</div>` : '';
                 let nextDueHtml = cust.nextDueDate ? `<div class="date-badge" style="background:#fee2e2; border-color:#fecaca; color:#b91c1c;"><i class="fas fa-calendar-alt"></i> Due: ${cust.nextDueDate}</div>` : '';
-                let notesHtml = cust.notes ? `<div class="notes-box"><i class="fas fa-info-circle"></i> ${cust.notes}</div>` : '';
+                let notesHtml = cust.notes ? `<div class="notes-box" title="${cust.notes}"><i class="fas fa-info-circle"></i> Notes saved</div>` : '';
                 
                 let penaltyHtml = penalty > 0 ? `<div class="text-danger mt-1" style="font-size:10px; font-weight:bold;">(+ ${formatMoney(penalty)} Penalty Added)</div>` : '';
                 let initials = cust.name.substring(0, 2).toUpperCase();
 
-                // EXTRA MAGIC FEATURE: Showing Village & KYC badge directly in the table
                 let villageTag = cust.village ? `<span style="font-size: 10px; background:#e2e8f0; color:#475569; padding:2px 5px; border-radius:4px;"><i class="fas fa-map-marker-alt text-danger"></i> ${cust.village}</span>` : '';
                 let kycTag = cust.aadhaar ? `<span style="font-size: 10px; background:#d1fae5; color:#065f46; padding:2px 5px; border-radius:4px; margin-left:3px;"><i class="fas fa-id-card"></i> KYC</span>` : '';
+                let vipTag = principal >= 50000 ? `<i class="fas fa-star vip-star" title="VIP Customer"></i>` : ''; // VIP Badge Feature
 
                 let rowHTML = `
-                    <tr class="customer-row">
+                    <tr class="${rowClass}">
                         <td>
                             <div class="d-flex align-items-center gap-2">
-                                <div class="avatar shadow-sm" title="${cust.name}">${initials}</div>
+                                <div class="avatar shadow-sm" title="${cust.name}">${initials}${vipTag}</div>
                                 <div>
                                     <div class="fw-bold text-dark d-flex align-items-center gap-1">${cust.name} 
                                         <a href="tel:${cust.phone}" class="text-primary" title="Call Now"><i class="fas fa-phone-alt" style="font-size:10px;"></i></a>
                                     </div>
-                                    <div class="text-muted" style="font-size:11px; cursor:pointer;" onclick="copyPhone('${cust.phone}')" title="Click to copy">${cust.phone}</div>
+                                    <div class="text-muted" style="font-size:11px; cursor:pointer;" onclick="copyPhone('${cust.phone}')" title="Click to copy ID/Phone">ID: JF-${cust.phone.slice(-4)} | ${cust.phone}</div>
                                     <div class="mt-1">${statusBadge} ${villageTag} ${kycTag}</div>
                                     ${overdueWarning}
                                 </div>
@@ -311,7 +360,7 @@
                         </td>
                         <td class="sensitive">
                             <div style="font-size:12px;">Principal: <b>${formatMoney(principal)}</b></div>
-                            <div style="font-size:13px; margin-top:3px; background:#fef2f2; padding:3px 5px; border-radius:4px; display:inline-block; border: 1px solid #fecaca;">
+                            <div style="font-size:13px; margin-top:3px; background:#fef2f2; padding:3px 5px; border-radius:4px; display:inline-block; border: 1px solid #fecaca;" title="Base EMI: ${formatMoney(baseEmi)}">
                                 Next Pay: <b class="text-danger">${formatMoney(nextEmiToPay)}</b>
                                 ${penaltyHtml}
                             </div>
@@ -320,40 +369,89 @@
                             <div class="d-flex justify-content-between text-success fw-bold" style="font-size:11px;">
                                 <span>Paid: ${paidWeeks}</span> <span>Pend: ${pendingWeeks}</span>
                             </div>
-                            <div class="progress-bar-custom" title="${progressPercent}% Completed">
+                            <div class="progress-bar-custom" title="Completed: ${progressPercent}% | Paid: ${formatMoney(paidWeeks * baseEmi)}">
                                 <div class="progress-fill" style="width: ${progressPercent}%;"></div>
                             </div>
                             <div class="mt-1">${lastPaidHtml} ${nextDueHtml}</div>
                         </td>
                         <td>${approvalHTML}</td>
                         <td style="text-align: center;">
-                            <!-- Feature: Cash Receipt -->
                             <button class="action-btn bg-success text-white" title="Mark Cash Received" onclick="recordCashPayment('${cust.phone}', '${cust.name}', ${nextEmiToPay})"><i class="fas fa-hand-holding-usd"></i></button>
-                            <!-- Print Agreement -->
                             <button class="action-btn btn-agreement" title="Print Legal Loan Agreement" onclick="printAgreement('${cust.phone}')"><i class="fas fa-file-contract"></i></button>
-                            <!-- Print Ledger Statement -->
                             <button class="action-btn btn-statement" title="Print Customer Statement" onclick="printStatement('${cust.phone}')"><i class="fas fa-receipt"></i></button>
-                            <!-- Edit Profile -->
                             <button class="action-btn btn-edit" title="Edit Profile & Dates" onclick="openEditModal('${cust.phone}')"><i class="fas fa-pencil-alt"></i></button>
-                            <!-- Add Penalty -->
                             <button class="action-btn btn-penalty" title="Add Late Penalty" onclick="addPenalty('${cust.phone}', '${cust.name}')"><i class="fas fa-gavel"></i></button>
-                            <!-- View App -->
+                            <button class="action-btn btn-pin" title="View / Reset PIN" onclick="recoverPIN('${cust.phone}', '${cust.name}', '${cust.password}')"><i class="fas fa-key"></i></button>
+                            <button class="action-btn btn-wa" title="Send WhatsApp Reminders/Welcome" onclick="whatsappMenu('${cust.phone}', '${cust.name}', ${nextEmiToPay}, '${cust.nextDueDate || 'soon'}', '${cust.password}')"><i class="fab fa-whatsapp"></i></button>
                             <button class="action-btn btn-ghost" title="View as Customer (Ghost Login)" onclick="adminGhostLogin('${cust.phone}', '${cust.password}')"><i class="fas fa-eye"></i></button>
-                            <!-- WhatsApp Remind -->
-                            <button class="action-btn btn-wa" title="Send WhatsApp Reminder" onclick="sendWhatsAppReminder('${cust.phone}', '${cust.name}', ${nextEmiToPay}, '${cust.nextDueDate || 'soon'}')"><i class="fab fa-whatsapp"></i></button>
-                            <!-- Delete Data -->
                             <button class="action-btn bg-danger text-white" title="Delete Account" onclick="secureDeleteCustomer('${cust.phone}')"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>
                 `;
                 tableBody.innerHTML += rowHTML;
             });
+            
+            document.getElementById('emptyState').style.display = visibleCount === 0 ? 'block' : 'none';
         }
 
-        function copyPhone(phone) {
-            navigator.clipboard.writeText(phone);
-            alert("Phone number copied: " + phone);
+        // --- NEW FEATURES LOGIC ---
+        
+        function recoverPIN(phone, name, currentPin) {
+            let newPin = prompt(`SECURITY ACCESS:\nCustomer: ${name}\nCurrent PIN: ${currentPin}\n\nEnter a new PIN to reset, or click Cancel to keep it:`, currentPin);
+            if(newPin && newPin !== currentPin) {
+                // To update PIN, we use edit_customer endpoint logic 
+                let cust = globalCustomers.find(c => c.phone === phone);
+                fetch('/api/customers', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({...cust, password: newPin, action:'update_pin'}) }) // Need backend logic for this specifically, simulating by re-alerting for now.
+                alert("PIN updated locally for this session. (Backend support needed for permanent PIN change). New PIN is: " + newPin);
+            }
         }
+        
+        function whatsappMenu(phone, name, emi, dueDate, pin) {
+            let choice = prompt(`WHATSAPP MENU for ${name}:\n1. Send EMI Reminder\n2. Resend Welcome Details (ID & PIN)\nEnter 1 or 2:`);
+            if(choice === '1') {
+                let dueText = dueDate !== 'soon' ? ` on or before *${dueDate}*` : ``;
+                let msg = `Hello ${name} garu, Gentle reminder from *Jessica Finance Management*. Your Due amount of Rs.${emi}/- (including penalties if any) is payable${dueText}. Please pay to avoid further penalty.\n\n- By Jessica Finance Management`;
+                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+            } else if (choice === '2') {
+                let msg = `Welcome back to *Jessica Finance Management*! 🎉\n\nDear ${name} garu,\nHere are your login details:\n🆔 ID: ${phone}\n🔑 PIN: ${pin}\n\n- Regards,\n*Jessica Finance Management*`;
+                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+            }
+        }
+
+        function backupDatabase() {
+            let dataStr = JSON.stringify(globalCustomers, null, 2);
+            let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            let exportFileDefaultName = 'JessicaFinance_Backup_' + new Date().toLocaleDateString('en-GB').replace(/\//g,'-') + '.json';
+            let linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        let sortDirection = false;
+        function sortTable(n) {
+            let table = document.getElementById("dataTable");
+            let rows, switching, i, x, y, shouldSwitch;
+            switching = true;
+            sortDirection = !sortDirection;
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    if (sortDirection ? (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) : (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase())) {
+                        shouldSwitch = true; break;
+                    }
+                }
+                if (shouldSwitch) { rows[i].parentNode.insertBefore(rows[i + 1], rows[i]); switching = true; }
+            }
+        }
+
+        // --- EXISTING CORE LOGIC ---
+
+        function copyPhone(phone) { navigator.clipboard.writeText(phone); }
 
         function applySmartFilter(type, btnElement) {
             currentFilter = type;
@@ -362,30 +460,27 @@
             renderTable();
         }
 
-        // NEW FEATURE: Cash Payment automatically sends Mode as "cash"
         async function recordCashPayment(phone, name, amount) {
             let confirmPay = confirm(`CONFIRMATION:\nDid you receive ₹${amount} in cash from ${name}?`);
             if(confirmPay) {
                 await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: phone, action: 'approve_payment', amount: amount, mode: 'cash' }) });
                 if(confirm("Payment Recorded!\nDo you want to send a WhatsApp Receipt to the customer?")) {
-                    let waMsg = `*JESSICA FINANCE - PAYMENT RECEIPT* 🧾\n\nDear ${name} garu,\nWe have successfully received your cash payment of *Rs.${amount}/-*.\n\nThank you for paying your installment on time. 🙏\n\n- Authorized by CEO RAM`;
+                    let waMsg = `*JESSICA FINANCE - PAYMENT RECEIPT* 🧾\n\nDear ${name} garu,\nWe have successfully received your cash payment of *Rs.${amount}/-*.\n\nThank you for paying your installment on time. 🙏\n\n- Authorized by Jessica Finance Management`;
                     window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(waMsg)}`, '_blank');
                 }
                 loadCustomers();
             }
         }
 
-        // NEW FEATURE: Ask for Payment Mode when Approving Request
         async function approvePayment(phone, name, amount, weekNo) { 
             let mode = prompt(`Payment requested by ${name}.\nEnter Payment Mode (e.g., PhonePe, GPay, Cash):`, "PhonePe");
-            if (mode === null) return; // Action Cancelled
+            if (mode === null) return; 
             await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, action: 'approve_payment', amount, mode: mode.toLowerCase() }) }); 
             loadCustomers(); 
         }
 
         async function rejectFakePayment(phone) { await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, action: 'reject_payment' }) }); loadCustomers(); }
 
-        // BUG FIXED: Penalty System Add to Next EMI
         async function addPenalty(phone, name) {
             let amount = prompt(`Add Penalty amount (in ₹) for ${name}:\n(This will automatically add to their next EMI)`);
             if (amount && !isNaN(amount) && Number(amount) > 0) {
@@ -395,7 +490,6 @@
             }
         }
 
-        // Professional Agreement Print
         function printAgreement(phone) {
             let cust = globalCustomers.find(c => c.phone === phone);
             if(!cust) return;
@@ -406,7 +500,7 @@
             printWindow.document.write(`
                 <html><head><title>Loan Agreement - ${cust.name}</title>
                 <style>
-                    body { font-family: 'Times New Roman', serif; padding: 40px; line-height: 1.8; color: #000; }
+                    body { font-family: 'Times New Roman', serif; padding: 40px; line-height: 1.6; color: #000; }
                     .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 30px; }
                     h1 { margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 2px; }
                     h2 { text-align: center; text-decoration: underline; font-size: 18px; margin-bottom: 30px; }
@@ -414,10 +508,10 @@
                     .details-table td { padding: 8px; border: 1px solid #ccc; }
                     .details-table td:first-child { font-weight: bold; width: 40%; background: #f9f9f9; }
                     .signatures { margin-top: 80px; display: flex; justify-content: space-between; }
-                    .sig-line { border-top: 1px solid #000; width: 250px; text-align: center; padding-top: 5px; font-weight: bold; }
+                    .sig-line { border-top: 1px solid #000; width: 280px; text-align: center; padding-top: 5px; font-weight: bold; }
                 </style>
                 </head><body>
-                <div class="header"><h1>JESSICA FINANCE MANAGEMENT</h1><p style="margin:5px 0 0 0; font-size:12px;">Corporate Financial Services - CEO RAM</p></div>
+                <div class="header"><h1>JESSICA FINANCE MANAGEMENT</h1><p style="margin:5px 0 0 0; font-size:12px;">Corporate Financial Services</p></div>
                 <h2>GENERAL LOAN AGREEMENT</h2>
                 <p>This Loan Agreement is made and executed on <b>${date}</b> by and between <b>JESSICA FINANCE</b> (Lender) and <b>Mr/Ms. ${cust.name}</b> (Borrower).</p>
                 <table class="details-table">
@@ -430,13 +524,15 @@
                     <tr><td>Total Tenure:</td><td>${cust.duration} Installments</td></tr>
                 </table>
                 <p><b>Terms and Conditions:</b><br>1. The borrower agrees to repay the loan amount in specified installments.<br>2. Delay in payment will attract late penalties added to the next EMI.<br>3. All payments must be recorded via official Jessica Finance channels.</p>
-                <div class="signatures"><div class="sig-line">Borrower Signature<br>(${cust.name})</div><div class="sig-line">Authorized Signatory<br>(CEO RAM)</div></div>
+                <div class="signatures">
+                    <div class="sig-line">Borrower Signature<br>(${cust.name})</div>
+                    <div class="sig-line">For Jessica Finance Management<br><span style="font-size:12px; font-weight:normal;">(Authorized Signatory)</span></div>
+                </div>
                 <script>window.onload = function() { window.print(); }<\/script>
                 </body></html>
             `);
         }
 
-        // Print Customer Statement
         function printStatement(phone) {
             let cust = globalCustomers.find(c => c.phone === phone);
             if(!cust) return;
@@ -505,13 +601,6 @@
 
         function adminGhostLogin(phone, password) { localStorage.setItem('loggedInCustomer', JSON.stringify({ phone, password })); window.open('customer-dashboard.html', '_blank'); }
 
-        function sendWhatsAppReminder(phone, name, emi, dueDate) {
-            let dueText = dueDate !== 'soon' ? ` on or before *${dueDate}*` : ``;
-            let msg = `Hello ${name} garu, Gentle reminder from *Jessica Finance Management*. Your Due amount of Rs.${emi}/- (including penalties if any) is payable${dueText}. Please pay to avoid further penalty.\n\n- By CEO RAM`;
-            window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-
-        // FEATURE: Open Edit Modal with New Fields
         function openEditModal(phone) {
             let cust = globalCustomers.find(c => c.phone === phone);
             if(!cust) return;
@@ -562,7 +651,7 @@
             };
             await fetch('/api/customers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newCustomer) });
             document.getElementById('addCustomerForm').reset(); bootstrap.Modal.getInstance(document.getElementById('addCustomerModal')).hide(); loadCustomers(); 
-            let waMsg = `Welcome to *Jessica Finance Management*! 🎉\n\nDear ${newCustomer.name} garu, your account is created.\n\n*Login Details:*\n🆔 ID: ${newCustomer.phone}\n🔑 PIN: ${newCustomer.password}\n\n- Regards,\n*CEO RAM*`;
+            let waMsg = `Welcome to *Jessica Finance Management*! 🎉\n\nDear ${newCustomer.name} garu, your account is created.\n\n*Login Details:*\n🆔 ID: ${newCustomer.phone}\n🔑 PIN: ${newCustomer.password}\n\n- Regards,\n*Jessica Finance Management*`;
             window.open(`https://wa.me/91${newCustomer.phone}?text=${encodeURIComponent(waMsg)}`, '_blank');
         });
 
