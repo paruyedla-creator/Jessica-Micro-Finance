@@ -76,7 +76,7 @@
         </div>
 
         <div class="content-card">
-            <!-- Action Bar (New Features Added Here) -->
+            <!-- Action Bar -->
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                 <div class="d-flex gap-2">
                     <button class="btn btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#addCustomerModal"><i class="fas fa-user-plus"></i> New Account</button>
@@ -275,7 +275,7 @@
             }
         }
 
-        // 4. Professional Loan Agreement (Print Feature)
+        // 4. Professional Loan Agreement (Print Feature - BUG FIXED)
         function printAgreement(phone) {
             let cust = globalCustomers.find(c => c.phone === phone);
             if(!cust) return;
@@ -321,7 +321,7 @@
                     <div class="sig-line">Borrower Signature<br><span style="font-size:12px; font-weight:normal;">(${cust.name})</span></div>
                     <div class="sig-line">Authorized Signatory<br><span style="font-size:12px; font-weight:normal;">(Jessica Finance)</span></div>
                 </div>
-                <script>window.onload = function() { window.print(); }</script>
+                <script>window.onload = function() { window.print(); }<\/script>
                 </body></html>
             `);
         }
@@ -429,7 +429,7 @@
             loadCustomers(); 
 
             // Auto Open WhatsApp Message with ID & Pass
-            let loginUrl = "https://your-website.onrender.com"; // మీరు కావాలంటే లింక్ మార్చుకోండి
+            let loginUrl = "https://your-website.onrender.com"; 
             let waMsg = `Welcome to *Jessica Finance Management*! 🎉\n\nDear ${newCustomer.name} garu, your account has been successfully created.\n\n*Your Login Details:*\n🆔 User ID (Phone): ${newCustomer.phone}\n🔑 Password: ${newCustomer.password}\n\nPlease login to check your loan details and pay Installments on time to avoid penalty.\n\n- Regards,\n*CEO RAM*`;
             window.open(`https://wa.me/91${newCustomer.phone}?text=${encodeURIComponent(waMsg)}`, '_blank');
         });
