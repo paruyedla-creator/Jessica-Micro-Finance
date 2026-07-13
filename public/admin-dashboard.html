@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jessica Finance - Admin Pro</title>
+    <title>Jessica Finance - Admin Pro (Advanced)</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -12,6 +12,7 @@
         body.dark-mode { background-color: #121212; color: #ffffff; }
         body.dark-mode .content-card { background: #1e1e1e; border-color: #333; }
         body.dark-mode .table { color: #fff; }
+        body.dark-mode .stat-card { background: #1e1e1e; color: #fff; border-color: #444; }
         
         .navbar-custom { background-color: var(--primary); padding: 10px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .navbar-brand { font-weight: 900; color: white !important; font-size: 20px; letter-spacing: 0.5px; line-height: 1.2; }
@@ -29,13 +30,19 @@
         .table td { vertical-align: middle; font-size: 13px; font-weight: 500; }
         
         .action-btn { width: 32px; height: 32px; border-radius: 8px; display: inline-flex; justify-content: center; align-items: center; border: none; font-size: 14px; transition: 0.2s; margin: 2px;}
+        .action-btn:hover { filter: brightness(0.9); transform: scale(1.1); }
         .btn-ghost { background: #6366f1; color: white; }
         .btn-wa { background: #25D366; color: white; }
         .btn-edit { background: #0ea5e9; color: white; }
+        .btn-penalty { background: #f59e0b; color: #fff; }
+        .btn-agreement { background: #334155; color: white; }
         
         .search-bar { border-radius: 20px; padding: 10px 20px; border: 1px solid #e2e8f0; width: 300px; outline: none; }
         .date-badge { background: #e0f2fe; color: #0284c7; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; display: inline-block; margin-top: 4px; border: 1px solid #bae6fd;}
         .notes-box { background: #fef3c7; border-left: 3px solid #f59e0b; padding: 5px; font-size: 11px; margin-top: 5px; color: #92400e; border-radius: 0 4px 4px 0;}
+        
+        /* Spin Animation for Refresh */
+        .fa-spin-fast { animation: fa-spin 0.5s infinite linear; }
     </style>
 </head>
 <body>
@@ -69,12 +76,16 @@
         </div>
 
         <div class="content-card">
-            <!-- Action Bar -->
+            <!-- Action Bar (New Features Added Here) -->
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                 <div class="d-flex gap-2">
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal"><i class="fas fa-user-plus"></i> New Account</button>
+                    <button class="btn btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#addCustomerModal"><i class="fas fa-user-plus"></i> New Account</button>
+                    <!-- Excel Export Button -->
+                    <button class="btn btn-success fw-bold" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Export Data</button>
                 </div>
                 <div class="d-flex gap-2 align-items-center">
+                    <!-- Live Refresh Button -->
+                    <button class="btn btn-outline-secondary" id="refreshBtn" onclick="liveRefresh()" title="Refresh Data"><i class="fas fa-sync-alt" id="refreshIcon"></i></button>
                     <input type="text" class="search-bar" id="searchInput" placeholder="Search Name or Phone..." onkeyup="filterTable()">
                 </div>
             </div>
@@ -88,7 +99,7 @@
                             <th>Loan (Given / EMI)</th>
                             <th>Dates & Progress</th>
                             <th>Approval Actions</th>
-                            <th style="min-width: 180px;">Super Controls</th>
+                            <th style="min-width: 220px;">Super Controls</th>
                         </tr>
                     </thead>
                     <tbody id="customersTableBody"></tbody>
@@ -111,11 +122,11 @@
                             <div class="col-12"><input type="text" id="custName" class="form-control" placeholder="Full Name" required></div>
                             <div class="col-6"><input type="tel" id="custPhone" class="form-control" placeholder="Phone Number" required></div>
                             <div class="col-6"><input type="text" id="custPass" class="form-control" placeholder="Password (Pin)" required></div>
-                            <div class="col-12"><select id="custCategory" class="form-select" required><option value="Weekly Finance">Weekly Finance</option></select></div>
+                            <div class="col-12"><select id="custCategory" class="form-select" required><option value="General Finance">General Finance</option></select></div>
                             <div class="col-6"><input type="number" id="custAmount" class="form-control" placeholder="Given Amt (₹)" required></div>
-                            <div class="col-6"><input type="number" id="custDuration" class="form-control" placeholder="Duration (Weeks)" required></div>
+                            <div class="col-6"><input type="number" id="custDuration" class="form-control" placeholder="Duration (Installments)" required></div>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 mt-4 fw-bold">CREATE ACCOUNT</button>
+                        <button type="submit" class="btn btn-primary w-100 mt-4 fw-bold"><i class="fab fa-whatsapp"></i> CREATE & SEND ID</button>
                     </form>
                 </div>
             </div>
@@ -136,7 +147,7 @@
                         <div class="row g-2">
                             <div class="col-12"><label class="form-label" style="font-size:11px;">Full Name</label><input type="text" id="editName" class="form-control" required></div>
                             <div class="col-6"><label class="form-label" style="font-size:11px;">Given Amount (₹)</label><input type="number" id="editAmount" class="form-control" required></div>
-                            <div class="col-6"><label class="form-label" style="font-size:11px;">Total Weeks</label><input type="number" id="editDuration" class="form-control" required></div>
+                            <div class="col-6"><label class="form-label" style="font-size:11px;">Total Installments</label><input type="number" id="editDuration" class="form-control" required></div>
                             
                             <!-- Custom Dates Manager -->
                             <div class="col-6 mt-3"><label class="form-label fw-bold text-success" style="font-size:11px;">Last Paid Date</label><input type="date" id="editLastPaid" class="form-control"></div>
@@ -157,31 +168,43 @@
         const formatMoney = (amount) => '₹' + Number(amount).toLocaleString('en-IN');
         let globalCustomers = [];
 
+        // 1. Data Fetching
         async function loadCustomers() {
-            const res = await fetch('/api/customers');
-            globalCustomers = await res.json();
-            renderTable();
-            calculateAnalytics();
+            try {
+                const res = await fetch('/api/customers');
+                globalCustomers = await res.json();
+                renderTable();
+                calculateAnalytics();
+            } catch (error) {
+                console.log("Waiting for backend connection...");
+            }
+        }
+
+        // 2. Live Refresh Feature
+        async function liveRefresh() {
+            let icon = document.getElementById('refreshIcon');
+            icon.classList.add('fa-spin-fast');
+            await loadCustomers();
+            setTimeout(() => icon.classList.remove('fa-spin-fast'), 500);
         }
 
         function renderTable() {
             const tableBody = document.getElementById('customersTableBody');
             tableBody.innerHTML = '';
 
-            // Get Today's Date for Alert logic
             const today = new Date();
             today.setHours(0,0,0,0);
 
             globalCustomers.forEach(cust => {
                 let principal = Number(cust.amount);
-                let totalToPay = principal + (principal * 0.20); 
-                let emi = Math.round(totalToPay / Number(cust.duration));
+                let penalty = Number(cust.penalty || 0); // New Penalty Variable
+                let totalToPay = principal + (principal * 0.20) + penalty; 
+                let emi = Math.round((principal + (principal * 0.20)) / Number(cust.duration));
                 let paidWeeks = cust.paidWeeks || 0;
                 let pendingWeeks = Number(cust.duration) - paidWeeks;
 
                 let statusBadge = pendingWeeks <= 0 ? `<span class="badge bg-success">Cleared</span>` : `<span class="badge bg-primary">Active</span>`;
                 
-                // Smart Date Red Alert Logic
                 let overdueWarning = '';
                 if (cust.nextDueDate) {
                     let due = new Date(cust.nextDueDate);
@@ -196,10 +219,10 @@
                     `;
                 }
 
-                // Format dates to display beautifully
                 let lastPaidHtml = cust.lastPaidDate ? `<div class="date-badge"><i class="fas fa-history"></i> Last Paid: ${cust.lastPaidDate}</div>` : '';
                 let nextDueHtml = cust.nextDueDate ? `<div class="date-badge" style="background:#fee2e2; border-color:#fecaca; color:#b91c1c;"><i class="fas fa-calendar-alt"></i> Next Due: ${cust.nextDueDate}</div>` : '';
                 let notesHtml = cust.notes ? `<div class="notes-box"><i class="fas fa-info-circle"></i> ${cust.notes}</div>` : '';
+                let penaltyHtml = penalty > 0 ? `<div class="text-danger" style="font-size:11px; font-weight:bold;">+ Penalty: ${formatMoney(penalty)}</div>` : '';
 
                 tableBody.innerHTML += `
                     <tr>
@@ -212,6 +235,7 @@
                         <td>
                             <div style="font-size:12px;">Given: <b>${formatMoney(principal)}</b></div>
                             <div style="font-size:12px;">EMI: <b class="text-danger">${formatMoney(emi)}</b></div>
+                            ${penaltyHtml}
                         </td>
                         <td>
                             <div class="text-success fw-bold" style="font-size:12px;">Paid: ${paidWeeks} / Pend: ${pendingWeeks}</div>
@@ -219,8 +243,12 @@
                         </td>
                         <td>${approvalHTML}</td>
                         <td>
+                            <!-- Professional Agreement -->
+                            <button class="action-btn btn-agreement" title="Print Loan Agreement" onclick="printAgreement('${cust.phone}')"><i class="fas fa-file-contract"></i></button>
                             <!-- Master Edit -->
                             <button class="action-btn btn-edit" title="Edit Customer & Dates" onclick="openEditModal('${cust.phone}')"><i class="fas fa-pencil-alt"></i></button>
+                            <!-- Penalty Add -->
+                            <button class="action-btn btn-penalty" title="Add Penalty" onclick="addPenalty('${cust.phone}', '${cust.name}')"><i class="fas fa-gavel"></i></button>
                             <!-- Ghost Login -->
                             <button class="action-btn btn-ghost" title="View as Customer" onclick="adminGhostLogin('${cust.phone}', '${cust.password}')"><i class="fas fa-eye"></i></button>
                             <!-- WhatsApp -->
@@ -233,7 +261,88 @@
             });
         }
 
-        // Feature: Analytics
+        // 3. Penalty Feature Logic
+        async function addPenalty(phone, name) {
+            let amount = prompt(`Add Penalty amount (in ₹) for ${name}:`);
+            if (amount && !isNaN(amount) && Number(amount) > 0) {
+                await fetch('/api/action', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ phone: phone, action: 'add_penalty', amount: Number(amount) }) 
+                });
+                alert(`₹${amount} Penalty Added to ${name}`);
+                loadCustomers();
+            }
+        }
+
+        // 4. Professional Loan Agreement (Print Feature)
+        function printAgreement(phone) {
+            let cust = globalCustomers.find(c => c.phone === phone);
+            if(!cust) return;
+            let emi = Math.round((Number(cust.amount) * 1.2) / cust.duration);
+            let date = new Date().toLocaleDateString();
+
+            let printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html><head><title>Loan Agreement - ${cust.name}</title>
+                <style>
+                    body { font-family: 'Times New Roman', serif; padding: 40px; line-height: 1.8; color: #000; }
+                    .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 30px; }
+                    h1 { margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 2px; }
+                    h2 { text-align: center; text-decoration: underline; font-size: 18px; margin-bottom: 30px; }
+                    .details-table { width: 100%; margin-bottom: 30px; border-collapse: collapse; }
+                    .details-table td { padding: 8px; border: 1px solid #ccc; }
+                    .details-table td:first-child { font-weight: bold; width: 40%; background: #f9f9f9; }
+                    .signatures { margin-top: 80px; display: flex; justify-content: space-between; }
+                    .sig-line { border-top: 1px solid #000; width: 250px; text-align: center; padding-top: 5px; font-weight: bold; }
+                </style>
+                </head><body>
+                <div class="header">
+                    <h1>JESSICA FINANCE MANAGEMENT</h1>
+                    <p style="margin:5px 0 0 0; font-size:12px;">Corporate Financial Services</p>
+                </div>
+                <h2>GENERAL LOAN AGREEMENT</h2>
+                <p>This Loan Agreement is made and executed on <b>${date}</b> by and between <b>JESSICA FINANCE</b> (Hereinafter referred to as the "Lender") and <b>Mr/Ms. ${cust.name}</b> (Hereinafter referred to as the "Borrower").</p>
+                
+                <table class="details-table">
+                    <tr><td>Borrower Name:</td><td>${cust.name}</td></tr>
+                    <tr><td>Registered Phone Number:</td><td>${cust.phone}</td></tr>
+                    <tr><td>Principal Loan Amount:</td><td>Rs. ${formatMoney(cust.amount)}/-</td></tr>
+                    <tr><td>Installment Amount (EMI):</td><td>Rs. ${formatMoney(emi)}/-</td></tr>
+                    <tr><td>Total Tenure:</td><td>${cust.duration} Installments</td></tr>
+                </table>
+
+                <p><b>Terms and Conditions:</b><br>
+                1. The borrower agrees to repay the loan amount along with the agreed charges in specified installments.<br>
+                2. Any delay in the payment of the installment on the due date will attract a late payment penalty.<br>
+                3. All payments must be recorded through the official Jessica Finance portal.</p>
+
+                <div class="signatures">
+                    <div class="sig-line">Borrower Signature<br><span style="font-size:12px; font-weight:normal;">(${cust.name})</span></div>
+                    <div class="sig-line">Authorized Signatory<br><span style="font-size:12px; font-weight:normal;">(Jessica Finance)</span></div>
+                </div>
+                <script>window.onload = function() { window.print(); }</script>
+                </body></html>
+            `);
+        }
+
+        // 5. Excel Export Feature
+        function exportToExcel() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Name,Phone,Loan Amount,EMI,Total Installments,Paid Installments,Penalty\n";
+            globalCustomers.forEach(c => {
+                let emi = Math.round((Number(c.amount) * 1.2) / c.duration);
+                let row = `${c.name},${c.phone},${c.amount},${emi},${c.duration},${c.paidWeeks || 0},${c.penalty || 0}`;
+                csvContent += row + "\n";
+            });
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Jessica_Finance_Customers.csv");
+            document.body.appendChild(link);
+            link.click();
+        }
+
         function calculateAnalytics() {
             let tGiven = 0, tCollected = 0, active = 0, tProfit = 0;
             globalCustomers.forEach(c => {
@@ -258,7 +367,6 @@
             window.open('customer-dashboard.html', '_blank');
         }
 
-        // Next Due Date included in WhatsApp Reminder
         function sendWhatsAppReminder(phone, name, emi, dueDate) {
             let dueText = dueDate !== 'soon' ? ` on or before *${dueDate}*` : ``;
             let msg = `Hello ${name} garu, Gentle reminder from *Jessica Finance Management*. Your EMI amount of Rs.${emi}/- is due${dueText}. Please pay via your dashboard link to avoid penalty. Thank you!\n\n- By CEO RAM`;
@@ -275,7 +383,6 @@
             loadCustomers();
         }
 
-        // New Edit System Logic
         function openEditModal(phone) {
             let cust = globalCustomers.find(c => c.phone === phone);
             if(!cust) return;
@@ -306,6 +413,7 @@
             loadCustomers();
         });
 
+        // Add Customer & Auto WhatsApp Action
         document.getElementById('addCustomerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const newCustomer = {
@@ -313,29 +421,26 @@
                 password: document.getElementById('custPass').value, category: document.getElementById('custCategory').value,
                 amount: document.getElementById('custAmount').value, duration: document.getElementById('custDuration').value
             };
+            
+            // Save to Backend
             await fetch('/api/customers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newCustomer) });
             document.getElementById('addCustomerForm').reset();
             bootstrap.Modal.getInstance(document.getElementById('addCustomerModal')).hide();
             loadCustomers(); 
+
+            // Auto Open WhatsApp Message with ID & Pass
+            let loginUrl = "https://your-website.onrender.com"; // మీరు కావాలంటే లింక్ మార్చుకోండి
+            let waMsg = `Welcome to *Jessica Finance Management*! 🎉\n\nDear ${newCustomer.name} garu, your account has been successfully created.\n\n*Your Login Details:*\n🆔 User ID (Phone): ${newCustomer.phone}\n🔑 Password: ${newCustomer.password}\n\nPlease login to check your loan details and pay Installments on time to avoid penalty.\n\n- Regards,\n*CEO RAM*`;
+            window.open(`https://wa.me/91${newCustomer.phone}?text=${encodeURIComponent(waMsg)}`, '_blank');
         });
 
-        // 100% BUG-FREE DELETE LOGIC (Using Secure POST)
         async function secureDeleteCustomer(phone) {
-            let pin = prompt("DANGER: Enter Admin PIN (1234) to delete this customer.");
-            if (pin === "1234") {
-                const res = await fetch('/api/action', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phone: phone, action: 'delete_customer' })
-                });
+            let pin = prompt("DANGER: Enter Admin PIN (7569) to delete this customer.");
+            if (pin === "7569") {
+                const res = await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: phone, action: 'delete_customer' }) });
                 let data = await res.json();
-                if(data.success) {
-                    alert("Account Deleted Successfully!");
-                    loadCustomers();
-                }
-            } else if (pin) {
-                alert("Incorrect PIN. Deletion cancelled.");
-            }
+                if(data.success) { alert("Account Deleted Successfully!"); loadCustomers(); }
+            } else if (pin) { alert("Incorrect PIN. Deletion cancelled."); }
         }
 
         function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
