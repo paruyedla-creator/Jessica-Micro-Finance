@@ -80,6 +80,7 @@ app.post('/api/customers', async (req, res) => {
     newCustomer.village = newCustomer.village || '';
     newCustomer.address = newCustomer.address || '';
     newCustomer.aadhaar = newCustomer.aadhaar || '';
+    newCustomer.guarantor = newCustomer.guarantor || ''; // GUARANTOR FEATURE
     
     newCustomer.paidWeeks = 0;
     newCustomer.penalty = 0;
@@ -93,7 +94,7 @@ app.post('/api/customers', async (req, res) => {
     res.json({ success: true, message: "Account Created!" });
 });
 
-// 4. యాక్షన్స్ (Approve, Reject, Delete, Edit, Penalty)
+// 4. యాక్షన్స్ (Approve, Reject, Delete, Edit, Penalty, PIN Update, Settle)
 app.post('/api/action', async (req, res) => {
     // NEW: "mode" ని కూడా తీసుకుంటున్నాం
     const { phone, action, amount, mode } = req.body; 
@@ -122,12 +123,12 @@ app.post('/api/action', async (req, res) => {
         customer.paidWeeks += 1;
         customer.lastPaidDate = new Date().toLocaleDateString('en-GB'); 
         
-        // NEW FEATURE: పేమెంట్ మోడ్ ని హిస్టరీలో సేవ్ చేయడం
+        // NEW FEATURE: పేమెంట్ మోడ్ ని హిస్టరీలో సేవ్ చేయడం (Advance, Topup, Cash, Online)
         customer.history.push({
             week: customer.paidWeeks, 
             amount: customer.requestAmount || amount, 
             date: customer.lastPaidDate,
-            mode: mode || 'online' // (e.g., Cash, GPay)
+            mode: mode || 'online' 
         });
 
         // SMART BUSINESS LOGIC: డబ్బులు కట్టేశాడు కాబట్టి పెనాల్టీ జీరో చేయాలి
@@ -144,10 +145,15 @@ app.post('/api/action', async (req, res) => {
         customer.penalty = 0;
         
     } else if (action === 'settle_loan') {
+        // ONE-CLICK SETTLEMENT & TOP-UP CLOSURE LOGIC
         customer.pendingApproval = false;
         customer.paidWeeks = Number(customer.duration); 
         customer.history.push({ week: 'SETTLED', amount: amount, date: new Date().toLocaleDateString('en-GB'), mode: mode || 'settlement' });
         customer.penalty = 0;
+        
+    } else if (action === 'update_pin') {
+        // PIN RECOVERY LOGIC
+        customer.password = req.body.password;
         
     } else if (action === 'edit_customer') {
         customer.name = req.body.editName || customer.name;
@@ -161,6 +167,7 @@ app.post('/api/action', async (req, res) => {
         customer.village = req.body.editVillage || customer.village || '';
         customer.address = req.body.editAddress || customer.address || '';
         customer.aadhaar = req.body.editAadhaar || customer.aadhaar || '';
+        customer.guarantor = req.body.editGuarantor || customer.guarantor || '';
     }
 
     await saveDB(db);
