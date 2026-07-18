@@ -75,12 +75,12 @@ app.post('/api/customers', async (req, res) => {
         return res.json({ success: false, message: "Phone number already exists!" });
     }
     
-    // NEW FEATURES ADDED: పాతవి పోకుండా కొత్తవి సేవ్ చేస్తున్నాం
-    newCustomer.customerId = 'JF-' + Math.floor(1000 + Math.random() * 9000); // Unique ID Generate
+    // పాతవి పోకుండా కొత్త ఫీచర్స్ సేవ్ చేస్తున్నాం (Guarantor తో సహా)
+    newCustomer.customerId = 'JF-' + Math.floor(1000 + Math.random() * 9000); 
     newCustomer.village = newCustomer.village || '';
     newCustomer.address = newCustomer.address || '';
     newCustomer.aadhaar = newCustomer.aadhaar || '';
-    newCustomer.guarantor = newCustomer.guarantor || ''; // GUARANTOR FEATURE
+    newCustomer.guarantor = newCustomer.guarantor || ''; 
     
     newCustomer.paidWeeks = 0;
     newCustomer.penalty = 0;
@@ -94,10 +94,10 @@ app.post('/api/customers', async (req, res) => {
     res.json({ success: true, message: "Account Created!" });
 });
 
-// 4. యాక్షన్స్ (Approve, Reject, Delete, Edit, Penalty, PIN Update, Settle)
+// 4. యాక్షన్స్ (Approve, Reject, Delete, Edit, Penalty, PIN Update, Settle, UTR Tracking)
 app.post('/api/action', async (req, res) => {
-    // NEW: "mode" ని కూడా తీసుకుంటున్నాం
-    const { phone, action, amount, mode } = req.body; 
+    // NEW: "mode" మరియు "utr" ని కూడా రిక్వెస్ట్ నుంచి తీసుకుంటున్నాం
+    const { phone, action, amount, mode, utr } = req.body; 
     let db = await getDB();
     
     // కస్టమర్ డిలీట్
@@ -117,38 +117,48 @@ app.post('/api/action', async (req, res) => {
     if (action === 'request_payment') {
         customer.pendingApproval = true;
         customer.requestAmount = amount;
+        // NEW: కస్టమర్ కొట్టిన UTR నెంబర్ టెంపరరీగా సేవ్ అవుతుంది
+        customer.paymentUtr = utr || 'Not Provided';
         
     } else if (action === 'approve_payment') {
         customer.pendingApproval = false;
         customer.paidWeeks += 1;
         customer.lastPaidDate = new Date().toLocaleDateString('en-GB'); 
         
-        // NEW FEATURE: పేమెంట్ మోడ్ ని హిస్టరీలో సేవ్ చేయడం (Advance, Topup, Cash, Online)
+        // NEW FEATURE: పేమెంట్ మోడ్ మరియు UTR నెంబర్ ని హిస్టరీలో పక్కాగా సేవ్ చేయడం
         customer.history.push({
             week: customer.paidWeeks, 
             amount: customer.requestAmount || amount, 
             date: customer.lastPaidDate,
-            mode: mode || 'online' 
+            mode: mode || 'online',
+            utr: customer.paymentUtr || '' 
         });
 
         // SMART BUSINESS LOGIC: డబ్బులు కట్టేశాడు కాబట్టి పెనాల్టీ జీరో చేయాలి
         customer.penalty = 0; 
+        customer.paymentUtr = ''; // అప్రూవ్ అయ్యాక క్లియర్ చేయడం
         
     } else if (action === 'reject_payment') {
         customer.pendingApproval = false;
         customer.requestAmount = 0;
+        customer.paymentUtr = '';
         
     } else if (action === 'add_penalty') {
-        customer.penalty += Number(amount); // పెనాల్టీ ప్లస్ అవుతుంది
+        customer.penalty += Number(amount); 
         
     } else if (action === 'waive_penalty') {
-        customer.penalty = 0;
+        customer.penalty = 0; 
         
     } else if (action === 'settle_loan') {
         // ONE-CLICK SETTLEMENT & TOP-UP CLOSURE LOGIC
         customer.pendingApproval = false;
         customer.paidWeeks = Number(customer.duration); 
-        customer.history.push({ week: 'SETTLED', amount: amount, date: new Date().toLocaleDateString('en-GB'), mode: mode || 'settlement' });
+        customer.history.push({ 
+            week: 'SETTLED', 
+            amount: amount, 
+            date: new Date().toLocaleDateString('en-GB'), 
+            mode: mode || 'settlement' 
+        });
         customer.penalty = 0;
         
     } else if (action === 'update_pin') {
@@ -163,7 +173,6 @@ app.post('/api/action', async (req, res) => {
         customer.nextDueDate = req.body.editNextDue || customer.nextDueDate || '';
         customer.notes = req.body.editNotes || customer.notes || '';
         
-        // NEW FIELDS IN EDIT: ఎడిట్ లో కూడా ఈ డీటెయిల్స్ సేవ్ అవుతాయి
         customer.village = req.body.editVillage || customer.village || '';
         customer.address = req.body.editAddress || customer.address || '';
         customer.aadhaar = req.body.editAadhaar || customer.aadhaar || '';
