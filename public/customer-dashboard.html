@@ -3,280 +3,365 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Loan App - Jessica Finance</title>
+    <title>Customer Portal - Jessica Finance</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --primary: #1e3a8a; --secondary: #3b82f6; --success: #10b981; --bg: #f8fafc; }
-        body { background-color: var(--bg); font-family: 'Segoe UI', sans-serif; padding-bottom: 80px; transition: background 0.3s, color 0.3s; }
+        /* CORPORATE BANKING THEME (HDFC STYLE) */
+        :root { 
+            --primary: #004C8F; /* HDFC Blue */
+            --secondary: #ED232A; /* HDFC Red */
+            --success: #27AE60; 
+            --warning: #F39C12;
+            --bg: #F4F5F7; 
+            --card-border: #E0E4E9;
+            --text-dark: #2C3E50;
+        }
+
+        body { 
+            background-color: var(--bg); 
+            font-family: 'Open Sans', sans-serif; 
+            padding-bottom: 80px; 
+            transition: background 0.3s, color 0.3s; 
+            color: var(--text-dark);
+        }
         
-        body.dark-mode { background-color: #121212; color: #f1f5f9; }
-        body.dark-mode .app-card, body.dark-mode .info-box, body.dark-mode .history-table { background: #1e1e1e; border-color: #333; color: white; }
+        /* Dark Mode Configuration */
+        body.dark-mode { background-color: #121212; color: #E0E4E9; }
+        body.dark-mode .app-card, body.dark-mode .info-box, body.dark-mode .history-table { background: #1E1E1E; border-color: #333; color: white; }
         body.dark-mode .grid-item span { color: #ccc; }
         body.dark-mode .text-dark { color: #f8fafc !important; }
+        body.dark-mode .bg-light { background-color: #2A2A2A !important; }
 
-        .app-header { background: var(--primary); color: white; padding: 20px 20px 60px 20px; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(30, 58, 138, 0.2); }
-        .profile-pic { width: 50px; height: 50px; background: white; color: var(--primary); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 22px; font-weight: bold; border: 2px solid #93c5fd; position: relative;}
-        
-        .app-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-top: -35px; position: relative; z-index: 10; margin-bottom: 20px; border: 1px solid #f1f5f9; transition: 0.3s;}
-        .card-normal { margin-top: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
-        .info-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center; transition: 0.3s; }
-        
-        .tier-badge { font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 12px; background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; display: inline-block;}
-        .tier-gold { background: #fef08a; color: #92400e; border-color: #fde047; }
-        .tier-danger { background: #fee2e2; color: #b91c1c; border-color: #fecaca; }
+        /* Header UI */
+        .app-header { 
+            background: linear-gradient(135deg, var(--primary), #003666); 
+            color: white; 
+            padding: 25px 20px 65px 20px; 
+            border-bottom: 5px solid var(--secondary);
+            border-radius: 0 0 20px 20px; 
+            box-shadow: 0 4px 15px rgba(0, 76, 143, 0.3); 
+        }
 
-        .trust-meter { height: 6px; background: #e2e8f0; border-radius: 5px; width: 100px; margin-top: 5px; overflow: hidden; }
+        .profile-pic { 
+            width: 55px; height: 55px; 
+            background: white; color: var(--primary); 
+            border-radius: 50%; 
+            display: flex; justify-content: center; align-items: center; 
+            font-size: 24px; font-weight: 800; 
+            border: 3px solid #BDC3C7; 
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* Main Cards */
+        .app-card { 
+            background: white; 
+            border-radius: 8px; 
+            padding: 20px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            margin-top: -40px; 
+            position: relative; 
+            z-index: 10; 
+            margin-bottom: 15px; 
+            border: 1px solid var(--card-border); 
+            transition: 0.3s;
+        }
+
+        .card-normal { margin-top: 0; box-shadow: 0 1px 5px rgba(0,0,0,0.03); }
+        
+        .info-box { 
+            background: #FAFBFC; 
+            border: 1px solid var(--card-border); 
+            border-radius: 6px; 
+            padding: 12px; 
+            text-align: center; 
+            transition: 0.3s; 
+        }
+        
+        .tier-badge { 
+            font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; 
+            background: #EAF2F8; color: var(--primary); border: 1px solid #D4E6F1; display: inline-block;
+        }
+        .tier-gold { background: #FEF9E7; color: #D35400; border-color: #FAD7A1; }
+        .tier-danger { background: #FDEDEC; color: #C0392B; border-color: #F5B7B1; }
+
+        .trust-meter { height: 6px; background: #EAEDED; border-radius: 3px; width: 100px; margin-top: 5px; overflow: hidden; }
         .trust-fill { height: 100%; width: 100%; background: var(--success); transition: 1s;}
 
+        /* Grid Icons for Services */
         .app-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px 10px; margin-top: 15px; }
         .grid-item { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; cursor: pointer; transition: 0.2s; }
-        .grid-item:hover { transform: translateY(-3px); }
-        .icon-circle { width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; transition: 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .grid-item span { font-size: 11px; font-weight: 700; color: #475569; line-height: 1.1; }
+        .grid-item:hover { transform: translateY(-2px); }
         
-        .ic-1 { background: #e0e7ff; color: #2563eb; } .ic-2 { background: #fef08a; color: #d97706; }
-        .ic-3 { background: #dcfce7; color: #059669; } .ic-4 { background: #fee2e2; color: #dc2626; }
-        .ic-5 { background: #f3e8ff; color: #4f46e5; } .ic-6 { background: #ffedd5; color: #ea580c; }
-        .ic-7 { background: #e0f2fe; color: #0284c7; } .ic-8 { background: #f1f5f9; color: #475569; }
+        .icon-circle { 
+            width: 45px; height: 45px; border-radius: 8px; 
+            display: flex; justify-content: center; align-items: center; 
+            font-size: 20px; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+        }
+        .grid-item span { font-size: 11px; font-weight: 700; color: #34495E; line-height: 1.1; }
+        
+        /* Corporate Icon Colors */
+        .ic-1 { background: #EAF2F8; color: #2980B9; } 
+        .ic-2 { background: #FEF9E7; color: #D35400; }
+        .ic-3 { background: #E8F8F5; color: #27AE60; } 
+        .ic-4 { background: #FDEDEC; color: #C0392B; }
+        .ic-5 { background: #F4ECF7; color: #8E44AD; } 
+        .ic-6 { background: #EAECEE; color: #2C3E50; }
+        .ic-7 { background: #EBF5FB; color: #2471A3; } 
+        .ic-8 { background: #FBEEEE; color: #E74C3C; }
 
-        .pay-btn-main { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 16px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);}
+        /* Pay Buttons */
+        .pay-btn-main { 
+            background: var(--primary); color: white; border: none; padding: 15px; 
+            border-radius: 6px; font-weight: 800; font-size: 15px; width: 100%; 
+            display: flex; align-items: center; justify-content: center; gap: 10px; 
+            transition: 0.2s; box-shadow: 0 4px 10px rgba(0, 76, 143, 0.2);
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
         .pay-btn-main:active { transform: scale(0.98); }
-        .pay-btn-custom { background: white; color: var(--primary); border: 2px solid var(--primary); font-weight: bold; padding: 12px; border-radius: 12px; width: 100%; margin-top: 10px; transition: 0.2s; }
-
-        .ticker { background: #fef3c7; color: #b45309; font-size: 12px; font-weight: 700; padding: 6px; text-align: center; border-bottom: 1px solid #fde68a;}
-        .promo-banner { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 15px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; cursor: pointer; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);}
-        .notice-banner { background: #e0f2fe; border-left: 4px solid #0284c7; color: #0369a1; padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 600; margin-bottom: 15px;}
         
-        .progress-bar-custom { height: 8px; border-radius: 10px; background: #e2e8f0; margin-top: 10px; overflow: hidden;}
+        .pay-btn-custom { 
+            background: white; color: var(--primary); border: 2px solid var(--primary); 
+            font-weight: 800; padding: 12px; border-radius: 6px; width: 100%; margin-top: 10px; 
+            transition: 0.2s; text-transform: uppercase;
+        }
+
+        .ticker { background: #FFF9C4; color: #B7950B; font-size: 12px; font-weight: 800; padding: 8px; text-align: center; border-bottom: 2px solid #F1C40F;}
+        .promo-banner { background: linear-gradient(135deg, #27AE60, #1E8449); color: white; padding: 15px; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; cursor: pointer; box-shadow: 0 2px 8px rgba(39, 174, 96, 0.2);}
+        .notice-banner { background: #EBF5FB; border-left: 4px solid var(--primary); color: var(--primary); padding: 12px; border-radius: 4px; font-size: 12px; font-weight: 700; margin-bottom: 15px;}
+        
+        .progress-bar-custom { height: 6px; border-radius: 3px; background: #EAEDED; margin-top: 10px; overflow: hidden;}
         .progress-fill { height: 100%; background: var(--secondary); transition: 1s; }
 
-        @media print { body * { visibility: hidden; } .print-area, .print-area * { visibility: visible; } .print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; } .app-grid, .pay-btn-main, .pay-btn-custom, .ticker { display: none !important; } }
+        @media print { body * { visibility: hidden; } .print-area, .print-area * { visibility: visible; } .print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 10px; } .app-grid, .pay-btn-main, .pay-btn-custom, .ticker { display: none !important; } }
     </style>
 </head>
 <body>
 
     <div class="ticker" id="tickerMsg">
-        <marquee behavior="scroll" direction="left" scrollamount="4">💡 PRO TIP: Pay your weekly EMI on time to earn Reward Coins, unlock Top-up Loans, and upgrade your Customer Tier to GOLD!</marquee>
+        <marquee behavior="scroll" direction="left" scrollamount="5">⚠️ NOTIFICATION: Pay your weekly EMI strictly on time to maintain a Good Trust Score. Avoid late payment penalties.</marquee>
     </div>
 
-    <!-- Login Screen -->
+    <!-- LOGIN SCREEN -->
     <div id="loginScreen" style="height: 100vh; display: flex; align-items: center; justify-content: center; background: white; padding: 20px;">
         <div style="width: 100%; max-width: 350px; text-align: center;">
-            <div style="background: #e0e7ff; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; color: var(--primary);">
-                <i class="fas fa-shield-alt fs-1"></i>
+            <div style="background: #EAF2F8; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; color: var(--primary);">
+                <i class="fas fa-university fs-1"></i>
             </div>
-            <h3 class="fw-bold mb-1" style="color: var(--primary);">Jessica Finance</h3>
-            <p class="text-muted small mb-4 fw-bold">Secure Customer Login</p>
+            <h3 class="fw-bold mb-1" style="color: var(--primary); font-weight: 900;">JESSICA FINANCE</h3>
+            <p class="text-muted small mb-4 fw-bold">Corporate Customer Portal</p>
             
-            <input type="tel" id="loginPhone" class="form-control mb-3 p-3 bg-light text-center fw-bold" placeholder="Mobile Number" style="border-radius:12px; font-size: 16px;">
-            <input type="password" id="loginPin" class="form-control mb-4 p-3 bg-light text-center fw-bold" placeholder="4-Digit PIN" style="border-radius:12px; font-size: 16px;">
+            <input type="tel" id="loginPhone" class="form-control mb-3 p-3 bg-light text-center fw-bold" placeholder="Registered Mobile Number" style="border-radius:6px; font-size: 14px; border: 1px solid #BDC3C7;">
+            <input type="password" id="loginPin" class="form-control mb-4 p-3 bg-light text-center fw-bold" placeholder="4-Digit Secure PIN" style="border-radius:6px; font-size: 14px; border: 1px solid #BDC3C7;">
             
-            <button class="btn btn-primary w-100 p-3 fw-bold shadow-sm" style="border-radius:12px; background: var(--primary); border: none;" onclick="customerLogin()">PROCEED <i class="fas fa-arrow-right ms-2"></i></button>
+            <button class="btn w-100 p-3 fw-bold shadow-sm text-white" style="border-radius:6px; background: var(--primary); font-size: 15px;" onclick="customerLogin()">SECURE LOGIN <i class="fas fa-lock ms-2"></i></button>
             <div id="loginLoading" style="display: none;" class="mt-3 text-primary"><i class="fas fa-circle-notch fa-spin fs-4"></i></div>
         </div>
     </div>
 
-    <!-- Main Dashboard -->
+    <!-- MAIN DASHBOARD -->
     <div id="dashboardScreen" style="display: none;">
         
         <div class="app-header d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center gap-3">
-                <div class="profile-pic shadow-sm">
+                <div class="profile-pic">
                     <i class="fas fa-user"></i>
-                    <i class="fas fa-star text-warning" id="goldStar" style="position: absolute; bottom: -5px; right: -5px; font-size: 16px; display: none;"></i>
+                    <i class="fas fa-shield-alt text-success" id="goldStar" style="position: absolute; bottom: -5px; right: -5px; font-size: 14px; display: none; background: white; border-radius: 50%;"></i>
                 </div>
                 <div>
-                    <h5 class="fw-bold mb-0" id="cName">Customer Name</h5>
+                    <h5 class="fw-bold mb-0" id="cName" style="font-size: 18px; text-transform: uppercase;">Customer Name</h5>
                     <div class="d-flex gap-2 align-items-center mt-1">
-                        <span style="font-size: 11px; opacity: 0.8; font-weight: 600;">ID: <span id="cId">JF-XXXX</span></span>
-                        <span class="tier-badge" id="cTier">Bronze Member</span>
+                        <span style="font-size: 11px; font-weight: 700;">ACC ID: <span id="cId">JF-XXXX</span></span>
+                        <span class="tier-badge" id="cTier">Standard</span>
                     </div>
                 </div>
             </div>
             <div class="d-flex gap-3 align-items-center">
-                <i class="fas fa-moon fs-5" id="darkModeIcon" onclick="toggleCustomerDarkMode()" style="cursor: pointer;"></i>
-                <i class="fas fa-power-off fs-5 text-danger bg-white p-2 rounded-circle shadow-sm" onclick="logoutCustomer()" style="cursor: pointer;"></i>
+                <i class="fas fa-moon fs-5" id="darkModeIcon" onclick="toggleCustomerDarkMode()" style="cursor: pointer; color: #BDC3C7;"></i>
+                <i class="fas fa-sign-out-alt fs-5 text-white" onclick="logoutCustomer()" style="cursor: pointer; background: var(--secondary); padding: 8px; border-radius: 4px;"></i>
             </div>
         </div>
 
         <div class="container print-area">
+            
+            <!-- OVERVIEW CARD -->
             <div class="app-card">
                 
                 <div id="adminNoticeBanner" class="notice-banner" style="display: none;">
-                    <i class="fas fa-bell me-2"></i> <span id="adminNoticeText"></span>
+                    <i class="fas fa-info-circle me-2"></i> <span id="adminNoticeText"></span>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="d-flex justify-content-between align-items-start mb-3 border-bottom pb-3">
                     <div>
-                        <div style="font-size: 11px; color: #64748b; font-weight: bold; text-transform: uppercase;">Outstanding Balance</div>
+                        <div style="font-size: 10px; color: #7F8C8D; font-weight: 800; text-transform: uppercase;">Outstanding Balance</div>
                         <h2 class="fw-bold mb-0 mt-1" style="color: var(--primary);" id="cPendingBal">₹0</h2>
-                        <div class="small fw-bold text-muted mt-1">Principal: <span id="dispPrincipal">₹0</span></div>
+                        <div style="font-size: 11px; font-weight: 700; color: #34495E; mt-1">Sanctioned: <span id="dispPrincipal">₹0</span></div>
                     </div>
                     <div class="text-end">
-                        <div style="font-size: 10px; font-weight: bold; color: #64748b; text-transform: uppercase;">Trust Score</div>
+                        <div style="font-size: 10px; font-weight: 800; color: #7F8C8D; text-transform: uppercase;">CIBIL / Trust</div>
                         <div class="trust-meter"><div class="trust-fill" id="trustScoreBar"></div></div>
-                        <div style="font-size: 11px; font-weight: bold; color: var(--success); margin-top: 2px;" id="trustScoreText">Good</div>
+                        <div style="font-size: 11px; font-weight: 800; color: var(--success); margin-top: 2px;" id="trustScoreText">Good</div>
                     </div>
                 </div>
 
-                <!-- Offers -->
+                <!-- Offers (TopUp / PreClose) -->
                 <div class="promo-banner" id="topUpBanner" style="display: none;" onclick="sendWhatsAppIntent('Hi Admin, I want to apply for my Top-Up Loan.')">
-                    <div><i class="fas fa-gift fs-5 mb-1"></i><br><b>Top-Up Available</b></div>
-                    <button class="btn btn-sm btn-light fw-bold text-success px-3 rounded-pill">Apply</button>
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="fas fa-gift fs-3"></i>
+                        <div><div style="font-size:10px;">Eligible for Renewal</div><b style="font-size:14px;">Top-Up Available</b></div>
+                    </div>
+                    <button class="btn btn-sm bg-white fw-bold text-success" style="border-radius: 4px;">Apply</button>
                 </div>
-                <div class="promo-banner" id="preCloseBanner" style="display: none; background: linear-gradient(135deg, #f59e0b, #d97706);" onclick="sendWhatsAppIntent('Hi Admin, I want to Pre-Close my entire loan today for a discount.')">
-                    <div><i class="fas fa-tags fs-5 mb-1"></i><br><b>Pre-Close Offer</b></div>
+                <div class="promo-banner" id="preCloseBanner" style="display: none; background: linear-gradient(135deg, #D35400, #E67E22);" onclick="sendWhatsAppIntent('Hi Admin, I want to Pre-Close my entire loan today for a discount.')">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="fas fa-tags fs-3"></i>
+                        <div><div style="font-size:10px;">Special Discount</div><b style="font-size:14px;">Pre-Close Offer</b></div>
+                    </div>
                     <i class="fas fa-chevron-right text-white"></i>
                 </div>
 
-                <!-- Progress -->
+                <!-- Progress Details -->
                 <div class="row g-2 mb-3">
-                    <div class="col-4"><div class="info-box"><div style="font-size: 10px; color: #64748b; font-weight: 800;">TOTAL WKS</div><div class="fw-bold fs-5 text-dark" id="cTotalWeeks">0</div></div></div>
-                    <div class="col-4"><div class="info-box"><div style="font-size: 10px; color: #10b981; font-weight: 800;">PAID WKS</div><div class="fw-bold fs-5 text-success" id="cPaidWeeks">0</div></div></div>
-                    <div class="col-4"><div class="info-box"><div style="font-size: 10px; color: #dc2626; font-weight: 800;">PENDING</div><div class="fw-bold fs-5 text-danger" id="cPendingWeeks">0</div></div></div>
+                    <div class="col-4"><div class="info-box"><div style="font-size: 9px; color: #7F8C8D; font-weight: 800;">TOTAL WKS</div><div class="fw-bold fs-5 text-dark" id="cTotalWeeks">0</div></div></div>
+                    <div class="col-4"><div class="info-box"><div style="font-size: 9px; color: var(--success); font-weight: 800;">PAID WKS</div><div class="fw-bold fs-5 text-success" id="cPaidWeeks">0</div></div></div>
+                    <div class="col-4"><div class="info-box"><div style="font-size: 9px; color: var(--secondary); font-weight: 800;">PENDING</div><div class="fw-bold fs-5 text-danger" id="cPendingWeeks">0</div></div></div>
                 </div>
 
                 <div class="mb-4">
-                    <div class="d-flex justify-content-between" style="font-size: 11px; font-weight: bold; color: #64748b;">
-                        <span>Recovery Progress</span> <span id="progressText" class="text-primary">0%</span>
+                    <div class="d-flex justify-content-between" style="font-size: 11px; font-weight: 800; color: #7F8C8D;">
+                        <span>Recovery Progress</span> <span id="progressText" style="color: var(--primary);">0%</span>
                     </div>
                     <div class="progress-bar-custom"><div class="progress-fill" id="loanProgress"></div></div>
                 </div>
 
-                <!-- Payment Section -->
-                <div id="loanClearedBanner" style="display: none; background: #dcfce7; color: #166534; padding: 15px; border-radius: 12px; text-align: center; font-weight: bold; border: 1px solid #86efac;">
-                    <i class="fas fa-check-circle fs-3 mb-2"></i><br>Congratulations! Loan Cleared.
+                <!-- PAYMENT ACTION SECTION -->
+                <div id="loanClearedBanner" style="display: none; background: #E8F8F5; color: #1E8449; padding: 15px; border-radius: 6px; text-align: center; border: 1px solid #A9DFBF;">
+                    <i class="fas fa-check-circle fs-2 mb-2"></i><br><b style="font-size: 14px;">Account Settled & Closed</b><br><span style="font-size:11px;">Thank you for banking with us.</span>
                 </div>
 
                 <div id="paymentSection">
-                    <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-3 mb-3 border">
+                    <div class="d-flex justify-content-between align-items-center p-3 rounded-2 mb-3" style="background: #F8F9FA; border: 1px solid #EAEDED;">
                         <div>
-                            <div style="font-size: 11px; color: #64748b; font-weight: bold;">WEEKLY EMI</div>
-                            <div class="fw-bold fs-4 text-dark" id="cEmi">₹0</div>
-                            <div style="font-size: 10px; color: #ef4444; font-weight: bold; display: none;" id="cPenaltyBox">+ <span id="cPenalty">₹0</span> Penalty added</div>
+                            <div style="font-size: 10px; color: #7F8C8D; font-weight: 800;">WEEKLY EMI DUE</div>
+                            <div class="fw-bold fs-3 text-dark" id="cEmi">₹0</div>
+                            <div style="font-size: 10px; color: var(--secondary); font-weight: 800; display: none;" id="cPenaltyBox">+ <span id="cPenalty">₹0</span> Late Penalty</div>
                         </div>
                         <div class="text-end">
-                            <div style="font-size: 11px; color: #64748b; font-weight: bold;">DUE DATE</div>
-                            <div class="fw-bold fs-6 text-dark" id="nextDueDate">Loading...</div>
-                            <div style="font-size: 10px; color: #d97706; font-weight: bold;" id="countdownText">...</div>
+                            <div style="font-size: 10px; color: #7F8C8D; font-weight: 800;">PAYMENT DUE DATE</div>
+                            <div class="fw-bold fs-5 text-dark" id="nextDueDate">Loading...</div>
+                            <div style="font-size: 11px; font-weight: 800;" id="countdownText">...</div>
                         </div>
                     </div>
 
-                    <button class="pay-btn-main" onclick="openUPIApp('any')"><i class="fas fa-qrcode"></i> PAY ONLINE NOW</button>
-                    <button class="pay-btn-custom" onclick="customPartialPay()">Pay Custom Amount</button>
-                </div>
-
-                <!-- UTR Input Box -->
-                <div id="confirmSection" style="display: none; border: 2px dashed var(--success); padding: 15px; border-radius: 12px; background: #f0fdf4; margin-top: 15px; text-align: center;">
-                    <p style="font-size: 13px; color: #065f46; font-weight: bold;">Enter UTR / Ref No. after payment</p>
-                    <input type="text" id="utrInput" class="form-control mb-2 text-center" placeholder="12-digit UTR Number" style="border-radius: 8px;">
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-success w-75 fw-bold" onclick="sendAdminRequest()">Submit</button>
-                        <button class="btn btn-light border w-25 fw-bold" onclick="cancelPaymentProcess()">Cancel</button>
-                    </div>
-                </div>
-
-                <div id="pendingStatus" class="text-center fw-bold mt-3" style="display: none; font-size: 13px; color: #b45309; background: #fef3c7; padding: 15px; border-radius: 12px;">
-                    <i class="fas fa-circle-notch fa-spin me-2 fs-5"></i> Payment verifying by Admin...
+                    <!-- Direct Pay Buttons (NO UTR REQUIRED) -->
+                    <button class="pay-btn-main" onclick="triggerUPIApp('any')"><i class="fas fa-rupee-sign"></i> PAY EMI SECURELY</button>
+                    <button class="pay-btn-custom" onclick="customPartialPay()"><i class="fas fa-edit"></i> Pay Custom Amount</button>
                 </div>
             </div>
 
-            <!-- Quick Action Grid -->
+            <!-- QUICK SERVICES GRID -->
             <div class="app-card card-normal">
-                <h6 class="fw-bold mb-3" style="font-size: 14px; color: #475569;">Quick Services</h6>
+                <h6 class="fw-bold mb-3" style="font-size: 13px; color: #34495E; text-transform: uppercase;">Service Requests</h6>
                 <div class="app-grid">
-                    <div class="grid-item" onclick="window.print()"><div class="icon-circle ic-1"><i class="fas fa-file-pdf"></i></div><span>Statement</span></div>
-                    <div class="grid-item" onclick="sendWhatsAppIntent('Hi Admin, I need a 1-day Grace Period for my EMI payment. Please approve.')"><div class="icon-circle ic-2"><i class="fas fa-hourglass-half"></i></div><span>Grace Time</span></div>
+                    <div class="grid-item" onclick="window.print()"><div class="icon-circle ic-1"><i class="fas fa-file-invoice"></i></div><span>Ledger</span></div>
+                    <div class="grid-item" onclick="viewIdCard()"><div class="icon-circle ic-7"><i class="fas fa-id-card-alt"></i></div><span>ID Card</span></div>
                     <div class="grid-item" data-bs-toggle="modal" data-bs-target="#calculatorModal"><div class="icon-circle ic-3"><i class="fas fa-calculator"></i></div><span>EMI Calc</span></div>
-                    <div class="grid-item" onclick="syncCalendar()"><div class="icon-circle ic-4"><i class="fas fa-calendar-plus"></i></div><span>Cal Sync</span></div>
+                    <div class="grid-item" onclick="viewAgreement()"><div class="icon-circle ic-6"><i class="fas fa-file-signature"></i></div><span>Agreement</span></div>
                     
-                    <div class="grid-item" onclick="sendWhatsAppIntent('Hi Admin, I want to update my Address/KYC documents.')"><div class="icon-circle ic-5"><i class="fas fa-id-card"></i></div><span>Update KYC</span></div>
-                    <div class="grid-item" onclick="sendWhatsAppIntent('Hi Admin, I want to securely change my Login PIN.')"><div class="icon-circle ic-8"><i class="fas fa-key"></i></div><span>Reset PIN</span></div>
-                    <div class="grid-item" data-bs-toggle="modal" data-bs-target="#autopayModal"><div class="icon-circle ic-7"><i class="fas fa-sync-alt"></i></div><span>Auto-Pay</span></div>
-                    <div class="grid-item" onclick="sendWhatsAppIntent('Hi Admin, I am facing an issue / I have a complaint.')"><div class="icon-circle ic-6"><i class="fas fa-headset"></i></div><span>Support</span></div>
+                    <div class="grid-item" onclick="sendWhatsAppIntent('Hi Admin, I need a 1-day Grace Period for my payment.')"><div class="icon-circle ic-2"><i class="fas fa-hourglass-half"></i></div><span>Grace Time</span></div>
+                    <div class="grid-item" data-bs-toggle="modal" data-bs-target="#autopayModal"><div class="icon-circle ic-5"><i class="fas fa-sync-alt"></i></div><span>Auto-Pay</span></div>
+                    <div class="grid-item" onclick="sendWhatsAppIntent('Hi Admin, I want to change my PIN / Update Address.')"><div class="icon-circle ic-8"><i class="fas fa-user-cog"></i></div><span>Settings</span></div>
+                    <div class="grid-item" onclick="sendWhatsAppIntent('URGENT: I need support regarding my loan account.')"><div class="icon-circle ic-4"><i class="fas fa-headset"></i></div><span>Support</span></div>
                 </div>
             </div>
 
-            <!-- Payment History -->
+            <!-- PAYMENT HISTORY -->
             <div class="app-card card-normal">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold mb-0" style="font-size: 14px; color: #475569;">Recent Transactions</h6>
-                    <span class="badge bg-light text-dark border" style="font-size: 10px;">View All</span>
+                    <h6 class="fw-bold mb-0" style="font-size: 13px; color: #34495E; text-transform: uppercase;">Recent Transactions</h6>
                 </div>
                 <div class="table-responsive">
-                    <table class="table history-table table-borderless">
+                    <table class="table history-table table-borderless align-middle">
                         <tbody id="historyBody"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Refer -->
-            <div class="app-card card-normal text-center" style="background: #eff6ff; border: 1px dashed #93c5fd;" onclick="copyReferral()">
-                <div style="font-size: 12px; font-weight: bold; color: #1e3a8a; margin-bottom: 5px;"><i class="fas fa-coins text-warning me-1"></i> Reward Coins: <span id="cCoins">0</span></div>
-                <div style="font-size: 11px; color: #475569;">Share code to earn: <b id="cReferral" class="text-primary">REF-0000</b> (Tap to copy)</div>
+            <!-- REWARD COINS -->
+            <div class="app-card card-normal text-center" style="background: #FFF9F9; border: 1px dashed #F5B7B1;" onclick="copyReferral()">
+                <div style="font-size: 12px; font-weight: 800; color: var(--secondary); margin-bottom: 5px;"><i class="fas fa-gift me-1"></i> Reward Coins: <span id="cCoins" class="text-dark fs-5">0</span></div>
+                <div style="font-size: 10px; color: #7F8C8D; font-weight: 700;">Share Referral Code: <b id="cReferral" style="color: var(--primary);">REF-0000</b> (Tap to copy)</div>
             </div>
 
-            <!-- Footer -->
-            <div class="text-center mt-4 mb-2 opacity-50" style="font-size: 10px; font-weight: bold;">
-                <div id="cVillage">Location</div>
-                Guarantor: <span id="cGuarantor">None</span>
+            <!-- FOOTER INFO -->
+            <div class="text-center mt-4 mb-2" style="font-size: 10px; font-weight: 700; color: #95A5A6;">
+                <div id="cVillage" style="text-transform: uppercase;">Location</div>
+                Guarantor: <span id="cGuarantor">None</span><br>
+                <span style="font-size: 8px;">© Jessica Finance Management. All rights reserved.</span>
             </div>
 
         </div>
     </div>
 
-    <!-- Modals -->
+    <!-- MODALS SECTION -->
+    
+    <!-- EMI Calculator Modal -->
     <div class="modal fade" id="calculatorModal" tabindex="-1">
         <div class="modal-dialog modal-sm modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
-                <div class="modal-header bg-primary text-white" style="border-radius: 16px 16px 0 0;">
-                    <h6 class="modal-title fw-bold">Plan Next Loan</h6>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="modal-content border-0" style="border-radius: 8px;">
+                <div class="modal-header" style="background: var(--primary); color: white; border-radius: 8px 8px 0 0; padding: 12px 15px;">
+                    <h6 class="modal-title fw-bold m-0"><i class="fas fa-calculator me-2"></i> Future Loan Plan</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" style="font-size: 10px;"></button>
                 </div>
-                <div class="modal-body p-4 text-center">
-                    <input type="number" id="calcPrincipal" class="form-control text-center mb-2 fw-bold" placeholder="Amount (₹)" oninput="runCalculator()" style="background: #f8fafc;">
+                <div class="modal-body p-4 text-center bg-light">
+                    <input type="number" id="calcPrincipal" class="form-control text-center mb-3 fw-bold" placeholder="Principal (₹)" oninput="runCalculator()" style="border-radius: 4px;">
                     <div class="d-flex gap-2 mb-3">
-                        <input type="number" id="calcInterest" class="form-control text-center fw-bold" value="20" placeholder="Int %" readonly style="background: #f8fafc;">
-                        <input type="number" id="calcWeeks" class="form-control text-center fw-bold" value="10" placeholder="Weeks" oninput="runCalculator()" style="background: #f8fafc;">
+                        <input type="number" id="calcInterest" class="form-control text-center fw-bold" value="20" placeholder="Int %" readonly style="border-radius: 4px; background:#EAEDED;">
+                        <input type="number" id="calcWeeks" class="form-control text-center fw-bold" value="10" placeholder="Weeks" oninput="runCalculator()" style="border-radius: 4px;">
                     </div>
-                    <div class="p-3 bg-light rounded-3 border">
-                        <div class="small text-muted fw-bold">Weekly EMI</div>
-                        <h4 class="text-primary fw-bold my-1" id="calcResult">₹0</h4>
+                    <div class="p-3 bg-white rounded border border-primary text-center">
+                        <div style="font-size: 10px; font-weight: 800; color: #7F8C8D;">WEEKLY EMI</div>
+                        <h3 class="fw-bold m-0" style="color: var(--primary);" id="calcResult">₹0</h3>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Auto-Pay Modal -->
     <div class="modal fade" id="autopayModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+            <div class="modal-content border-0" style="border-radius: 8px;">
                 <div class="modal-body p-4 text-center">
-                    <div style="background: #e0f2fe; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #0284c7; font-size: 24px; margin: 0 auto 15px auto;">
+                    <div style="background: #EBF5FB; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #2980B9; font-size: 24px; margin: 0 auto 15px auto;">
                         <i class="fas fa-sync-alt"></i>
                     </div>
-                    <h5 class="fw-bold">UPI Auto-Pay</h5>
-                    <p class="small text-muted mb-4">Never miss a payment! Set up auto-deduction from your Bank/UPI. Request admin for the secure mandate link.</p>
-                    <button class="btn btn-primary w-100 fw-bold rounded-pill" onclick="sendWhatsAppIntent('Hi Admin, I want to set up UPI Auto-Pay. Send link.')">Request Auto-Pay Link</button>
+                    <h5 class="fw-bold" style="color: var(--primary);">Secure Auto-Pay</h5>
+                    <p class="small text-muted mb-4 fw-bold">Avoid late fees! Request Admin to send a secure UPI Mandate link to setup automatic weekly deductions.</p>
+                    <button class="btn text-white w-100 fw-bold py-2" style="background: var(--primary); border-radius: 4px;" onclick="sendWhatsAppIntent('Hi Admin, I want to set up UPI Auto-Pay. Please send the PhonePe Mandate link.')">Request Mandate Link</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- JAVASCRIPT ENGINE (FULLY EXPANDED) -->
     <script>
         const formatMoney = (amount) => '₹' + Number(amount).toLocaleString('en-IN');
         let currentCustomer = null;
         let emiAmount = 0;
         
-        // --- ⚙️ UPI & WHATSAPP SETTINGS (CRITICAL FIX) ---
-        // వాట్సాప్ కి "91" ఉండాలి, కానీ UPI కి "91" ఉండకూడదు! ఇక్కడ పక్కాగా వేరు చేశాను.
+        // --- ⚙️ UPI & WHATSAPP SETTINGS ---
         const adminWhatsApp = "917569532152"; 
-        const adminUPI_ID = "7569532152@ybl"; // మీ ఫోన్ పే/గూగుల్ పే లో ఉండే కరెక్ట్ UPI ID ని ఇక్కడ ఇచ్చుకోవచ్చు (ఉదాహరణకు @ibl, @paytm)
+        const adminUPI_ID = "7569532152@ybl"; 
         const businessName = "Jessica Finance"; 
 
-        window.onload = () => {
+        // Auto Login Check
+        window.onload = function() {
             let session = localStorage.getItem('loggedInCustomer');
             if(session) {
                 let creds = JSON.parse(session);
@@ -288,17 +373,25 @@
             }
         };
 
+        // Login Logic
         async function customerLogin() {
             let phone = document.getElementById('loginPhone').value;
             let pin = document.getElementById('loginPin').value;
-            if(!phone || !pin) { alert("Enter Phone & PIN"); return; }
+            
+            if(!phone || !pin) { 
+                alert("Please enter both Phone & PIN"); 
+                return; 
+            }
 
             document.getElementById('loginLoading').style.display = 'block';
+            
             try {
                 let res = await fetch('/api/login', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ userId: phone, password: pin })
                 });
+                
                 let data = await res.json();
                 document.getElementById('loginLoading').style.display = 'none';
 
@@ -308,15 +401,24 @@
                     document.getElementById('loginScreen').style.display = 'none';
                     document.getElementById('dashboardScreen').style.display = 'block';
                     updateUI();
-                } else { alert("Invalid Details!"); }
+                } else { 
+                    alert("Invalid Details! Please check ID and PIN."); 
+                }
             } catch(e) {
                 document.getElementById('loginLoading').style.display = 'none';
                 let fallback = localStorage.getItem('jf_offline_backup'); 
                 if(fallback) { 
                     let db = JSON.parse(fallback);
                     let cust = db.find(c => c.phone === phone && c.password === pin);
-                    if(cust) { currentCustomer = cust; document.getElementById('loginScreen').style.display = 'none'; document.getElementById('dashboardScreen').style.display = 'block'; updateUI(); }
-                } else { alert("Server error."); }
+                    if(cust) { 
+                        currentCustomer = cust; 
+                        document.getElementById('loginScreen').style.display = 'none'; 
+                        document.getElementById('dashboardScreen').style.display = 'block'; 
+                        updateUI(); 
+                    }
+                } else { 
+                    alert("Server error. Please try again."); 
+                }
             }
         }
 
@@ -325,15 +427,25 @@
             if(!session) return;
             let creds = JSON.parse(session);
             try {
-                let res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: creds.phone, password: creds.password }) });
+                let res = await fetch('/api/login', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ userId: creds.phone, password: creds.password }) 
+                });
                 let data = await res.json();
-                if(data.success && data.role === 'customer') { currentCustomer = data.customerData; updateUI(); }
-            } catch(e) {}
+                if(data.success && data.role === 'customer') { 
+                    currentCustomer = data.customerData; 
+                    updateUI(); 
+                }
+            } catch(e) {
+                console.log("Fetch failed, retaining UI state.");
+            }
         }
 
         function updateUI() {
             const cust = currentCustomer;
             
+            // Financial Calculations
             let principal = Number(cust.amount) || 0;
             let duration = Number(cust.duration) || 1;
             let baseEmi = Math.round((principal + (principal * 0.20)) / duration);
@@ -344,9 +456,10 @@
             let pendingWeeks = duration - paidWeeks;
             let pendBal = (pendingWeeks * baseEmi) + penalty;
 
+            // DOM Updates
             document.getElementById('cName').innerText = cust.name;
             document.getElementById('cId').innerText = cust.customerId || ('JF-' + cust.phone.slice(-4)); 
-            document.getElementById('cVillage').innerText = cust.village || 'No Location';
+            document.getElementById('cVillage').innerText = cust.village || 'Location N/A';
             document.getElementById('cGuarantor').innerText = cust.guarantor || 'None';
             
             document.getElementById('cTotalWeeks').innerText = duration;
@@ -358,34 +471,55 @@
             document.getElementById('cReferral').innerText = cust.referralCode || ('REF-' + cust.phone.slice(-5));
             document.getElementById('cCoins').innerText = paidWeeks * 50;
 
+            // Membership Tier Logic
             let tierEl = document.getElementById('cTier');
             document.getElementById('goldStar').style.display = 'none';
-            if(cust.notes && cust.notes.includes('🚫')) { tierEl.innerText = "Defaulter"; tierEl.className = "tier-badge tier-danger"; }
-            else if(paidWeeks >= 10 && principal >= 50000) { tierEl.innerText = "VIP Member"; tierEl.className = "tier-badge tier-gold"; document.getElementById('goldStar').style.display = 'block'; }
-            else if(paidWeeks >= 5) { tierEl.innerText = "Gold Member"; tierEl.className = "tier-badge tier-gold"; document.getElementById('goldStar').style.display = 'block';}
-            else if(paidWeeks >= 2) { tierEl.innerText = "Silver Member"; tierEl.className = "tier-badge"; }
-            else { tierEl.innerText = "Bronze Member"; tierEl.className = "tier-badge"; }
+            if(cust.notes && cust.notes.includes('🚫')) { 
+                tierEl.innerText = "Defaulter"; tierEl.className = "tier-badge tier-danger"; 
+            }
+            else if(paidWeeks >= 10 && principal >= 50000) { 
+                tierEl.innerText = "Corporate VIP"; tierEl.className = "tier-badge tier-gold"; document.getElementById('goldStar').style.display = 'block'; 
+            }
+            else if(paidWeeks >= 5) { 
+                tierEl.innerText = "Gold Member"; tierEl.className = "tier-badge tier-gold"; document.getElementById('goldStar').style.display = 'block';
+            }
+            else if(paidWeeks >= 2) { 
+                tierEl.innerText = "Silver Member"; tierEl.className = "tier-badge"; 
+            }
+            else { 
+                tierEl.innerText = "Standard"; tierEl.className = "tier-badge"; 
+            }
 
+            // Penalty Logic
             if (penalty > 0) {
                 document.getElementById('cPenaltyBox').style.display = 'block';
                 document.getElementById('cPenalty').innerText = formatMoney(penalty);
-            } else { document.getElementById('cPenaltyBox').style.display = 'none'; }
+            } else { 
+                document.getElementById('cPenaltyBox').style.display = 'none'; 
+            }
 
+            // Trust Score Logic
             let score = 500 + Math.floor((paidWeeks/duration)*300) - (penalty > 0 ? 100 : 0);
             score = Math.max(300, Math.min(900, score));
             let tBar = document.getElementById('trustScoreBar');
             let tText = document.getElementById('trustScoreText');
-            if (penalty > 0 || (cust.notes && cust.notes.includes('🚫'))) { tBar.style.width = '30%'; tBar.style.background = '#ef4444'; tText.innerText = score+' (Poor)'; tText.style.color = '#ef4444'; } 
-            else if (paidWeeks > 0) { tBar.style.width = Math.max(50, Math.min(100, (score-300)/6)) + '%'; tBar.style.background = '#10b981'; tText.innerText = score+' (Good)'; tText.style.color = '#10b981'; }
+            
+            if (penalty > 0 || (cust.notes && cust.notes.includes('🚫'))) { 
+                tBar.style.width = '30%'; tBar.style.background = 'var(--secondary)'; tText.innerText = score+' (Poor)'; tText.style.color = 'var(--secondary)'; 
+            } else if (paidWeeks > 0) { 
+                tBar.style.width = Math.max(50, Math.min(100, (score-300)/6)) + '%'; tBar.style.background = 'var(--success)'; tText.innerText = score+' (Good)'; tText.style.color = 'var(--success)'; 
+            }
 
+            // Progress Bar
             let prog = Math.round((paidWeeks / duration) * 100);
             setTimeout(() => { document.getElementById('loanProgress').style.width = prog + '%'; }, 300);
             document.getElementById('progressText').innerText = prog + '%';
             
+            // Banners Display
             document.getElementById('topUpBanner').style.display = (prog >= 60 && penalty === 0 && pendingWeeks > 0) ? 'flex' : 'none';
             document.getElementById('preCloseBanner').style.display = (prog > 0 && pendingWeeks > 0 && pendingWeeks <= 3) ? 'flex' : 'none';
 
-            // --- ⚙️ పాత డేట్ లాజిక్ (100% పక్కాగా రిస్టోర్ చేశాను) ---
+            // Date & Countdown Logic (Intact)
             let dueDate = null;
             if (cust.nextDueDate) {
                 if(cust.nextDueDate.includes('-')) {
@@ -420,97 +554,115 @@
                 
                 if (diffDays < 0) document.getElementById('countdownText').innerText = `(Overdue!)`;
                 else if (diffDays === 0) document.getElementById('countdownText').innerText = `(Today!)`;
-                else document.getElementById('countdownText').innerText = `(${diffDays}d left)`;
+                else document.getElementById('countdownText').innerText = `(${diffDays} days left)`;
                 document.getElementById('countdownText').className = diffDays <= 1 ? "text-danger" : "text-warning";
             } else {
                 document.getElementById('nextDueDate').innerText = 'Not Set';
                 document.getElementById('countdownText').innerText = '';
             }
-            // ----------------------------------------------------
 
+            // Notices
             let nBanner = document.getElementById('adminNoticeBanner');
-            if(cust.notes && cust.notes.includes("Notice:")) { nBanner.style.display = 'block'; document.getElementById('adminNoticeText').innerText = cust.notes.split("Notice:")[1].trim(); }
-            else { nBanner.style.display = 'none'; }
+            if(cust.notes && cust.notes.includes("Notice:")) { 
+                nBanner.style.display = 'block'; 
+                document.getElementById('adminNoticeText').innerText = cust.notes.split("Notice:")[1].trim(); 
+            } else { 
+                nBanner.style.display = 'none'; 
+            }
 
+            // Loan Status Check
             if(pendingWeeks <= 0) {
                 document.getElementById('loanClearedBanner').style.display = 'block';
                 document.getElementById('paymentSection').style.display = 'none';
-                document.getElementById('confirmSection').style.display = 'none';
-                document.getElementById('pendingStatus').style.display = 'none';
                 document.getElementById('preCloseBanner').style.display = 'none';
                 if(!localStorage.getItem('confetti')) { fireSuccessConfetti(); localStorage.setItem('confetti', '1'); }
             } else {
                 document.getElementById('loanClearedBanner').style.display = 'none';
-                if(cust.pendingApproval) {
-                    document.getElementById('paymentSection').style.display = 'none';
-                    document.getElementById('confirmSection').style.display = 'none';
-                    document.getElementById('pendingStatus').style.display = 'block';
-                } else {
-                    document.getElementById('paymentSection').style.display = 'block';
-                    document.getElementById('confirmSection').style.display = 'none';
-                    document.getElementById('pendingStatus').style.display = 'none';
-                }
+                document.getElementById('paymentSection').style.display = 'block';
             }
 
+            // History Render
             const tbody = document.getElementById('historyBody');
             tbody.innerHTML = '';
             if(cust.history && cust.history.length > 0) {
                 [...cust.history].reverse().forEach((r) => {
-                    let ic = r.mode === 'cash' ? `<div class="bg-success bg-opacity-10 text-success p-2 rounded-circle"><i class="fas fa-money-bill"></i></div>` : `<div class="bg-primary bg-opacity-10 text-primary p-2 rounded-circle"><i class="fas fa-mobile-alt"></i></div>`;
+                    let ic = r.mode === 'cash' 
+                        ? `<div style="background:#E8F8F5; color:#27AE60; padding:8px; border-radius:6px; font-size:14px;"><i class="fas fa-money-bill"></i></div>` 
+                        : `<div style="background:#EBF5FB; color:#2980B9; padding:8px; border-radius:6px; font-size:14px;"><i class="fas fa-mobile-alt"></i></div>`;
                     let share = encodeURIComponent(`Receipt: Paid ${formatMoney(r.amount)} on ${r.date} for Wk-${r.week}. - Jessica Finance`);
-                    tbody.innerHTML += `<tr>
-                        <td>${ic}</td>
-                        <td><div class="fw-bold text-dark">Wk-${r.week}</div><div style="font-size:10px; color:#64748b;">${r.date}</div></td>
-                        <td class="text-success fw-bold text-end align-middle">${formatMoney(r.amount)}</td>
-                        <td class="text-end align-middle"><a href="https://wa.me/?text=${share}" target="_blank" class="text-secondary"><i class="fas fa-share-alt"></i></a></td>
+                    
+                    tbody.innerHTML += `
+                    <tr style="border-bottom: 1px dashed #EAEDED;">
+                        <td style="padding: 10px 5px;">${ic}</td>
+                        <td style="padding: 10px 5px;">
+                            <div class="fw-bold text-dark" style="font-size:13px;">Wk-${r.week}</div>
+                            <div style="font-size:10px; color:#7F8C8D; font-weight:700;">${r.date}</div>
+                        </td>
+                        <td class="text-success fw-bold text-end align-middle" style="font-size:14px;">${formatMoney(r.amount)}</td>
+                        <td class="text-end align-middle">
+                            <a href="https://wa.me/?text=${share}" target="_blank" style="color:#BDC3C7; font-size:14px;"><i class="fas fa-share-alt"></i></a>
+                        </td>
                     </tr>`;
                 });
-            } else { tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3 small">No transactions yet.</td></tr>'; }
+            } else { 
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3" style="font-size:12px; font-weight:bold;">No transactions yet.</td></tr>'; 
+            }
         }
 
-        // UPI Trigger Function
-        function openUPIApp(appType) { triggerUPI(emiAmount, appType); }
+        // ==========================================
+        // 🚀 NEW SECURE PAYMENT LOGIC (NO UTR REQUIRED)
+        // ==========================================
+
+        function triggerUPIApp(appType) { 
+            initiateDirectPayment(emiAmount); 
+        }
+
         function customPartialPay() {
-            let amt = prompt(`Custom Amount (Pending is ₹${currentCustomer.amount}):`, emiAmount);
-            if(amt && !isNaN(amt) && Number(amt)>0) { emiAmount = Number(amt); triggerUPI(emiAmount, 'any'); }
+            let amt = prompt(`Custom Payment:\nOutstanding Balance is ₹${currentCustomer.amount}\n\nEnter the exact amount you want to pay today:`, emiAmount);
+            if(amt && !isNaN(amt) && Number(amt) > 0) { 
+                initiateDirectPayment(Number(amt)); 
+            }
         }
 
-        function triggerUPI(amt, appType) {
-            // "91" లేకుండా ఇక్కడ exact UPI ID వాడాను. కాబట్టి Error రాదు.
-            let intentUrl = `upi://pay?pa=${adminUPI_ID}&pn=${encodeURIComponent(businessName)}&am=${amt}&cu=INR&tn=JF_Loan`;
+        // The core change: No UTR box. Just open UPI and alert admin.
+        function initiateDirectPayment(amt) {
+            // Open the UPI Intent link directly
+            let intentUrl = `upi://pay?pa=${adminUPI_ID}&pn=${encodeURIComponent(businessName)}&am=${amt}&cu=INR&tn=JF_Loan_ID_${currentCustomer.phone.slice(-4)}`;
             window.location.href = intentUrl;
             
+            // Wait a few seconds to let them return to the app, then ask to notify admin.
             setTimeout(() => {
-                document.getElementById('paymentSection').style.display = 'none';
-                document.getElementById('confirmSection').style.display = 'block';
-            }, 1000);
+                let msg = `Hi Admin, I have just completed an online payment of Rs.${amt} via PhonePe/GPay for my EMI. Please check your bank statement and update my dashboard. \n- ${currentCustomer.name} (ID: ${currentCustomer.phone.slice(-4)})`;
+                
+                if(confirm("Did you successfully complete the payment in your UPI App?\n\nClick 'OK' to send a verification message to Admin.")) {
+                    window.open(`https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(msg)}`, '_blank');
+                }
+            }, 3000);
         }
 
-        async function sendAdminRequest() {
-            let utr = document.getElementById('utrInput').value || 'Not Provided';
-            document.getElementById('confirmSection').innerHTML = `<i class="fas fa-spinner fa-spin text-success fs-5"></i> <span class="fw-bold mt-2 d-block">Submitting UTR...</span>`;
-            
-            await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentCustomer.phone, action: 'request_payment', amount: emiAmount, utr: utr }) });
-            
-            // "91" వాట్సాప్ నెంబర్ కి మాత్రమే యాడ్ చేసాను.
-            let msg = `💳 *Payment Sent!*\nName: ${currentCustomer.name}\nAmount: Rs.${emiAmount}\nUTR: ${utr}\n\nPlease approve.`;
-            window.open(`https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(msg)}`, '_blank');
-            
-            setTimeout(fetchMyData, 2000); 
-        }
+        // ==========================================
+        // UTILITY & NEW FEATURES
+        // ==========================================
 
-        function cancelPaymentProcess() { document.getElementById('paymentSection').style.display = 'block'; document.getElementById('confirmSection').style.display = 'none'; fetchMyData(); }
-        
-        function sendWhatsAppIntent(msg) { window.open(`https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(msg)}`, '_blank'); }
+        function sendWhatsAppIntent(msg) { 
+            window.open(`https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(msg)}`, '_blank'); 
+        }
         
         function syncCalendar() {
             let due = document.getElementById('nextDueDate').innerText;
-            if(due === 'Loading...' || due === 'Not Set') return alert("No due date found.");
-            alert(`Please manually set a calendar reminder for: ${due}\nAmount: ₹${emiAmount}`);
+            if(due === 'Loading...' || due === 'Not Set') return alert("No due date set.");
+            alert(`Please manually set a calendar reminder for: ${due}\nAmount to pay: ₹${emiAmount}`);
         }
 
-        function copyReferral() { navigator.clipboard.writeText(document.getElementById('cReferral').innerText); alert("Referral Code Copied! Share to earn coins."); }
-        function toggleCustomerDarkMode() { document.body.classList.toggle('dark-mode'); document.getElementById('darkModeIcon').className = document.body.classList.contains('dark-mode') ? 'fas fa-sun fs-5 text-warning' : 'fas fa-moon fs-5'; }
+        function copyReferral() { 
+            navigator.clipboard.writeText(document.getElementById('cReferral').innerText); 
+            alert("Referral Code Copied! Share to earn coins."); 
+        }
+
+        function toggleCustomerDarkMode() { 
+            document.body.classList.toggle('dark-mode'); 
+            document.getElementById('darkModeIcon').className = document.body.classList.contains('dark-mode') ? 'fas fa-sun fs-5 text-warning' : 'fas fa-moon fs-5 text-secondary'; 
+        }
         
         function runCalculator() {
             let p = Number(document.getElementById('calcPrincipal').value) || 0;
@@ -518,12 +670,60 @@
             document.getElementById('calcResult').innerText = formatMoney(Math.round((p + (p * 0.20)) / w));
         }
 
-        function logoutCustomer() { localStorage.removeItem('loggedInCustomer'); window.location.reload(); }
+        function logoutCustomer() { 
+            localStorage.removeItem('loggedInCustomer'); 
+            window.location.reload(); 
+        }
         
         function fireSuccessConfetti() {
             let duration = 2000; let end = Date.now() + duration;
-            (function frame() { confetti({ particleCount: 4, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#10b981', '#3b82f6', '#fbbf24'] }); confetti({ particleCount: 4, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#10b981', '#3b82f6', '#fbbf24'] }); if (Date.now() < end) requestAnimationFrame(frame); }());
+            (function frame() { 
+                confetti({ particleCount: 4, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#10b981', '#3b82f6', '#fbbf24'] }); 
+                confetti({ particleCount: 4, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#10b981', '#3b82f6', '#fbbf24'] }); 
+                if (Date.now() < end) requestAnimationFrame(frame); 
+            }());
         }
+
+        // --- NEW FEATURES ---
+        function viewIdCard() {
+            let c = currentCustomer;
+            if(!c) return;
+            let w = window.open('','_blank');
+            w.document.write(`
+                <style>
+                    body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #fff; font-family: 'Open Sans', Arial, sans-serif; margin: 0; }
+                    .id-card { width: 320px; height: 500px; background: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); overflow: hidden; position: relative; border: 1px solid #C0C8D0; }
+                    .header { background: #004C8F; color: white; padding: 25px 20px; text-align: center; border-bottom: 5px solid #ED232A;}
+                    .header h2 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: 1px; }
+                    .header p { margin: 5px 0 0 0; font-size: 10px; opacity: 0.9; text-transform: uppercase; letter-spacing: 2px; }
+                    .photo-container { width: 100px; height: 100px; background: #F4F5F7; border-radius: 50%; margin: -50px auto 0 auto; display: flex; justify-content: center; align-items: center; border: 5px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.15); font-size: 40px; color: #004C8F; font-weight: bold; }
+                    .details { padding: 20px; text-align: center; }
+                    .name { font-size: 20px; font-weight: 800; color: #2C3E50; margin: 5px 0; text-transform: uppercase; }
+                    .id-number { font-size: 13px; font-weight: bold; color: #ED232A; background: #FFF5F5; padding: 5px 15px; border-radius: 4px; display: inline-block; margin-bottom: 20px; border: 1px dashed #F5B7B1; }
+                    .info-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 12px; text-align: left; padding: 0 10px; border-bottom: 1px dashed #EAEDED; padding-bottom: 5px;}
+                    .info-label { color: #6C7A89; font-weight: 700; }
+                    .info-value { color: #2C3E50; font-weight: 800; text-align: right;}
+                    .footer { background: #004C8F; padding: 15px; text-align: center; font-size: 10px; color: white; position: absolute; bottom: 0; width: 100%; }
+                </style>
+                <div class="id-card">
+                    <div class="header"><h2>JESSICA FINANCE</h2><p>Customer ID Card</p></div>
+                    <div class="photo-container">${c.name.substring(0,2).toUpperCase()}</div>
+                    <div class="details">
+                        <div class="name">${c.name}</div>
+                        <div class="id-number">JF-${c.phone.slice(-4)}</div>
+                        <div class="info-row"><span class="info-label">Mobile</span><span class="info-value">${c.phone}</span></div>
+                        <div class="info-row"><span class="info-label">Location</span><span class="info-value">${c.village || 'N/A'}</span></div>
+                    </div>
+                    <div class="footer">If found, please contact Jessica Finance Mgt.</div>
+                </div>
+            `);
+        }
+
+        function viewAgreement() {
+            let msg = `LOAN AGREEMENT SUMMARY\n\nName: ${currentCustomer.name}\nPrincipal: ₹${currentCustomer.amount}\nTotal Weeks: ${currentCustomer.duration}\n\nBy continuing to use this app, you agree to pay your weekly EMI on time. Late payments will incur penalties.`;
+            alert(msg);
+        }
+
     </script>
 </body>
 </html>
