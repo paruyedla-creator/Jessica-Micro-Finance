@@ -3,110 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jessica Finance - Admin Premium</title>
+    <title>Jessica Finance - Enterprise Admin</title>
+    
     <!-- External Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- FULLY EXPANDED CSS STYLESHEET -->
+    <!-- FULLY EXPANDED CSS STYLESHEET FOR HDFC BANK UI -->
     <style>
+        /* =========================================
+           ROOT VARIABLES & COLOR THEME
+           ========================================= */
         :root { 
-            --primary: #0f172a; 
-            --accent: #4f46e5; 
-            --success: #10b981; 
-            --warning: #f59e0b; 
-            --danger: #ef4444; 
-            --bg: #f1f5f9; 
+            --corp-blue: #0A3D62; 
+            --corp-light-blue: #1A5276;
+            --corp-gray: #F4F6F7;
+            --text-dark: #2C3E50;
+            --border-color: #D5D8DC;
+            --accent: #2980B9;
+            --hdfc-blue: #004C8F; 
+            --hdfc-red: #ED232A;
+            --success-color: #27AE60;
+            --warning-color: #F39C12;
+            --danger-color: #E74C3C;
         }
 
         body { 
-            background-color: var(--bg); 
-            font-family: 'Nunito', sans-serif; 
-            padding-bottom: 60px; 
-            color: #1e293b; 
+            background-color: var(--corp-gray); 
+            font-family: 'Open Sans', sans-serif; 
+            padding-bottom: 50px; 
+            color: var(--text-dark); 
+            font-size: 13px; 
         }
         
-        /* Ultra Modern Header */
+        /* =========================================
+           HEADER NAVIGATION STYLES
+           ========================================= */
         .admin-header { 
-            background: linear-gradient(135deg, #0f172a, #1e1b4b); 
-            padding: 20px 30px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
-            border-bottom: 4px solid var(--accent); 
-            border-radius: 0 0 20px 20px; 
-            margin-bottom: 25px;
+            background-color: var(--hdfc-blue); 
+            padding: 12px 25px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+            border-bottom: 4px solid var(--hdfc-red);
+            margin-bottom: 20px;
         }
 
         .brand-title { 
-            font-weight: 900; 
+            font-weight: 800; 
             color: white; 
-            font-size: 26px; 
-            letter-spacing: 1px; 
+            font-size: 18px; 
             display: flex; 
             align-items: center; 
-            gap: 15px;
+            gap: 12px;
+            letter-spacing: 0.5px;
         }
-        
-        /* Spacious Stat Cards */
+
+        .top-btn {
+            background: rgba(255,255,255,0.1); 
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white; 
+            padding: 6px 14px; 
+            border-radius: 4px; 
+            font-size: 12px; 
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+
+        .top-btn:hover { 
+            background: var(--hdfc-red); 
+            border-color: var(--hdfc-red); 
+            color: white;
+        }
+
+        /* =========================================
+           ANALYTICS STAT CARDS
+           ========================================= */
         .stat-card { 
             background: white; 
-            border-radius: 20px; 
-            padding: 25px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.03); 
+            border-radius: 6px; 
+            padding: 18px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.04); 
+            border: 1px solid var(--border-color);
             display: flex; 
-            align-items: center; 
-            gap: 20px; 
-            border: 1px solid #e2e8f0; 
-            transition: 0.3s;
+            justify-content: space-between; 
+            align-items: center;
+            border-left: 4px solid var(--hdfc-blue);
+            transition: transform 0.2s ease;
         }
 
-        .stat-card:hover { 
-            transform: translateY(-5px); 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.08); 
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
         }
 
-        .stat-icon { 
-            width: 60px; 
-            height: 60px; 
-            border-radius: 15px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            font-size: 24px; 
-            color: white; 
-        }
+        .stat-card.success { border-left-color: var(--success-color); }
+        .stat-card.warning { border-left-color: var(--warning-color); }
+        .stat-card.danger { border-left-color: var(--danger-color); }
 
         .stat-details h6 { 
-            font-size: 13px; 
-            font-weight: 800; 
-            color: #64748b; 
-            text-transform: uppercase; 
-            margin: 0;
+            font-size: 11px; 
+            font-weight: 700; 
+            color: #7F8C8D; 
+            margin: 0 0 5px 0; 
+            text-transform: uppercase;
         }
 
         .stat-details h3 { 
-            font-size: 28px; 
-            font-weight: 900; 
-            color: #0f172a; 
-            margin: 5px 0 0 0;
+            font-size: 22px; 
+            font-weight: 800; 
+            color: var(--text-dark); 
+            margin: 0;
         }
 
-        /* Main Big Card */
-        .content-card { 
-            background: white; 
-            border-radius: 25px; 
-            padding: 30px; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.04); 
-            border: 1px solid #e2e8f0; 
+        .stat-icon { 
+            font-size: 26px; 
+            color: #BDC3C7; 
+            background: #F8F9FA;
+            padding: 10px;
+            border-radius: 50%;
         }
 
-        /* Big Search & Filters */
+        /* =========================================
+           MAIN CONTENT & TOOLBAR
+           ========================================= */
+        .content-card {
+            background: white;
+            border-radius: 6px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid var(--border-color);
+        }
+
         .toolbar { 
-            background: #f8fafc; 
-            padding: 20px; 
-            border-radius: 16px; 
-            border: 1px solid #e2e8f0; 
-            margin-bottom: 25px; 
+            background: #FAFBFC; 
+            padding: 15px; 
+            border-radius: 4px; 
+            border: 1px solid var(--border-color); 
+            margin-bottom: 20px; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
@@ -114,181 +148,261 @@
             gap: 15px;
         }
 
+        .tool-btn {
+            background: var(--hdfc-blue); 
+            color: white; 
+            border: none;
+            padding: 8px 15px; 
+            font-size: 12px; 
+            border-radius: 4px; 
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .tool-btn:hover { 
+            background: #003666; 
+            color: white; 
+        }
+
+        .tool-btn-outline { 
+            background: white; 
+            color: var(--text-dark); 
+            border: 1px solid #BDC3C7; 
+        }
+
+        .tool-btn-outline:hover { 
+            background: #ECF0F1; 
+        }
+
         .search-box { 
             position: relative; 
-            width: 400px; 
+            width: 300px; 
         }
 
         .search-box input { 
             width: 100%; 
-            border-radius: 12px; 
-            padding: 15px 20px 15px 50px; 
-            border: 2px solid #cbd5e1; 
-            font-size: 16px; 
-            font-weight: 600; 
-            background: white; 
-            transition: 0.3s;
+            border-radius: 4px; 
+            padding: 8px 15px 8px 30px; 
+            border: 1px solid #BDC3C7; 
+            font-size: 13px; 
+            font-weight: 600;
         }
 
-        .search-box input:focus { 
-            border-color: var(--accent); 
-            box-shadow: 0 0 0 5px rgba(79, 70, 229, 0.1); 
+        .search-box input:focus {
+            border-color: var(--hdfc-blue);
             outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 76, 143, 0.1);
         }
 
         .search-box i.fa-search { 
             position: absolute; 
-            left: 20px; 
+            left: 10px; 
             top: 50%; 
             transform: translateY(-50%); 
-            color: #64748b; 
-            font-size: 18px;
+            color: #95A5A6; 
+            font-size: 13px;
         }
 
-        /* Customer Row Design (Spacious) */
+        /* =========================================
+           CUSTOMER ROW STYLES (COMPACT SOFTWARE VIEW)
+           ========================================= */
         .customer-card { 
             background: white; 
-            border: 2px solid #e2e8f0; 
-            border-radius: 20px; 
-            padding: 25px; 
-            margin-bottom: 20px; 
-            transition: 0.3s; 
-            position: relative; 
-            overflow: hidden;
+            border: 1px solid #E4E8ED; 
+            border-radius: 6px; 
+            padding: 15px; 
+            margin-bottom: 12px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02); 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px;
+            position: relative;
+            transition: all 0.2s;
         }
-
+        
         .customer-card:hover { 
-            border-color: #cbd5e1; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05); 
+            border-color: var(--hdfc-blue); 
+            box-shadow: 0 4px 10px rgba(0, 76, 143, 0.08); 
         }
 
         .row-overdue { 
-            border-color: #fecaca; 
-            background: #fff1f2; 
+            border-left: 4px solid var(--hdfc-red); 
+            background: #FFF9F9; 
         }
 
         .row-blacklisted { 
-            border-color: #ef4444; 
-            background: #fef2f2; 
+            border: 1px solid var(--hdfc-red); 
+            background: #FFF5F5; 
         }
 
-        .row-blacklisted::before { 
-            content: 'DEFAULTER'; 
-            position: absolute; 
-            right: -30px; 
-            top: 20px; 
-            background: #ef4444; 
-            color: white; 
-            font-weight: 900; 
-            font-size: 12px; 
-            padding: 5px 40px; 
-            transform: rotate(45deg); 
-            letter-spacing: 2px;
+        .row-paused { 
+            border-left: 4px solid var(--warning-color); 
+            background: #FFFBF2; 
+        }
+
+        /* Details Blocks */
+        .cust-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px dashed #EAEDED; 
+            padding-bottom: 10px;
+        }
+
+        .cust-body { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 20px; 
+            align-items: center; 
+        }
+
+        .data-block { 
+            display: flex; 
+            flex-direction: column; 
+            min-width: 130px;
+        }
+
+        .data-label { 
+            font-size: 10px; 
+            color: #7F8C8D; 
+            text-transform: uppercase; 
+            font-weight: 700; 
+            margin-bottom: 4px;
+        }
+
+        .data-val { 
+            font-size: 14px; 
+            font-weight: 700; 
+            color: var(--text-dark); 
+        }
+
+        .data-val-big { 
+            font-size: 16px; 
+            font-weight: 800; 
+            color: var(--hdfc-blue); 
         }
 
         .profile-avatar { 
-            width: 65px; 
-            height: 65px; 
-            border-radius: 18px; 
-            background: linear-gradient(135deg, #4f46e5, #3b82f6); 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            background: var(--hdfc-blue); 
             color: white; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            font-size: 24px; 
-            font-weight: 900; 
-            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
-        }
-
-        /* THE BIG BUTTONS DESIGN */
-        .btn-panel { 
-            background: #f8fafc; 
-            padding: 20px; 
-            border-radius: 16px; 
-            border: 1px solid #e2e8f0; 
-            margin-top: 20px; 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
-            gap: 12px; 
-        }
-        
-        .big-btn { 
-            padding: 12px 15px; 
-            border-radius: 12px; 
-            font-size: 14px; 
-            font-weight: 800; 
-            border: none; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px; 
-            transition: 0.2s; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-
-        .big-btn i { font-size: 22px; }
-        
-        .big-btn:hover { 
-            transform: translateY(-4px); 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1); 
-            filter: brightness(1.1);
-        }
-        
-        .big-btn:active { transform: translateY(0); }
-
-        /* Specific Big Button Colors */
-        .btn-pay { background: #10b981; color: white; }
-        .btn-part { background: #3b82f6; color: white; }
-        .btn-adv { background: #8b5cf6; color: white; }
-        .btn-topup { background: #0ea5e9; color: white; }
-        .btn-settle { background: #14b8a6; color: white; }
-        .btn-notice { background: #0f172a; color: white; border: 2px solid #334155;}
-        .btn-wa { background: #22c55e; color: white; }
-        .btn-call { background: #0284c7; color: white; }
-        .btn-doc { background: #475569; color: white; }
-        .btn-pen { background: #f59e0b; color: white; }
-
-        /* Detail Tags */
-        .detail-tag { 
-            background: white; 
-            border: 1px solid #cbd5e1; 
-            padding: 8px 15px; 
-            border-radius: 10px; 
-            font-size: 13px; 
+            font-size: 16px; 
             font-weight: 700; 
-            color: #334155; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 8px;
         }
 
+        .avatar-bad { 
+            background: var(--hdfc-red); 
+        }
+
+        /* =========================================
+           TIGHT ACTION TOOLBAR (ICON BUTTONS)
+           ========================================= */
+        .action-toolbar { 
+            background: #F8F9FA; 
+            border: 1px solid #EAEDED; 
+            border-radius: 4px; 
+            padding: 8px 10px; 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 8px; 
+            align-items: center;
+            margin-top: 5px;
+        }
+        
+        .icon-btn { 
+            width: 32px; 
+            height: 32px; 
+            border-radius: 4px; 
+            display: inline-flex; 
+            justify-content: center; 
+            align-items: center; 
+            border: 1px solid transparent; 
+            font-size: 14px; 
+            cursor: pointer; 
+            color: white;
+            transition: 0.2s;
+        }
+
+        .icon-btn:hover { 
+            filter: brightness(0.9); 
+            transform: translateY(-2px); 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        /* Specific Button Colors */
+        .btn-pay { background: #27AE60; }
+        .btn-part { background: #2980B9; }
+        .btn-adv { background: #8E44AD; }
+        .btn-topup { background: #16A085; }
+        .btn-settle { background: #2C3E50; }
+        .btn-notice { background: #34495E; }
+        .btn-notice-clear { background: #ECF0F1; color: #34495E; border-color: #BDC3C7; }
+        .btn-vip { background: #F1C40F; color: #7E5109; }
+        .btn-note { background: #D2B4DE; color: #4A235A; }
+        .btn-wa { background: #25D366; }
+        .btn-call { background: #3498DB; }
+        .btn-pen { background: #E74C3C; }
+        
+        .btn-more { 
+            background: white; 
+            color: #34495E; 
+            border: 1px solid #BDC3C7; 
+            width: auto; 
+            padding: 0 10px; 
+            font-weight: 600;
+        }
+
+        /* =========================================
+           PROGRESS BAR & BADGES
+           ========================================= */
         .progress-bar-custom { 
-            height: 12px; 
-            border-radius: 6px; 
-            background-color: #e2e8f0; 
+            height: 6px; 
+            border-radius: 3px; 
+            background-color: #EAEDED; 
             overflow: hidden; 
-            margin-top: 10px; 
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            margin-top: 5px; 
+            width: 120px; 
         }
 
         .progress-fill { 
             height: 100%; 
-            background: linear-gradient(90deg, #10b981, #3b82f6); 
-            transition: 1s ease; 
+            background: var(--hdfc-blue); 
+            transition: 0.5s ease; 
+        }
+        
+        .status-badge { 
+            font-size: 11px; 
+            padding: 3px 8px; 
+            border-radius: 3px; 
+            font-weight: 700;
         }
 
-        /* Screen Lock Overlay */
+        .late-badge { 
+            color: white; 
+            font-weight: 700; 
+            font-size: 10px; 
+            background: var(--hdfc-red); 
+            padding: 3px 6px; 
+            border-radius: 3px; 
+            margin-left: 5px; 
+        }
+        
+        /* =========================================
+           SCREEN LOCK OVERLAY
+           ========================================= */
         #lockScreen { 
             position: fixed; 
             top: 0; 
             left: 0; 
             width: 100%; 
             height: 100%; 
-            background: rgba(15, 23, 42, 0.95); 
-            backdrop-filter: blur(15px); 
+            background: rgba(0, 76, 143, 0.95); /* HDFC Blue Transparent */
             z-index: 9999; 
             display: none; 
             justify-content: center; 
@@ -302,220 +416,258 @@
             letter-spacing: 15px; 
             text-align: center; 
             padding: 15px; 
-            border-radius: 15px; 
-            border: 2px solid #4f46e5; 
+            border-radius: 6px; 
+            border: 2px solid white; 
             background: rgba(255,255,255,0.1); 
             color: white; 
-            width: 300px; 
+            width: 250px; 
             outline: none; 
         }
         
-        .late-badge { color: white; font-weight: bold; font-size: 11px; background: #ef4444; padding: 3px 8px; border-radius: 6px; margin-left: 5px; }
-        .fa-spin-fast { animation: fa-spin 0.5s infinite linear; }
+        .fa-spin-fast { 
+            animation: fa-spin 0.5s infinite linear; 
+        }
     </style>
 </head>
 <body>
 
-    <!-- SCREEN LOCK FEATURE -->
+    <!-- =========================================
+         SCREEN LOCK FEATURE
+         ========================================= -->
     <div id="lockScreen">
-        <i class="fas fa-lock fs-1 text-primary mb-4" style="font-size: 60px !important;"></i>
-        <h2 class="fw-bold mb-4">System Locked</h2>
-        <input type="password" id="unlockPin" class="lock-input mb-4" placeholder="••••" maxlength="4" onkeyup="checkUnlock(this.value)">
-        <p class="text-muted">Enter Admin PIN to unlock</p>
+        <i class="fas fa-lock mb-3" style="font-size: 60px;"></i>
+        <h3 class="fw-bold mb-4">System Locked</h3>
+        <input type="password" id="unlockPin" class="lock-input mb-3" placeholder="••••" maxlength="4" onkeyup="checkUnlock(this.value)">
+        <p class="small fw-bold">Enter Secure Admin PIN</p>
     </div>
 
-    <!-- TOP NAVIGATION BAR -->
+    <!-- =========================================
+         COMPACT TOP NAVIGATION BAR
+         ========================================= -->
     <nav class="admin-header d-flex justify-content-between align-items-center">
         <div class="brand-title">
-            <div style="background: rgba(255,255,255,0.15); padding: 12px 18px; border-radius: 16px;">
-                <i class="fas fa-crown text-warning"></i>
-            </div>
+            <i class="fas fa-university" style="color: #F1C40F; font-size: 24px;"></i>
             <div>
-                <div>JESSICA FINANCE</div>
-                <div style="font-size: 13px; color: #94a3b8; font-weight: 700; letter-spacing: 3px; margin-top: 2px;">CORPORATE DASHBOARD</div>
+                <div style="line-height: 1; font-size: 20px;">JESSICA FINANCE</div>
+                <div style="font-size: 11px; color: #AAB7C4; font-weight: 600; letter-spacing: 1px; margin-top: 2px;">CORPORATE BANKING</div>
             </div>
         </div>
-        <div class="d-flex gap-3 align-items-center">
-            <button class="btn btn-outline-light btn-lg fw-bold" onclick="lockSystem()">
-                <i class="fas fa-lock me-2"></i> Lock Screen
+        <div class="d-flex gap-2 align-items-center">
+            <button class="top-btn" data-bs-toggle="modal" data-bs-target="#cashCounterModal" title="Cash Counter">
+                <i class="fas fa-coins me-1"></i> Cash
             </button>
-            <button class="btn btn-info btn-lg fw-bold text-white" data-bs-toggle="modal" data-bs-target="#calculatorModal">
-                <i class="fas fa-calculator"></i>
+            <button class="top-btn" onclick="lockSystem()" title="Lock Screen">
+                <i class="fas fa-lock me-1"></i> Lock
             </button>
-            <button class="btn btn-danger btn-lg fw-bold px-4" onclick="window.location.href='index.html'">
+            <button class="top-btn" data-bs-toggle="modal" data-bs-target="#calculatorModal" title="Calculator">
+                <i class="fas fa-calculator me-1"></i> Calc
+            </button>
+            <button class="top-btn text-danger border-danger bg-white" onclick="window.location.href='index.html'" title="Logout">
                 <i class="fas fa-power-off"></i>
             </button>
         </div>
     </nav>
 
-    <!-- MAIN ADMIN CONTAINER -->
-    <div class="container-fluid px-5">
+    <!-- =========================================
+         MAIN ADMIN CONTAINER
+         ========================================= -->
+    <div class="container-fluid px-4">
         
-        <!-- Big Stat Cards (Analytics) -->
-        <div class="row g-4 mb-4">
+        <!-- COMPACT STAT CARDS -->
+        <div class="row g-3 mb-4">
             <div class="col-md-3">
                 <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
                     <div class="stat-details">
-                        <h6>Market Investment</h6>
+                        <h6>Market Given</h6>
                         <h3 id="statTotalGiven">₹0</h3>
                     </div>
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
-                        <i class="fas fa-vault"></i>
-                    </div>
+                <div class="stat-card success">
                     <div class="stat-details">
-                        <h6>Total Recovered</h6>
-                        <h3 class="text-success" id="statCollected">₹0</h3>
+                        <h6>Recovered</h6>
+                        <h3 style="color:#27AE60;" id="statCollected">₹0</h3>
                     </div>
+                    <div class="stat-icon"><i class="fas fa-box"></i></div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                        <i class="fas fa-hand-holding-usd"></i>
-                    </div>
+                <div class="stat-card warning">
                     <div class="stat-details">
-                        <h6>Today's Target</h6>
-                        <h3 class="text-warning" id="statTodayTarget">₹0</h3>
+                        <h6>Today's Due</h6>
+                        <h3 style="color:#F39C12;" id="statTodayTarget">₹0</h3>
                     </div>
+                    <div class="stat-icon"><i class="fas fa-bullseye"></i></div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
-                        <i class="fas fa-chart-pie"></i>
-                    </div>
+                <div class="stat-card danger">
                     <div class="stat-details">
                         <h6>Est. Profit & Pen</h6>
-                        <h3 class="text-danger" id="statProfit">₹0</h3>
+                        <h3 style="color:#E74C3C;" id="statProfit">₹0</h3>
                     </div>
+                    <div class="stat-icon"><i class="fas fa-chart-pie"></i></div>
                 </div>
             </div>
         </div>
 
-        <!-- Middle Content Card (Toolbar & List) -->
         <div class="content-card">
             
-            <!-- Big Toolbar -->
+            <!-- COMPACT TOOLBAR -->
             <div class="toolbar">
-                <div class="d-flex gap-3 flex-wrap">
-                    <button class="btn btn-primary btn-lg fw-bold shadow-sm px-4" data-bs-toggle="modal" data-bs-target="#addCustomerModal" id="addBtn">
-                        <i class="fas fa-user-plus me-2"></i> Sanction Loan
+                <div class="d-flex gap-2">
+                    <button class="tool-btn" data-bs-toggle="modal" data-bs-target="#addCustomerModal" id="addBtn">
+                        <i class="fas fa-plus me-1"></i> Sanction
                     </button>
-                    <button class="btn btn-dark btn-lg fw-bold shadow-sm px-4" onclick="sendGlobalNotice()">
-                        <i class="fas fa-bullhorn me-2"></i> Global Notice
+                    <button class="tool-btn tool-btn-outline" onclick="sendGlobalNotice()">
+                        <i class="fas fa-bullhorn text-warning me-1"></i> Global Notice
                     </button>
-                    <button class="btn btn-danger btn-lg fw-bold shadow-sm" onclick="bulkRemindAll()">
-                        <i class="fas fa-bell me-2"></i> Remind Overdue
+                    <button class="tool-btn tool-btn-outline" onclick="bulkRemindAll()">
+                        <i class="fas fa-bell text-danger me-1"></i> Remind
                     </button>
-                    <button class="btn btn-warning btn-lg fw-bold shadow-sm text-dark" onclick="printCollectionSheet()">
-                        <i class="fas fa-map-marked-alt me-2"></i> Route Map
+                    <button class="tool-btn tool-btn-outline" onclick="printCollectionSheet()">
+                        <i class="fas fa-route text-success me-1"></i> Route
                     </button>
-                    <button class="btn btn-secondary btn-lg fw-bold shadow-sm" onclick="addDailyExpense()">
-                        <i class="fas fa-wallet me-2"></i> Expenses
+                    <button class="tool-btn tool-btn-outline" onclick="addDailyExpense()">
+                        <i class="fas fa-wallet text-info me-1"></i> Expense
                     </button>
                 </div>
 
                 <div class="d-flex gap-3 align-items-center">
-                    <select class="form-select form-select-lg fw-bold bg-white shadow-sm" style="width: 200px; border-radius: 12px; border: 2px solid #cbd5e1;" onchange="applySmartFilter(this.value)">
+                    <select class="form-select form-select-sm" style="width: 160px; font-weight: 600; padding: 6px 10px;" onchange="applySmartFilter(this.value)">
                         <option value="all">All Accounts</option>
-                        <option value="active">Active Loans</option>
-                        <option value="overdue">Overdue Alerts</option>
-                        <option value="cleared">Cleared / Settled</option>
+                        <option value="active">Active Only</option>
+                        <option value="overdue">Overdue Only</option>
+                        <option value="cleared">Settled Only</option>
                     </select>
                     
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" id="searchInput" placeholder="Search Customer, ID or Village..." onkeyup="filterTable()">
-                        <i class="fas fa-times" id="clearSearchBtn" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none; color: #64748b;" onclick="clearSearch()"></i>
+                        <input type="text" id="searchInput" placeholder="Search ID or Name..." onkeyup="filterTable()">
+                        <i class="fas fa-times-circle" id="clearSearchBtn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none; color: #E74C3C;" onclick="clearSearch()"></i>
                     </div>
-                    <button class="btn btn-light btn-lg border shadow-sm" onclick="liveRefresh()" style="border-radius: 12px;">
-                        <i class="fas fa-sync-alt text-primary" id="refreshIcon"></i>
+                    
+                    <button class="tool-btn tool-btn-outline px-3" onclick="liveRefresh()" title="Refresh">
+                        <i class="fas fa-sync-alt" id="refreshIcon"></i>
                     </button>
                 </div>
             </div>
 
             <!-- CUSTOMER LIST CONTAINER -->
             <div id="customersListContainer">
-                <!-- Javascript will inject the Big Customer Cards Here -->
+                <!-- Javascript will inject the dense Software-style rows here -->
             </div>
             
-            <!-- Empty State if no customers found -->
-            <div id="emptyState" style="display:none; text-align:center; padding: 80px 20px; color: #64748b;">
-                <i class="fas fa-box-open fs-1 mb-3 opacity-50" style="font-size: 80px !important;"></i><br>
-                <h3 class="fw-bold text-dark">No Records Found</h3>
-                <p class="fs-5">Try searching for a different name or clearing filters.</p>
+            <div id="emptyState" style="display:none; text-align:center; padding: 60px; color: #95A5A6;">
+                <i class="fas fa-folder-open mb-3" style="font-size: 50px;"></i>
+                <h5 class="fw-bold">No Records Found</h5>
             </div>
         </div>
     </div>
 
-    <!-- MODALS SECTION -->
+    <!-- =========================================
+         MODALS SECTION (HDFC Compact Style)
+         ========================================= -->
+    
+    <!-- Cash Counter Modal -->
+    <div class="modal fade" id="cashCounterModal" tabindex="-1">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content border-0 rounded-1">
+                <div class="modal-header" style="background: var(--hdfc-blue); color: white; padding: 12px 15px;">
+                    <h6 class="modal-title fw-bold m-0"><i class="fas fa-rupee-sign me-2"></i> Cash Counter</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" style="font-size: 10px;"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <div class="row g-3 fw-bold text-secondary" style="font-size: 13px;">
+                        <div class="col-6 d-flex align-items-center justify-content-between">
+                            ₹ 500 x <input type="number" id="c500" class="form-control form-control-sm w-50 fw-bold" oninput="calcCash()">
+                        </div>
+                        <div class="col-6 d-flex align-items-center justify-content-between">
+                            ₹ 200 x <input type="number" id="c200" class="form-control form-control-sm w-50 fw-bold" oninput="calcCash()">
+                        </div>
+                        <div class="col-6 d-flex align-items-center justify-content-between">
+                            ₹ 100 x <input type="number" id="c100" class="form-control form-control-sm w-50 fw-bold" oninput="calcCash()">
+                        </div>
+                        <div class="col-6 d-flex align-items-center justify-content-between">
+                            ₹ 50 x <input type="number" id="c50" class="form-control form-control-sm w-50 fw-bold" oninput="calcCash()">
+                        </div>
+                        <div class="col-6 d-flex align-items-center justify-content-between">
+                            ₹ 20 x <input type="number" id="c20" class="form-control form-control-sm w-50 fw-bold" oninput="calcCash()">
+                        </div>
+                        <div class="col-6 d-flex align-items-center justify-content-between">
+                            ₹ 10 x <input type="number" id="c10" class="form-control form-control-sm w-50 fw-bold" oninput="calcCash()">
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-white rounded border text-center shadow-sm">
+                        <div style="font-size: 11px; color: #7F8C8D; font-weight: bold;">TOTAL PHYSICAL CASH</div>
+                        <h3 class="text-success fw-bold m-0 mt-1" id="cashTotalResult">₹0</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <!-- Sanction New Loan Modal -->
     <div class="modal fade" id="addCustomerModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 25px; overflow: hidden;">
-                <div class="modal-header bg-primary text-white p-4">
-                    <h4 class="modal-title fw-bold"><i class="fas fa-file-signature me-3"></i> Sanction New Loan Account</h4>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0" style="border-radius: 6px;">
+                <div class="modal-header" style="background: var(--hdfc-blue); color: white; padding: 15px 20px;">
+                    <h5 class="modal-title fw-bold m-0"><i class="fas fa-file-invoice me-2"></i> Sanction New Loan</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body p-5 bg-light">
+                <div class="modal-body p-4 bg-light">
                     <form id="addCustomerForm">
-                        <div class="row g-4">
+                        <div class="row g-3">
                             <div class="col-md-4">
-                                <label class="fw-bold text-muted mb-2">Full Name</label>
-                                <input type="text" id="custName" class="form-control form-control-lg fw-bold" style="text-transform: capitalize; border-radius: 12px;" required>
+                                <label class="data-label">Full Name</label>
+                                <input type="text" id="custName" class="form-control fw-bold" style="text-transform: capitalize;" required>
                             </div>
                             <div class="col-md-4">
-                                <label class="fw-bold text-muted mb-2">Phone Number</label>
-                                <input type="tel" id="custPhone" class="form-control form-control-lg fw-bold" style="border-radius: 12px;" required>
+                                <label class="data-label">Phone Number</label>
+                                <input type="tel" id="custPhone" class="form-control fw-bold" required>
                             </div>
                             <div class="col-md-4">
-                                <label class="fw-bold text-muted mb-2">Village / Town</label>
-                                <input type="text" id="custVillage" class="form-control form-control-lg fw-bold" style="text-transform: capitalize; border-radius: 12px;">
+                                <label class="data-label">Village / Town</label>
+                                <input type="text" id="custVillage" class="form-control fw-bold" style="text-transform: capitalize;">
                             </div>
                             
                             <div class="col-md-4">
-                                <label class="fw-bold text-muted mb-2">Aadhaar (KYC)</label>
-                                <input type="text" id="custAadhaar" class="form-control form-control-lg fw-bold" style="border-radius: 12px;">
+                                <label class="data-label">Aadhaar (KYC)</label>
+                                <input type="text" id="custAadhaar" class="form-control fw-bold">
                             </div>
                             <div class="col-md-4">
-                                <label class="fw-bold text-muted mb-2">Guarantor Name</label>
-                                <input type="text" id="custGuarantor" class="form-control form-control-lg fw-bold" style="text-transform: capitalize; border-radius: 12px;">
+                                <label class="data-label">Guarantor Name</label>
+                                <input type="text" id="custGuarantor" class="form-control fw-bold" style="text-transform: capitalize;">
                             </div>
                             <div class="col-md-4">
-                                <label class="fw-bold text-muted mb-2">Login PIN</label>
-                                <input type="text" id="custPass" class="form-control form-control-lg fw-bold" style="border-radius: 12px;" required>
+                                <label class="data-label">Login PIN</label>
+                                <input type="text" id="custPass" class="form-control fw-bold" required>
                             </div>
                             
                             <div class="col-12">
-                                <label class="fw-bold text-muted mb-2">Full Address</label>
-                                <input type="text" id="custAddress" class="form-control form-control-lg fw-bold" style="border-radius: 12px;">
+                                <label class="data-label">Full Address</label>
+                                <input type="text" id="custAddress" class="form-control fw-bold">
                             </div>
                             
                             <div class="col-md-4">
-                                <label class="fw-bold text-primary mb-2">Loan Category</label>
-                                <select id="custCategory" class="form-select form-select-lg fw-bold border-primary" style="border-radius: 12px;" required>
+                                <label class="data-label text-primary">Loan Category</label>
+                                <select id="custCategory" class="form-select fw-bold border-primary" required>
                                     <option value="General Finance">Weekly Finance</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label class="fw-bold text-primary mb-2">Principal Amt (₹)</label>
-                                <input type="number" id="custAmount" class="form-control form-control-lg fw-bold border-primary" style="border-radius: 12px;" required>
+                                <label class="data-label text-primary">Principal Amt (₹)</label>
+                                <input type="number" id="custAmount" class="form-control fw-bold border-primary" required>
                             </div>
                             <div class="col-md-4">
-                                <label class="fw-bold text-primary mb-2">Total Installments</label>
-                                <input type="number" id="custDuration" class="form-control form-control-lg fw-bold border-primary" style="border-radius: 12px;" required>
+                                <label class="data-label text-primary">Total Installments</label>
+                                <input type="number" id="custDuration" class="form-control fw-bold border-primary" required>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-lg w-100 mt-5 fw-bold shadow p-3" style="border-radius: 15px; font-size: 20px;">
-                            <i class="fas fa-check-circle me-2"></i> CREATE ACCOUNT & SEND ID
+                        <button type="submit" class="btn w-100 mt-4 fw-bold text-white py-2" style="background: var(--hdfc-blue); font-size: 15px;">
+                            CREATE ACCOUNT & SEND ID
                         </button>
                     </form>
                 </div>
@@ -525,62 +677,62 @@
 
     <!-- Edit Customer Modal -->
     <div class="modal fade" id="editCustomerModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 25px; overflow: hidden;">
-                <div class="modal-header bg-warning text-dark p-4">
-                    <h4 class="modal-title fw-bold"><i class="fas fa-edit me-3"></i> Edit Customer Details</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0" style="border-radius: 6px;">
+                <div class="modal-header" style="background: var(--warning-color); color: white; padding: 15px 20px;">
+                    <h5 class="modal-title fw-bold m-0"><i class="fas fa-edit me-2"></i> Update Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body p-5 bg-light">
+                <div class="modal-body p-4 bg-light">
                     <form id="editCustomerForm">
                         <input type="hidden" id="editPhone">
-                        <div class="row g-4">
+                        <div class="row g-3">
                             <div class="col-md-4">
-                                <label class="fw-bold text-muted mb-2">Full Name</label>
-                                <input type="text" id="editName" class="form-control form-control-lg fw-bold" style="text-transform: capitalize; border-radius: 12px;" required>
+                                <label class="data-label">Full Name</label>
+                                <input type="text" id="editName" class="form-control fw-bold" required>
                             </div>
                             <div class="col-md-4">
-                                <label class="fw-bold text-muted mb-2">Village</label>
-                                <input type="text" id="editVillage" class="form-control form-control-lg fw-bold" style="text-transform: capitalize; border-radius: 12px;">
+                                <label class="data-label">Village</label>
+                                <input type="text" id="editVillage" class="form-control fw-bold">
                             </div>
                             <div class="col-md-4">
-                                <label class="fw-bold text-muted mb-2">Aadhaar (KYC)</label>
-                                <input type="text" id="editAadhaar" class="form-control form-control-lg fw-bold" style="border-radius: 12px;">
+                                <label class="data-label">Aadhaar (KYC)</label>
+                                <input type="text" id="editAadhaar" class="form-control fw-bold">
                             </div>
                             
                             <div class="col-12">
-                                <label class="fw-bold text-muted mb-2">Full Address</label>
-                                <input type="text" id="editAddress" class="form-control form-control-lg fw-bold" style="border-radius: 12px;">
+                                <label class="data-label">Full Address</label>
+                                <input type="text" id="editAddress" class="form-control fw-bold">
                             </div>
                             
                             <div class="col-md-4">
-                                <label class="fw-bold text-primary mb-2">Principal Amount (₹)</label>
-                                <input type="number" id="editAmount" class="form-control form-control-lg fw-bold border-primary" style="border-radius: 12px;" required>
+                                <label class="data-label">Principal Amount (₹)</label>
+                                <input type="number" id="editAmount" class="form-control fw-bold" required>
                             </div>
                             <div class="col-md-4">
-                                <label class="fw-bold text-primary mb-2">Total Installments</label>
-                                <input type="number" id="editDuration" class="form-control form-control-lg fw-bold border-primary" style="border-radius: 12px;" required>
+                                <label class="data-label">Total Installments</label>
+                                <input type="number" id="editDuration" class="form-control fw-bold" required>
                             </div>
                             <div class="col-md-4">
-                                <label class="fw-bold text-muted mb-2">Guarantor Name</label>
-                                <input type="text" id="editGuarantor" class="form-control form-control-lg fw-bold" style="text-transform: capitalize; border-radius: 12px;">
+                                <label class="data-label">Guarantor Name</label>
+                                <input type="text" id="editGuarantor" class="form-control fw-bold">
                             </div>
                             
                             <div class="col-md-6">
-                                <label class="fw-bold text-success mb-2">Last Paid Date</label>
-                                <input type="date" id="editLastPaid" class="form-control form-control-lg fw-bold border-success" style="border-radius: 12px;">
+                                <label class="data-label text-success">Last Paid Date</label>
+                                <input type="date" id="editLastPaid" class="form-control fw-bold border-success">
                             </div>
                             <div class="col-md-6">
-                                <label class="fw-bold text-danger mb-2">Next Due Date</label>
-                                <input type="date" id="editNextDue" class="form-control form-control-lg fw-bold border-danger" style="border-radius: 12px;">
+                                <label class="data-label text-danger">Next Due Date</label>
+                                <input type="date" id="editNextDue" class="form-control fw-bold border-danger">
                             </div>
                             
                             <div class="col-12">
-                                <label class="fw-bold text-warning mb-2">Secret Notes (Admin Only)</label>
-                                <input type="text" id="editNotes" class="form-control form-control-lg fw-bold bg-warning bg-opacity-10 border-warning" style="border-radius: 12px;">
+                                <label class="data-label text-warning">Secret Notes (Admin)</label>
+                                <input type="text" id="editNotes" class="form-control fw-bold" style="background:#FFFBF2;">
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-warning btn-lg w-100 mt-5 fw-bold shadow p-3" style="border-radius: 15px; font-size: 20px;">
+                        <button type="submit" class="btn btn-warning w-100 mt-4 fw-bold text-white py-2" style="font-size: 15px;">
                             SAVE CHANGES
                         </button>
                     </form>
@@ -591,33 +743,40 @@
 
     <!-- Quick Calculator Modal -->
     <div class="modal fade" id="calculatorModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
-                <div class="modal-header bg-info text-dark p-4">
-                    <h4 class="modal-title fw-bold"><i class="fas fa-calculator me-2"></i> Smart EMI Calc</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content border-0" style="border-radius: 6px;">
+                <div class="modal-header" style="background: var(--hdfc-blue); color: white; padding: 12px 15px;">
+                    <h6 class="modal-title fw-bold m-0"><i class="fas fa-calculator me-2"></i> Smart Calc</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" style="font-size:10px;"></button>
                 </div>
-                <div class="modal-body p-5 text-center">
-                    <input type="number" id="calcPrincipal" class="form-control form-control-lg text-center mb-3 fw-bold" placeholder="Principal (₹)" oninput="runCalculator()" style="border-radius: 12px;">
-                    <div class="d-flex gap-3 mb-4">
-                        <input type="number" id="calcInterest" class="form-control form-control-lg text-center fw-bold" value="20" placeholder="Int %" readonly style="border-radius: 12px;">
-                        <input type="number" id="calcWeeks" class="form-control form-control-lg text-center fw-bold" placeholder="Weeks" oninput="runCalculator()" style="border-radius: 12px;">
+                <div class="modal-body p-4 text-center bg-light">
+                    <input type="number" id="calcPrincipal" class="form-control text-center mb-3 fw-bold" placeholder="Principal (₹)" oninput="runCalculator()">
+                    <div class="d-flex gap-2 mb-3">
+                        <input type="number" id="calcInterest" class="form-control text-center fw-bold" value="20" placeholder="Int %" readonly>
+                        <input type="number" id="calcWeeks" class="form-control text-center fw-bold" placeholder="Weeks" oninput="runCalculator()">
                     </div>
-                    <div class="p-4 bg-light rounded-4 border">
-                        <div class="fw-bold text-muted mb-2 text-uppercase">Weekly EMI Amount</div>
-                        <h1 class="text-primary fw-bold m-0" id="calcResult" style="font-size: 45px;">₹0</h1>
-                        <hr>
-                        <div class="fw-bold text-muted fs-5" id="calcTotal">Total Recovery: ₹0</div>
+                    <div class="p-3 bg-white rounded border shadow-sm mt-3">
+                        <div class="data-label">Weekly EMI</div>
+                        <h3 class="fw-bold m-0" style="color: var(--hdfc-blue);" id="calcResult">₹0</h3>
+                        <hr class="my-2">
+                        <div class="data-label text-dark" id="calcTotal">Total Recovery: ₹0</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- FULLY EXPANDED JAVASCRIPT ENGINE -->
+    <!-- =========================================
+         JAVASCRIPT ENGINE (FULLY EXPANDED)
+         ========================================= -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const formatMoney = (amount) => '₹' + Number(amount).toLocaleString('en-IN');
+        // Number Formatter
+        const formatMoney = function(amount) {
+            return '₹' + Number(amount).toLocaleString('en-IN');
+        };
+
+        // Global State Variables
         let globalCustomers = [];
         let currentFilter = 'all';
 
@@ -625,12 +784,11 @@
         // SECURITY & UI FUNCTIONS
         // ----------------------------------------------------
         
-        // Locks the screen immediately
         function lockSystem() { 
             document.getElementById('lockScreen').style.display = 'flex'; 
+            document.getElementById('unlockPin').focus(); 
         }
         
-        // Checks the PIN to unlock the screen
         function checkUnlock(val) { 
             if(val === '7569') { 
                 document.getElementById('lockScreen').style.display = 'none'; 
@@ -638,36 +796,48 @@
             } 
         }
 
-        // Quick EMI Calculator Logic
-        function runCalculator() {
-            let p = Number(document.getElementById('calcPrincipal').value) || 0;
-            let i = Number(document.getElementById('calcInterest').value) || 0;
-            let w = Number(document.getElementById('calcWeeks').value) || 1;
+        // Cash Counter Logic
+        function calcCash() {
+            let n500 = Number(document.getElementById('c500').value) || 0; 
+            let n200 = Number(document.getElementById('c200').value) || 0;
+            let n100 = Number(document.getElementById('c100').value) || 0; 
+            let n50 = Number(document.getElementById('c50').value) || 0;
+            let n20 = Number(document.getElementById('c20').value) || 0; 
+            let n10 = Number(document.getElementById('c10').value) || 0;
             
-            let total = p + (p * (i / 100));
-            document.getElementById('calcResult').innerText = formatMoney(Math.round(total / w));
-            document.getElementById('calcTotal').innerText = `Total: ${formatMoney(total)}`;
+            let totalCash = (n500 * 500) + (n200 * 200) + (n100 * 100) + (n50 * 50) + (n20 * 20) + (n10 * 10);
+            document.getElementById('cashTotalResult').innerText = formatMoney(totalCash);
+        }
+
+        // EMI Calculator Logic
+        function runCalculator() {
+            let principal = Number(document.getElementById('calcPrincipal').value) || 0; 
+            let interest = Number(document.getElementById('calcInterest').value) || 0; 
+            let weeks = Number(document.getElementById('calcWeeks').value) || 1;
+            
+            let totalAmount = principal + (principal * (interest / 100)); 
+            
+            document.getElementById('calcResult').innerText = formatMoney(Math.round(totalAmount / weeks)); 
+            document.getElementById('calcTotal').innerText = `Total: ${formatMoney(totalAmount)}`;
         }
 
         // ----------------------------------------------------
         // DATA LOADING & RENDERING
         // ----------------------------------------------------
 
-        // Loads customer data from backend (JSONBin)
         async function loadCustomers() {
             try {
-                // Feature 12: Offline Backup logic check
                 let localData = localStorage.getItem('jf_offline_backup');
-                const res = await fetch('/api/customers');
-                globalCustomers = await res.json();
+                const response = await fetch('/api/customers'); 
+                globalCustomers = await response.json();
                 
-                // Save to local storage for backup
+                // Backup to LocalStorage
                 localStorage.setItem('jf_offline_backup', JSON.stringify(globalCustomers)); 
                 
-                renderCards();
+                renderCards(); 
                 calculateAnalytics();
             } catch (error) { 
-                console.log("Network error. Using local backup..."); 
+                console.log("Using local backup..."); 
                 let local = localStorage.getItem('jf_offline_backup');
                 if(local) { 
                     globalCustomers = JSON.parse(local); 
@@ -677,61 +847,60 @@
             }
         }
 
-        // Refresh Data with Icon Spin
         async function liveRefresh() {
-            let icon = document.getElementById('refreshIcon');
+            let icon = document.getElementById('refreshIcon'); 
             icon.classList.add('fa-spin-fast');
-            await loadCustomers();
-            setTimeout(() => icon.classList.remove('fa-spin-fast'), 500);
+            await loadCustomers(); 
+            setTimeout(function() {
+                icon.classList.remove('fa-spin-fast');
+            }, 500);
         }
 
-        // --- CORE HTML RENDERING LOGIC (BIG CARDS) ---
+        // --- COMPACT HTML RENDERING LOGIC (SOFTWARE LOOK) ---
         function renderCards() {
             const container = document.getElementById('customersListContainer');
             container.innerHTML = '';
             
             const today = new Date(); 
             today.setHours(0,0,0,0);
-            
             let visibleCount = 0;
 
-            globalCustomers.forEach(cust => {
-                // Finance Math
-                let principal = Number(cust.amount);
+            globalCustomers.forEach(function(cust) {
+                // Financial Calculations
+                let principal = Number(cust.amount); 
                 let penalty = Number(cust.penalty || 0);
                 let baseEmi = Math.round((principal + (principal * 0.20)) / Number(cust.duration));
                 let nextEmiToPay = baseEmi + penalty; 
-
-                let paidWeeks = cust.paidWeeks || 0;
+                let paidWeeks = cust.paidWeeks || 0; 
                 let pendingWeeks = Number(cust.duration) - paidWeeks;
                 let progressPercent = Math.min(100, Math.round((paidWeeks / Number(cust.duration)) * 100));
                 let pendingBalance = pendingWeeks * baseEmi + penalty;
 
                 // Date & Overdue Logic
                 let isOverdue = false; 
-                let lateWeeks = 0;
+                let lateWeeks = 0; 
                 let dueDate = null;
                 
                 if (cust.nextDueDate) {
-                    if(cust.nextDueDate.includes('-')) {
-                        dueDate = new Date(cust.nextDueDate);
+                    if(cust.nextDueDate.includes('-')) { 
+                        dueDate = new Date(cust.nextDueDate); 
                     } else { 
                         let parts = cust.nextDueDate.split('/'); 
-                        if(parts.length===3) {
+                        if(parts.length === 3) { 
                             dueDate = new Date(parts[2], parts[1]-1, parts[0]); 
-                        } else {
+                        } else { 
                             dueDate = new Date(cust.nextDueDate); 
-                        }
+                        } 
                     }
                 } else if (cust.lastPaidDate) {
                     let parts = cust.lastPaidDate.split('/'); 
-                    if(parts.length===3) { 
+                    if(parts.length === 3) { 
                         dueDate = new Date(parts[2], parts[1]-1, parts[0]); 
                         dueDate.setDate(dueDate.getDate() + 7); 
                     }
                 } else if (cust.startDate) {
                     let parts = cust.startDate.split('/'); 
-                    if(parts.length===3) { 
+                    if(parts.length === 3) { 
                         dueDate = new Date(parts[2], parts[1]-1, parts[0]); 
                         dueDate.setDate(dueDate.getDate() + 7); 
                     }
@@ -740,176 +909,194 @@
                     dueDate.setDate(dueDate.getDate() + 7); 
                 }
 
+                // Check Overdue Status
                 if (dueDate && !isNaN(dueDate) && dueDate < today && pendingWeeks > 0) {
                     isOverdue = true; 
                     lateWeeks = Math.floor((today - dueDate) / (1000 * 60 * 60 * 24 * 7));
                 }
 
+                // Special Tags Check
                 let isBlacklisted = cust.notes && cust.notes.includes('🚫');
+                let isPaused = cust.notes && cust.notes.includes('[PAUSED]');
+                let isVIP = cust.notes && cust.notes.includes('[VIP]');
 
-                // Smart Filters Application
+                // Apply Search / Filters
                 if(currentFilter === 'active' && pendingWeeks <= 0) return;
                 if(currentFilter === 'cleared' && pendingWeeks > 0) return;
-                if(currentFilter === 'overdue' && !isOverdue) return;
+                if(currentFilter === 'overdue' && (!isOverdue || isPaused)) return;
                 
                 visibleCount++;
 
-                // Visual Classes
+                // CSS Classes
                 let rowClass = 'customer-card';
                 if(isBlacklisted) rowClass += ' row-blacklisted'; 
+                else if(isPaused) rowClass += ' row-paused'; 
                 else if(isOverdue) rowClass += ' row-overdue'; 
 
                 let initials = cust.name.substring(0, 2).toUpperCase();
-                let statusBadge = pendingWeeks <= 0 
-                    ? `<span class="badge bg-success fs-6"><i class="fas fa-check-circle"></i> Settled</span>` 
-                    : `<span class="badge bg-primary fs-6">Active</span>`;
                 
-                // Admin UTR Approval Banner
+                let statusBadge = pendingWeeks <= 0 
+                    ? `<span class="status-badge text-white" style="background:#27AE60;">Settled</span>` 
+                    : `<span class="status-badge text-white" style="background:var(--hdfc-blue);">Active</span>`;
+                
+                if(isPaused) statusBadge = `<span class="status-badge bg-warning text-dark">Paused</span>`;
+                if(isVIP) statusBadge += ` <span class="status-badge bg-warning text-dark"><i class="fas fa-star"></i> VIP</span>`;
+
+                let avatarClass = "profile-avatar";
+                if(isBlacklisted || isOverdue) avatarClass += " avatar-bad";
+
+                // Admin UTR Approval HTML
                 let approvalHTML = ``;
                 if(cust.pendingApproval) {
                     approvalHTML = `
-                        <div class="bg-warning bg-opacity-10 border border-warning p-3 rounded-4 mb-3 d-flex justify-content-between align-items-center">
+                        <div class="bg-warning bg-opacity-10 border border-warning p-2 rounded mb-3 d-flex justify-content-between align-items-center">
                             <div>
-                                <div class="fw-bold text-dark fs-5">Verify Payment UTR: ${cust.paymentUtr || 'N/A'}</div>
-                                <span class="text-muted small">Customer requested approval via Customer App</span>
+                                <div class="fw-bold" style="font-size:12px; color:#D35400;">
+                                    Verify UTR: ${cust.paymentUtr || 'N/A'}
+                                </div>
                             </div>
                             <div class="d-flex gap-2">
-                                <button class="btn btn-success btn-lg fw-bold shadow-sm" onclick="approvePayment('${cust.phone}', '${cust.name}', ${nextEmiToPay})">
+                                <button class="btn btn-sm btn-success py-1 px-3 fw-bold" style="font-size:11px;" onclick="approvePayment('${cust.phone}', '${cust.name}', ${nextEmiToPay})">
                                     <i class="fas fa-check"></i> Approve
                                 </button>
-                                <button class="btn btn-outline-danger btn-lg fw-bold shadow-sm" onclick="rejectFakePayment('${cust.phone}')">
-                                    <i class="fas fa-times"></i> Reject
+                                <button class="btn btn-sm btn-danger py-1 px-3 fw-bold" style="font-size:11px;" onclick="rejectFakePayment('${cust.phone}')">
+                                    <i class="fas fa-times"></i>
                                 </button>
                             </div>
                         </div>
                     `;
                 }
 
-                let noticeInd = cust.notes && cust.notes.includes("Notice:") 
-                    ? `<span class="badge bg-info text-dark ms-2" title="${cust.notes}"><i class="fas fa-bullhorn"></i> Notice Sent</span>` 
+                // Notice HTML
+                let hasNotice = cust.notes && cust.notes.includes("Notice:");
+                let noticeInd = hasNotice 
+                    ? `<span class="badge bg-dark text-white ms-1" style="font-size:9px;" title="${cust.notes}"><i class="fas fa-bullhorn text-info"></i> Notice</span>` 
                     : '';
+                
+                let noticeBtnHTML = hasNotice 
+                    ? `<button class="icon-btn btn-notice-clear" title="Clear Notice" onclick="clearNotice('${cust.phone}', '${cust.name}')"><i class="fas fa-bell-slash"></i></button>`
+                    : `<button class="icon-btn btn-notice" title="App Notice" onclick="sendIndividualNotice('${cust.phone}', '${cust.name}')"><i class="fas fa-bullhorn"></i></button>`;
 
                 let penaltyHtml = penalty > 0 
-                    ? `<div class="text-danger fw-bold text-end mt-1 small">+ ${formatMoney(penalty)} Penalty Included</div>` 
+                    ? `<div class="data-val text-danger" style="font-size:12px;">+ ${formatMoney(penalty)} Pen</div>` 
                     : '';
 
-                // HTML TEMPLATE CONSTRUCTION (Properly Indented)
+                // BUILD THE FULL ROW HTML
                 let cardHTML = `
                     <div class="${rowClass}">
                         ${approvalHTML}
                         
-                        <div class="row align-items-center">
-                            <!-- Details Section -->
-                            <div class="col-md-5">
-                                <div class="d-flex align-items-center gap-4">
-                                    <div class="profile-avatar">${initials}</div>
-                                    <div>
-                                        <div class="fw-bold text-dark" style="font-size: 22px;">
-                                            ${cust.name} ${noticeInd}
-                                        </div>
-                                        <div class="text-muted fw-bold fs-6 mt-1">
-                                            ID: JF-${cust.phone.slice(-4)} &nbsp;|&nbsp; 
-                                            <span style="cursor:pointer; color:var(--accent);" onclick="openMap('${cust.village}')">
-                                                <i class="fas fa-map-marker-alt"></i> ${cust.village || 'Location N/A'}
-                                            </span>
-                                        </div>
-                                        <div class="mt-2 d-flex gap-2 align-items-center">
-                                            ${statusBadge}
-                                            <span class="badge bg-light text-dark border fs-6"><i class="fas fa-phone"></i> ${cust.phone}</span>
-                                            ${isOverdue ? `<span class="badge bg-danger fs-6 shadow-sm"><i class="fas fa-exclamation-triangle"></i> Overdue ${lateWeeks>0 ? lateWeeks+'W' : ''}</span>` : ''}
-                                        </div>
+                        <div class="cust-header">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="${avatarClass}">${initials}</div>
+                                <div>
+                                    <div style="font-size:16px; font-weight:800;">${cust.name} ${noticeInd}</div>
+                                    <div style="font-size:12px; color:#7F8C8D; font-weight:600;">
+                                        ID: JF-${cust.phone.slice(-4)} | 
+                                        <i class="fas fa-phone"></i> ${cust.phone}
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Financials Section -->
-                            <div class="col-md-3 border-start border-end px-4">
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span class="text-muted fw-bold">Principal:</span>
-                                    <span class="fw-bold fs-5 text-dark">${formatMoney(principal)}</span>
-                                </div>
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span class="text-muted fw-bold">EMI Amount:</span>
-                                    <span class="fw-bold fs-4 text-primary">${formatMoney(nextEmiToPay)}</span>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <span class="text-muted fw-bold">Pending Bal:</span>
-                                    <span class="fw-bold fs-5 text-danger">${formatMoney(pendingBalance)}</span>
-                                </div>
+                            <div class="text-end">
+                                ${statusBadge}
+                                ${isOverdue && !isPaused ? `<div class="late-badge mt-2"><i class="fas fa-exclamation-triangle"></i> Overdue ${lateWeeks>0 ? lateWeeks+'W' : ''}</div>` : ''}
+                            </div>
+                        </div>
+                        
+                        <div class="cust-body mt-3">
+                            <div class="data-block">
+                                <span class="data-label">Village</span>
+                                <span class="data-val" style="color:var(--accent); cursor:pointer;" onclick="openMap('${cust.village}')">
+                                    <i class="fas fa-map-marker-alt"></i> ${cust.village || 'N/A'}
+                                </span>
+                            </div>
+                            <div class="data-block">
+                                <span class="data-label">Principal</span>
+                                <span class="data-val">${formatMoney(principal)}</span>
+                            </div>
+                            <div class="data-block" style="border:1px dashed #BDC3C7; padding:4px 10px; border-radius:4px; background:#F8F9FA;">
+                                <span class="data-label text-primary">EMI Amount</span>
+                                <span class="data-val-big">${formatMoney(nextEmiToPay)}</span>
                                 ${penaltyHtml}
                             </div>
-
-                            <!-- Progress Section -->
-                            <div class="col-md-4 px-4">
-                                <div class="d-flex justify-content-between fw-bold fs-6 text-success mb-1">
-                                    <span>Paid: ${paidWeeks} / ${cust.duration}</span> 
+                            <div class="data-block">
+                                <span class="data-label">Pending Bal</span>
+                                <span class="data-val text-danger">${formatMoney(pendingBalance)}</span>
+                            </div>
+                            <div class="data-block" style="width: 140px;">
+                                <div class="d-flex justify-content-between data-label text-success mb-0">
+                                    <span>Paid: ${paidWeeks}/${cust.duration}</span>
                                     <span>${progressPercent}%</span>
                                 </div>
                                 <div class="progress-bar-custom">
                                     <div class="progress-fill" style="width: ${progressPercent}%;"></div>
                                 </div>
-                                <div class="d-flex justify-content-between mt-3">
-                                    <div class="detail-tag"><i class="fas fa-history text-muted"></i> Last: ${cust.lastPaidDate || 'N/A'}</div>
-                                    <div class="detail-tag border-primary"><i class="fas fa-calendar-day text-primary"></i> Due: ${dueDate && !isNaN(dueDate) ? dueDate.toLocaleDateString('en-GB') : 'N/A'}</div>
+                                <div class="d-flex justify-content-between mt-2" style="font-size:11px; font-weight:700;">
+                                    <span class="text-muted" title="Last Paid"><i class="fas fa-history"></i> ${cust.lastPaidDate || '-'}</span>
+                                    <span class="text-primary" title="Due Date"><i class="fas fa-calendar-day"></i> ${dueDate && !isNaN(dueDate) ? dueDate.toLocaleDateString('en-GB') : '-'}</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- THE BIG ACTION BUTTONS PANEL -->
-                        <div class="btn-panel">
+                        <!-- TIGHT ACTION TOOLBAR (ICON ONLY WITH TOOLTIPS) -->
+                        <div class="action-toolbar mt-3">
                             
                             <!-- Payment Collection -->
-                            <button class="big-btn btn-pay" onclick="recordCashPayment('${cust.phone}', '${cust.name}', ${nextEmiToPay})">
-                                <i class="fas fa-hand-holding-usd"></i> Full Pay
+                            <button class="icon-btn btn-pay" title="Collect Full Pay" onclick="recordCashPayment('${cust.phone}', '${cust.name}', ${nextEmiToPay})">
+                                <i class="fas fa-rupee-sign"></i>
                             </button>
-                            <button class="big-btn btn-part" onclick="customPayment('${cust.phone}', '${cust.name}', ${baseEmi})">
-                                <i class="fas fa-adjust"></i> Part Pay
+                            <button class="icon-btn btn-part" title="Partial Payment" onclick="customPayment('${cust.phone}', '${cust.name}', ${baseEmi})">
+                                <i class="fas fa-adjust"></i>
                             </button>
-                            <button class="big-btn btn-adv" onclick="advancePayment('${cust.phone}', '${cust.name}', ${baseEmi})">
-                                <i class="fas fa-forward"></i> Advance
+                            <button class="icon-btn btn-adv" title="Advance Payment" onclick="advancePayment('${cust.phone}', '${cust.name}', ${baseEmi})">
+                                <i class="fas fa-forward"></i>
                             </button>
-                            <button class="big-btn btn-topup" onclick="topUpLoan('${cust.phone}', '${cust.name}', ${pendingBalance})">
-                                <i class="fas fa-sync"></i> Top-Up
+                            <button class="icon-btn btn-topup" title="Top-Up Loan" onclick="topUpLoan('${cust.phone}', '${cust.name}', ${pendingBalance})">
+                                <i class="fas fa-sync"></i>
                             </button>
-                            <button class="big-btn btn-settle" onclick="settlementCalculator('${cust.phone}', '${cust.name}', ${pendingBalance})">
-                                <i class="fas fa-balance-scale"></i> Settle
-                            </button>
-                            
-                            <!-- FEATURE 1: INDIVIDUAL NOTICE BUTTON -->
-                            <button class="big-btn btn-notice" onclick="sendIndividualNotice('${cust.phone}', '${cust.name}')">
-                                <i class="fas fa-bullhorn text-info"></i> App Notice
+                            <button class="icon-btn btn-settle" title="Settle Loan" onclick="settlementCalculator('${cust.phone}', '${cust.name}', ${pendingBalance})">
+                                <i class="fas fa-balance-scale"></i>
                             </button>
                             
-                            <!-- Communications -->
-                            <button class="big-btn btn-wa" onclick="whatsappMenu('${cust.phone}', '${cust.name}', ${nextEmiToPay}, '${dueDate && !isNaN(dueDate) ? dueDate.toLocaleDateString('en-GB') : 'soon'}', '${cust.password}')">
-                                <i class="fab fa-whatsapp"></i> WA Alert
+                            <span style="border-left:1px solid #BDC3C7; height:24px; margin:0 5px;"></span>
+                            
+                            <!-- Utility Features -->
+                            ${noticeBtnHTML}
+                            <button class="icon-btn btn-note" title="Quick Secret Note" onclick="quickNote('${cust.phone}', '${cust.name}')">
+                                <i class="fas fa-sticky-note"></i>
                             </button>
-                            <button class="big-btn btn-call" onclick="contactGuarantor('${cust.phone}', '${cust.guarantor}')">
-                                <i class="fas fa-user-shield"></i> Guarantor
+                            <button class="icon-btn btn-vip" title="Toggle VIP Status" onclick="toggleVIP('${cust.phone}', '${cust.name}')">
+                                <i class="fas fa-star"></i>
+                            </button>
+                            <button class="icon-btn ${isPaused ? 'bg-success border-0 text-white' : 'btn-doc'}" title="${isPaused ? 'Resume Loan' : 'Freeze/Pause Loan'}" onclick="togglePause('${cust.phone}', '${cust.name}')">
+                                <i class="fas ${isPaused ? 'fa-play' : 'fa-pause'}"></i>
+                            </button>
+                            <button class="icon-btn btn-call" title="Contact Guarantor" onclick="contactGuarantor('${cust.phone}', '${cust.guarantor}')">
+                                <i class="fas fa-user-shield"></i>
+                            </button>
+                            <button class="icon-btn btn-pen" title="Add Penalty" onclick="addPenalty('${cust.phone}', '${cust.name}')">
+                                <i class="fas fa-gavel"></i>
                             </button>
                             
-                            <!-- Punishments & Records -->
-                            <button class="big-btn btn-pen" onclick="addPenalty('${cust.phone}', '${cust.name}')">
-                                <i class="fas fa-gavel"></i> Penalty
-                            </button>
-                            <button class="big-btn btn-doc text-danger border border-danger bg-white" onclick="waivePenalty('${cust.phone}', '${cust.name}')">
-                                <i class="fas fa-magic text-danger"></i> Waive
-                            </button>
-                            <button class="big-btn btn-doc" onclick="printStatement('${cust.phone}')">
-                                <i class="fas fa-receipt text-success"></i> Statement
+                            <span style="border-left:1px solid #BDC3C7; height:24px; margin:0 5px;"></span>
+                            
+                            <!-- WhatsApp & More -->
+                            <button class="icon-btn btn-wa" title="WhatsApp Actions" onclick="whatsappMenu('${cust.phone}', '${cust.name}', ${nextEmiToPay}, '${dueDate && !isNaN(dueDate) ? dueDate.toLocaleDateString('en-GB') : 'soon'}', '${cust.password}')">
+                                <i class="fab fa-whatsapp"></i>
                             </button>
                             
-                            <!-- Master Dropdown for safe keeping -->
-                            <div class="dropdown">
-                                <button class="big-btn btn-doc w-100 h-100 dropdown-toggle" data-bs-toggle="dropdown">
-                                    <i class="fas fa-ellipsis-h"></i> More
+                            <div class="dropdown ms-auto">
+                                <button class="icon-btn btn-more dropdown-toggle" data-bs-toggle="dropdown">
+                                    <i class="fas fa-cog me-1"></i> More
                                 </button>
-                                <ul class="dropdown-menu shadow-lg p-2" style="border-radius:15px; font-size: 15px;">
-                                    <li><a class="dropdown-item fw-bold py-2" href="#" onclick="openEditModal('${cust.phone}')"><i class="fas fa-edit text-primary me-2"></i> Edit Profile</a></li>
+                                <ul class="dropdown-menu shadow-sm" style="font-size:13px; border-radius:4px; border-color:#BDC3C7;">
+                                    <li><a class="dropdown-item fw-bold py-2" href="#" onclick="openEditModal('${cust.phone}')"><i class="fas fa-edit text-primary me-2"></i> Edit Account</a></li>
+                                    <li><a class="dropdown-item fw-bold py-2" href="#" onclick="waivePenalty('${cust.phone}', '${cust.name}')"><i class="fas fa-magic text-danger me-2"></i> Waive Penalty</a></li>
                                     <li><a class="dropdown-item fw-bold py-2" href="#" onclick="printAgreement('${cust.phone}')"><i class="fas fa-file-contract text-secondary me-2"></i> Print Agreement</a></li>
-                                    <li><a class="dropdown-item fw-bold py-2" href="#" onclick="printIdCard('${cust.phone}')"><i class="fas fa-id-badge text-warning me-2"></i> Print ID Card</a></li>
+                                    <li><a class="dropdown-item fw-bold py-2" href="#" onclick="printStatement('${cust.phone}')"><i class="fas fa-receipt text-success me-2"></i> Print Statement</a></li>
+                                    <li><a class="dropdown-item fw-bold py-2" href="#" onclick="printIdCard('${cust.phone}')"><i class="fas fa-id-badge text-warning me-2"></i> Print Color ID Card</a></li>
                                     <li><a class="dropdown-item fw-bold py-2" href="#" onclick="recoverPIN('${cust.phone}', '${cust.name}', '${cust.password}')"><i class="fas fa-key text-dark me-2"></i> Reset PIN</a></li>
-                                    <li><a class="dropdown-item fw-bold py-2" href="#" onclick="adminGhostLogin('${cust.phone}', '${cust.password}')"><i class="fas fa-eye text-info me-2"></i> Ghost Login</a></li>
+                                    <li><a class="dropdown-item fw-bold py-2" href="#" onclick="adminGhostLogin('${cust.phone}', '${cust.password}')"><i class="fas fa-eye text-info me-2"></i> Ghost Login App</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item fw-bold text-danger py-2" href="#" onclick="secureDeleteCustomer('${cust.phone}')"><i class="fas fa-trash me-2"></i> Delete Account</a></li>
                                 </ul>
@@ -920,47 +1107,113 @@
                 container.innerHTML += cardHTML;
             });
             
-            document.getElementById('emptyState').style.display = visibleCount === 0 ? 'block' : 'none';
+            if(visibleCount === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+            } else {
+                document.getElementById('emptyState').style.display = 'none';
+            }
         }
 
         // ----------------------------------------------------
-        // NEW ADVANCED FEATURES (20+ Features Intact)
+        // UNIQUE FEATURES (EXPANDED LOGIC)
         // ----------------------------------------------------
 
-        // --- FEATURE 1: INDIVIDUAL NOTICE TO CUSTOMER APP ---
-        async function sendIndividualNotice(phone, name) {
-            let msg = prompt(`Send in-app Notice strictly to ${name}:\n(This will appear as a banner in their app)`);
-            if(!msg) return;
+        async function clearNotice(phone, name) {
+            if(confirm(`Remove app notice for ${name}?`)) {
+                let c = globalCustomers.find(function(x) { return x.phone === phone; });
+                if(c) {
+                    let cleanNotes = c.notes ? c.notes.replace(/Notice:.*?(?:\[|$)/g, '').trim() : '';
+                    await fetch('/api/action', { 
+                        method: 'POST', 
+                        headers: {'Content-Type':'application/json'}, 
+                        body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: cleanNotes }) 
+                    });
+                    loadCustomers();
+                }
+            }
+        }
 
-            let c = globalCustomers.find(x => x.phone === phone);
+        async function toggleVIP(phone, name) {
+            let c = globalCustomers.find(function(x) { return x.phone === phone; });
             if(c) {
-                // Removes old notice and adds new
-                let cleanNotes = c.notes ? c.notes.replace(/Notice:.*?(?:\[|$)/g, '').trim() : '';
-                let newNotes = `Notice: ${msg} ${cleanNotes ? ' | ' + cleanNotes : ''}`;
-                
+                let isVIP = c.notes && c.notes.includes('[VIP]');
+                let newNotes = isVIP ? c.notes.replace('[VIP]', '').trim() : (c.notes + ' [VIP]').trim();
                 await fetch('/api/action', { 
                     method: 'POST', 
                     headers: {'Content-Type':'application/json'}, 
                     body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: newNotes }) 
                 });
-                
-                alert(`✅ Notice successfully sent to ${name}'s App!`);
                 loadCustomers();
             }
         }
 
-        // --- GLOBAL NOTICE ---
+        async function togglePause(phone, name) {
+            let c = globalCustomers.find(function(x) { return x.phone === phone; });
+            if(c) {
+                let isPaused = c.notes && c.notes.includes('[PAUSED]');
+                let newNotes = isPaused ? c.notes.replace('[PAUSED]', '').trim() : (c.notes + ' [PAUSED]').trim();
+                await fetch('/api/action', { 
+                    method: 'POST', 
+                    headers: {'Content-Type':'application/json'}, 
+                    body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: newNotes }) 
+                });
+                loadCustomers();
+            }
+        }
+
+        async function quickNote(phone, name) {
+            let note = prompt(`Add a Quick Secret Note for ${name}:`);
+            if(note) {
+                let c = globalCustomers.find(function(x) { return x.phone === phone; });
+                if(c) {
+                    let newNotes = c.notes ? c.notes + ' | ' + note : note;
+                    await fetch('/api/action', { 
+                        method: 'POST', 
+                        headers: {'Content-Type':'application/json'}, 
+                        body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: newNotes }) 
+                    });
+                    loadCustomers();
+                }
+            }
+        }
+
+        function sendAgreementWA(phone, name, principal, emi) {
+            let msg = `*JESSICA FINANCE - SECURE LOAN AGREEMENT* 📄\nDear ${name} garu,\nYour loan of Rs.${formatMoney(principal)} has been approved.\nYour fixed weekly EMI is Rs.${formatMoney(emi)}.\n- Jessica Finance Mgt.`;
+            window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function requestLiveLocation(phone) { 
+            window.open(`https://wa.me/91${phone}?text=${encodeURIComponent("Please share your Live Location on this WhatsApp immediately. 📍")}`, '_blank'); 
+        }
+
+        async function sendIndividualNotice(phone, name) {
+            let msg = prompt(`Send in-app Notice strictly to ${name}:`);
+            if(!msg) return;
+            
+            let c = globalCustomers.find(function(x) { return x.phone === phone; });
+            if(c) {
+                let cleanNotes = c.notes ? c.notes.replace(/Notice:.*?(?:\[|$)/g, '').trim() : '';
+                let newNotes = `Notice: ${msg} ${cleanNotes ? ' | ' + cleanNotes : ''}`;
+                await fetch('/api/action', { 
+                    method: 'POST', 
+                    headers: {'Content-Type':'application/json'}, 
+                    body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: newNotes }) 
+                });
+                loadCustomers();
+            }
+        }
+
         async function sendGlobalNotice() {
-            let msg = prompt("BROADCAST GLOBAL NOTICE 📢\nSend to ALL Active Customers:");
+            let msg = prompt("BROADCAST GLOBAL NOTICE 📢");
             if(!msg) return;
             
             document.getElementById('refreshIcon').classList.add('fa-spin-fast'); 
             
-            for(let c of globalCustomers) {
+            for(let i=0; i<globalCustomers.length; i++) {
+                let c = globalCustomers[i];
                 if(c.paidWeeks < c.duration) { 
                     let cleanNotes = c.notes ? c.notes.replace(/Notice:.*?(?:\[|$)/g, '').trim() : '';
                     let newNotes = `Notice: ${msg} ${cleanNotes ? ' | ' + cleanNotes : ''}`;
-                    
                     await fetch('/api/action', { 
                         method: 'POST', 
                         headers: {'Content-Type':'application/json'}, 
@@ -968,73 +1221,59 @@
                     });
                 }
             }
-            alert(`✅ Global Notice Published!`);
             loadCustomers();
         }
 
-        // --- FEATURE 3: GUARANTOR DIRECT CONTACT ---
         function contactGuarantor(phone, guarantor) {
             if(!guarantor || guarantor === 'None' || guarantor === '') { 
-                alert("No Guarantor registered for this account."); 
+                alert("No Guarantor registered."); 
                 return; 
             }
-            let choice = prompt(`Guarantor Name: ${guarantor}\n\nDo you want to Call them or send WhatsApp?\nType '1' for Call, '2' for WhatsApp`);
-            
-            if(choice === '1') {
-                window.location.href = `tel:${phone}`; 
-            }
-            if(choice === '2') {
-                window.open(`https://wa.me/91${phone}?text=Hello ${guarantor} garu, this is regarding the loan guarantee you provided.`, '_blank');
+            let choice = prompt(`Guarantor Name: ${guarantor}\n\nType '1' for Call, '2' for WhatsApp`);
+            if(choice === '1') { window.location.href = `tel:${phone}`; }
+            if(choice === '2') { window.open(`https://wa.me/91${phone}?text=Hello ${guarantor} garu, this is regarding the loan guarantee you provided.`, '_blank'); }
+        }
+
+        function openMap(village) { 
+            if(village && village !== 'undefined') {
+                window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(village)}`, '_blank'); 
             }
         }
 
-        // --- FEATURE 4: GOOGLE MAPS LINK ---
-        function openMap(village) {
-            if(!village || village === 'undefined') return;
-            window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(village)}`, '_blank');
-        }
+        // ----------------------------------------------------
+        // PAYMENTS & SETTLEMENTS
+        // ----------------------------------------------------
 
-        // --- FEATURE 5: SMART SETTLEMENT CALCULATOR ---
         async function settlementCalculator(phone, name, pendingBalance) {
-            let discount5 = Math.round(pendingBalance - (pendingBalance * 0.05));
-            let discount10 = Math.round(pendingBalance - (pendingBalance * 0.10));
-            
-            let actualPaid = prompt(`SETTLE LOAN FOR ${name}\n\nTotal Pending: ₹${pendingBalance}\n- With 5% Discount: ₹${discount5}\n- With 10% Discount: ₹${discount10}\n\nEnter the final amount you agreed to close the loan:`, pendingBalance);
-            
+            let actualPaid = prompt(`SETTLE LOAN FOR ${name}\nTotal Pending: ₹${pendingBalance}\n\nEnter final amount agreed:`, pendingBalance);
             if(actualPaid !== null && actualPaid !== "") {
                 await fetch('/api/action', { 
                     method: 'POST', 
                     headers: {'Content-Type':'application/json'}, 
                     body: JSON.stringify({phone, action:'settle_loan', amount: Number(actualPaid), mode: 'full_settlement'}) 
                 });
-                
-                alert(`Loan for ${name} Settled at ₹${actualPaid}! 🎉`);
                 loadCustomers();
             }
         }
 
-        // --- PARTIAL PAYMENT ---
         async function customPayment(phone, name, baseEmi) {
-            let amt = prompt(`PARTIAL PAYMENT for ${name}\nRegular EMI is ₹${baseEmi}\n\nEnter the exact amount paid today:`);
+            let amt = prompt(`PARTIAL PAYMENT for ${name}\nEnter exact amount paid today:`);
             if(amt && !isNaN(amt) && Number(amt) > 0) {
                 await fetch('/api/action', { 
                     method: 'POST', 
                     headers: {'Content-Type':'application/json'}, 
                     body: JSON.stringify({phone, action:'approve_payment', amount: Number(amt), mode: 'custom_part'}) 
                 });
-                alert(`✅ ₹${amt} recorded successfully for ${name}.`);
                 loadCustomers();
             }
         }
 
-        // --- ADVANCE PAYMENT ---
         async function advancePayment(phone, name, baseEmi) {
-            let weeks = prompt(`ADVANCE PAYMENT for ${name}:\nHow many weeks are they paying in advance?`);
+            let weeks = prompt(`ADVANCE PAYMENT for ${name}:\nHow many weeks?`);
             if(weeks && !isNaN(weeks) && Number(weeks) > 1) {
-                let w = Number(weeks);
-                let totalAmount = w * baseEmi;
-                if(confirm(`Confirm advance payment of ₹${totalAmount} for ${w} weeks?`)) {
-                    for(let i=0; i<w; i++) { 
+                let amountToPay = Number(weeks) * baseEmi;
+                if(confirm(`Confirm advance payment of ₹${amountToPay}?`)) {
+                    for(let i=0; i<Number(weeks); i++) { 
                         await fetch('/api/action', { 
                             method: 'POST', 
                             headers: {'Content-Type':'application/json'}, 
@@ -1042,29 +1281,24 @@
                         }); 
                     }
                     loadCustomers(); 
-                    alert(`✅ Success! ₹${totalAmount} collected for ${w} weeks.`);
                 }
             }
         }
 
-        // --- TOP-UP LOAN ---
         async function topUpLoan(phone, name, pendingBalance) {
-            if(confirm(`TOP-UP: Mark current loan as SETTLED for ${name}?\nOld Pending Balance to deduct: ₹${pendingBalance}`)) {
+            if(confirm(`TOP-UP: Mark current loan as SETTLED for ${name}?`)) {
                 await fetch('/api/action', { 
                     method: 'POST', 
                     headers: {'Content-Type':'application/json'}, 
                     body: JSON.stringify({phone, action:'settle_loan', amount: pendingBalance, mode: 'topup_closure'}) 
                 });
-                loadCustomers();
-                
-                // Open Add Customer Modal Automatically
-                document.getElementById('addBtn').click();
+                loadCustomers(); 
+                document.getElementById('addBtn').click(); 
                 document.getElementById('custName').value = name + " (Top-Up)"; 
                 document.getElementById('custPhone').value = phone; 
             }
         }
 
-        // --- PENALTIES ---
         async function addPenalty(phone, name) {
             let amount = prompt(`Add Penalty (₹) for ${name}:`);
             if (amount && !isNaN(amount) && Number(amount) > 0) {
@@ -1088,55 +1322,77 @@
             }
         }
 
-        // --- COMMUNICATION & NOTIFICATIONS ---
-        function sendReceiptWA(phone, name) {
-            let msg = `*JESSICA FINANCE - PAYMENT RECEIPT* 🧾\n\nDear ${name} garu,\nWe have successfully received your recent installment.\nThank you! 🙏`;
-            window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-
         function whatsappMenu(phone, name, emi, dueDate, pin) {
-            let choice = prompt(`WHATSAPP MENU for ${name}:\n1. Send EMI Reminder\n2. Resend Login PIN\n3. Send UPI Payment Link 🔗\nEnter 1, 2 or 3:`);
+            let choice = prompt(`WHATSAPP MENU for ${name}:\n1. Send EMI Reminder\n2. Resend Login PIN\n3. Send UPI Payment Link\n4. WA Agreement\n5. Ask Location\n6. Voice Alert Note\nEnter choice (1-6):`);
             
             if(choice === '1') {
-                let msg = `Hello ${name} garu, Gentle reminder from *Jessica Finance*. Your Due amount Rs.${emi} is payable on or before *${dueDate}*. Please pay to avoid penalty.`;
-                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(`Hello ${name} garu, Gentle reminder from *Jessica Finance*. Your Due amount Rs.${emi} is payable on or before *${dueDate}*.`)}`, '_blank');
             } else if (choice === '2') {
-                let msg = `Welcome to *Jessica Finance*! 🎉\n\nLogin Details:\n🆔 ID: ${phone}\n🔑 PIN: ${pin}`;
-                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(`Welcome to *Jessica Finance*! 🎉\n🆔 ID: ${phone}\n🔑 PIN: ${pin}`)}`, '_blank');
             } else if (choice === '3') {
-                // FEATURE 6: PAYMENT LINK GENERATOR
-                let link = `upi://pay?pa=7569532152@ybl&pn=JessicaFinance&am=${emi}&cu=INR`;
-                let msg = `Hello ${name} garu, Click the secure link below to pay your EMI of Rs.${emi} via PhonePe/GPay:\n\n${link}`;
-                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(`Hello ${name} garu, Click to pay your EMI of Rs.${emi} via UPI:\nupi://pay?pa=7569532152@ybl&pn=JessicaFinance&am=${emi}&cu=INR`)}`, '_blank');
+            } else if (choice === '4') { 
+                let c = globalCustomers.find(function(x){ return x.phone === phone; }); 
+                sendAgreementWA(phone, name, c.amount, emi); 
+            } else if (choice === '5') {
+                requestLiveLocation(phone);
+            } else if (choice === '6') {
+                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(`Hello ${name} garu, Please check your WhatsApp. I have sent an important voice note regarding your loan due. Reply back.`)}`, '_blank');
             }
         }
 
         function bulkRemindAll() { 
-            if(confirm("⚠️ Send Overdue Reminder to ALL pending customers?")) alert("✅ Reminders dispatched successfully!"); 
+            if(confirm("⚠️ Send Overdue Reminder to ALL pending customers?")) {
+                alert("Reminders dispatched!"); 
+            }
         }
 
-        // --- PRINTING & DOCUMENTS ---
+        /* =========================================
+           COLORFUL MULTI-NATIONAL ID CARD
+           ========================================= */
         function printIdCard(phone) {
-            let c = globalCustomers.find(x => x.phone === phone);
+            let c = globalCustomers.find(function(x) { return x.phone === phone; });
             let w = window.open('','_blank');
             w.document.write(`
                 <style>
-                    .card { border:2px solid #000; width:250px; padding:15px; border-radius:10px; font-family:Arial; text-align:center;}
+                    body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #fff; font-family: 'Open Sans', Arial, sans-serif; margin: 0; }
+                    .id-card { width: 330px; height: 520px; background: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); overflow: hidden; position: relative; border: 1px solid #C0C8D0; }
+                    .header { background: #004C8F; color: white; padding: 25px 20px; text-align: center; border-bottom: 5px solid #ED232A;}
+                    .header h2 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: 1px; }
+                    .header p { margin: 5px 0 0 0; font-size: 10px; opacity: 0.9; text-transform: uppercase; letter-spacing: 2px; }
+                    .photo-container { width: 110px; height: 110px; background: #F4F5F7; border-radius: 50%; margin: -55px auto 0 auto; display: flex; justify-content: center; align-items: center; border: 5px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.15); font-size: 45px; color: #004C8F; font-weight: bold; }
+                    .details { padding: 25px 20px; text-align: center; }
+                    .name { font-size: 22px; font-weight: 800; color: #2C3E50; margin: 5px 0; text-transform: uppercase; }
+                    .id-number { font-size: 14px; font-weight: bold; color: #ED232A; background: #FFF5F5; padding: 5px 15px; border-radius: 4px; display: inline-block; margin-bottom: 20px; border: 1px dashed #F5B7B1; }
+                    .info-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px; text-align: left; padding: 0 10px; border-bottom: 1px dashed #EAEDED; padding-bottom: 5px;}
+                    .info-label { color: #6C7A89; font-weight: 700; }
+                    .info-value { color: #2C3E50; font-weight: 800; text-align: right;}
+                    .footer { background: #004C8F; padding: 15px; text-align: center; font-size: 10px; color: white; position: absolute; bottom: 0; width: 100%; }
                 </style>
-                <div class="card">
-                    <h3 style="color:#2563eb; margin-bottom:5px;">JESSICA FINANCE</h3>
-                    <p style="font-size:10px; margin-top:0;">Customer ID Card</p>
-                    <b>${c.name}</b><br><small>${c.phone}</small><br><small>${c.village}</small><br><br>
-                    <i>ID: JF-${c.phone.slice(-4)}</i>
+                <div class="id-card">
+                    <div class="header">
+                        <h2>JESSICA FINANCE</h2>
+                        <p>Corporate Authorized ID</p>
+                    </div>
+                    <div class="photo-container">${c.name.substring(0,2).toUpperCase()}</div>
+                    <div class="details">
+                        <div class="name">${c.name}</div>
+                        <div class="id-number">JF-${c.phone.slice(-4)}</div>
+                        <div class="info-row"><span class="info-label">Mobile</span><span class="info-value">${c.phone}</span></div>
+                        <div class="info-row"><span class="info-label">Aadhaar</span><span class="info-value">${c.aadhaar || 'Verified'}</span></div>
+                        <div class="info-row"><span class="info-label">Branch</span><span class="info-value">${c.village || 'Main Office'}</span></div>
+                    </div>
+                    <div class="footer">Property of Jessica Finance Management.<br>Valid strictly for internal loan processing.</div>
                 </div>
                 <script>window.onload=window.print<\/script>
             `);
         }
 
+        // --- PRINTING & DOCUMENTS ---
         function printAgreement(phone) {
-            let cust = globalCustomers.find(c => c.phone === phone);
+            let cust = globalCustomers.find(function(c) { return c.phone === phone; }); 
             let emi = Math.round((Number(cust.amount) * 1.2) / cust.duration);
-            let w = window.open('','_blank');
+            let w = window.open('','_blank'); 
             w.document.write(`
                 <h2 style="text-align:center; font-family:Arial;">LOAN AGREEMENT</h2>
                 <div style="font-family:Arial; padding:20px;">
@@ -1147,7 +1403,7 @@
         }
 
         function printStatement(phone) {
-            let cust = globalCustomers.find(c => c.phone === phone);
+            let cust = globalCustomers.find(function(c) { return c.phone === phone; }); 
             let w = window.open('','_blank');
             w.document.write(`
                 <h2 style="text-align:center; font-family:Arial;">CUSTOMER LEDGER</h2>
@@ -1159,12 +1415,16 @@
         }
 
         function printCollectionSheet() { 
-            window.open('','_blank').document.write(`<h2 style="font-family:Arial; text-align:center;">ROUTE SHEET</h2><script>window.onload=window.print<\/script>`); 
+            let w = window.open('','_blank');
+            w.document.write(`
+                <h2 style="font-family:Arial; text-align:center;">ROUTE SHEET</h2>
+                <script>window.onload=window.print<\/script>
+            `); 
         }
 
         // --- EXPENSES & MISC ---
         function addDailyExpense() {
-            let amt = prompt("Enter Expense Amount (₹):");
+            let amt = prompt("Enter Expense Amount (₹):"); 
             let reason = prompt("Enter Reason (e.g., Petrol):");
             if(amt && reason) { 
                 fetch('/api/expenses', { 
@@ -1176,21 +1436,12 @@
             }
         }
 
-        function pushHolidayAll() { 
-            if(confirm("HOLIDAY PUSH: This will push everyone's Due Date by 7 days. Are you sure?")) {
-                alert("Simulated push done!"); 
-            }
-        }
-
-        function exportToExcel() { alert("Exporting CSV..."); }
-        function backupDatabase() { alert("Downloading Backup..."); }
-
-        // --- FILTERING & SEARCHING ---
+        // --- FILTERS & SEARCH ---
         function applySmartFilter(type) { 
             currentFilter = type; 
             renderCards(); 
         }
-        
+
         function clearSearch() { 
             document.getElementById('searchInput').value = ''; 
             document.getElementById('clearSearchBtn').style.display = 'none'; 
@@ -1204,33 +1455,31 @@
         function filterTable() {
             let input = document.getElementById("searchInput").value.toLowerCase();
             let cards = document.getElementById("customersListContainer").getElementsByClassName("customer-card");
-            for (let i = 0; i < cards.length; i++) {
-                cards[i].style.display = cards[i].innerText.toLowerCase().includes(input) ? "" : "none";
+            for (let i = 0; i < cards.length; i++) { 
+                if(cards[i].innerText.toLowerCase().includes(input)) {
+                    cards[i].style.display = "";
+                } else {
+                    cards[i].style.display = "none";
+                }
             }
         }
 
         // --- ANALYTICS DASHBOARD ---
         function calculateAnalytics() {
-            let tGiven = 0, tCollected = 0, active = 0, cleared = 0, tProfit = 0, expected = 0, todayTarget = 0;
+            let tGiven = 0, tCollected = 0, todayTarget = 0, tProfit = 0;
             const today = new Date(); 
             today.setHours(0,0,0,0);
             
-            globalCustomers.forEach(c => {
+            globalCustomers.forEach(function(c) {
                 let p = Number(c.amount); 
                 tGiven += p; 
                 tProfit += (p * 0.20) + Number(c.penalty||0);
                 
-                let emi = Math.round((p + p*0.20) / c.duration);
+                let emi = Math.round((p + p*0.20) / c.duration); 
                 tCollected += (c.paidWeeks * emi);
                 
-                if(c.paidWeeks < c.duration) { 
-                    active++; 
-                    expected += emi; 
-                    if(c.nextDueDate && new Date(c.nextDueDate) <= today) {
-                        todayTarget += emi;
-                    }
-                } else { 
-                    cleared++; 
+                if(c.paidWeeks < c.duration && c.nextDueDate && new Date(c.nextDueDate) <= today && !(c.notes && c.notes.includes('[PAUSED]'))) { 
+                    todayTarget += emi; 
                 }
             });
 
@@ -1240,7 +1489,7 @@
             document.getElementById('statProfit').innerText = formatMoney(tProfit);
         }
 
-        // --- CORE PAYMENT LOGIC ---
+        // --- CORE PAYMENT APPROVALS ---
         async function recordCashPayment(phone, name, amount) {
             if(confirm(`CONFIRM:\nReceive ₹${amount} in cash from ${name}?`)) {
                 await fetch('/api/action', { 
@@ -1248,7 +1497,9 @@
                     headers: { 'Content-Type': 'application/json' }, 
                     body: JSON.stringify({ phone: phone, action: 'approve_payment', amount: amount, mode: 'cash' }) 
                 });
-                if(confirm("Payment Recorded! Send WA Receipt?")) sendReceiptWA(phone, name);
+                if(confirm("Payment Recorded! Send WA Receipt?")) {
+                    sendReceiptWA(phone, name);
+                }
                 loadCustomers();
             }
         }
@@ -1282,7 +1533,7 @@
 
         // --- FORMS AND MODALS ---
         function openEditModal(phone) {
-            let c = globalCustomers.find(c => c.phone === phone);
+            let c = globalCustomers.find(function(c) { return c.phone === phone; }); 
             if(!c) return;
             
             document.getElementById('editPhone').value = c.phone; 
@@ -1292,12 +1543,23 @@
             document.getElementById('editAmount').value = c.amount; 
             document.getElementById('editDuration').value = c.duration;
             document.getElementById('editGuarantor').value = c.guarantor||'';
+            document.getElementById('editLastPaid').value = c.lastPaidDate ? c.lastPaidDate.split('/').reverse().join('-') : '';
+            document.getElementById('editNextDue').value = c.nextDueDate ? c.nextDueDate.split('/').reverse().join('-') : '';
+            document.getElementById('editNotes').value = c.notes||'';
             
             new bootstrap.Modal(document.getElementById('editCustomerModal')).show();
         }
 
+        // Edit Form Submit
         document.getElementById('editCustomerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            let lastP = document.getElementById('editLastPaid').value; 
+            let nextD = document.getElementById('editNextDue').value;
+            
+            if(lastP && lastP.includes('-')) lastP = lastP.split('-').reverse().join('/');
+            if(nextD && nextD.includes('-')) nextD = nextD.split('-').reverse().join('/');
+            
             const payload = { 
                 action: 'edit_customer', 
                 phone: document.getElementById('editPhone').value, 
@@ -1306,8 +1568,12 @@
                 editAadhaar: document.getElementById('editAadhaar').value, 
                 editAmount: document.getElementById('editAmount').value, 
                 editDuration: document.getElementById('editDuration').value, 
-                editGuarantor: document.getElementById('editGuarantor').value 
+                editGuarantor: document.getElementById('editGuarantor').value, 
+                editLastPaid: lastP, 
+                editNextDue: nextD, 
+                editNotes: document.getElementById('editNotes').value 
             };
+            
             await fetch('/api/action', { 
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
@@ -1317,9 +1583,10 @@
             loadCustomers();
         });
 
+        // Add Form Submit
         document.getElementById('addCustomerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const newCustomer = { 
+            const payload = { 
                 name: document.getElementById('custName').value, 
                 phone: document.getElementById('custPhone').value, 
                 village: document.getElementById('custVillage').value, 
@@ -1334,24 +1601,25 @@
             await fetch('/api/customers', { 
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify(newCustomer) 
+                body: JSON.stringify(payload) 
             });
-            
             bootstrap.Modal.getInstance(document.getElementById('addCustomerModal')).hide(); 
             loadCustomers(); 
         });
 
+        // Delete Customer
         async function secureDeleteCustomer(phone) {
             if (prompt("Enter Admin PIN (7569) to delete:") === "7569") {
                 await fetch('/api/action', { 
                     method: 'POST', 
                     headers: { 'Content-Type': 'application/json' }, 
                     body: JSON.stringify({ phone: phone, action: 'delete_customer' }) 
-                });
+                }); 
                 loadCustomers();
             }
         }
 
+        // Recover PIN
         function recoverPIN(phone, name, currentPin) {
             let newPin = prompt(`SECURITY ACCESS:\nCustomer: ${name}\nCurrent PIN: ${currentPin}\n\nEnter a new PIN to reset, or click Cancel to keep it:`, currentPin);
             if(newPin && newPin !== currentPin) {
@@ -1360,12 +1628,12 @@
                     headers: {'Content-Type':'application/json'}, 
                     body: JSON.stringify({phone: phone, action:'update_pin', password: newPin}) 
                 });
-                alert("PIN updated successfully! 🎉"); 
+                alert("PIN updated successfully!"); 
                 loadCustomers();
             }
         }
 
-        // Initialize System
+        // Boot
         loadCustomers();
 
     </script>
