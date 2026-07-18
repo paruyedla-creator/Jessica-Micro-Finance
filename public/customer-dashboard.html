@@ -124,11 +124,11 @@
             text-transform: uppercase; letter-spacing: 0.5px;
         }
         .pay-btn-main:active { transform: scale(0.98); }
-        
-        .pay-btn-custom { 
-            background: white; color: var(--primary); border: 2px solid var(--primary); 
-            font-weight: 800; padding: 12px; border-radius: 6px; width: 100%; margin-top: 10px; 
-            transition: 0.2s; text-transform: uppercase;
+
+        .btn-noc {
+            background: #1E8449; color: white; border: none; padding: 10px; 
+            border-radius: 6px; font-weight: 800; font-size: 13px; width: 100%; 
+            margin-top: 10px; transition: 0.2s; text-transform: uppercase;
         }
 
         .ticker { background: #FFF9C4; color: #B7950B; font-size: 12px; font-weight: 800; padding: 8px; text-align: center; border-bottom: 2px solid #F1C40F;}
@@ -138,7 +138,17 @@
         .progress-bar-custom { height: 6px; border-radius: 3px; background: #EAEDED; margin-top: 10px; overflow: hidden;}
         .progress-fill { height: 100%; background: var(--secondary); transition: 1s; }
 
-        @media print { body * { visibility: hidden; } .print-area, .print-area * { visibility: visible; } .print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 10px; } .app-grid, .pay-btn-main, .pay-btn-custom, .ticker { display: none !important; } }
+        /* Floating WhatsApp Button */
+        .float-support {
+            position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+            background: #25D366; color: white; width: 60px; height: 60px; 
+            border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            display: flex; justify-content: center; align-items: center; 
+            font-size: 30px; cursor: pointer; transition: 0.3s;
+        }
+        .float-support:hover { transform: scale(1.1); }
+
+        @media print { body * { visibility: hidden; } .print-area, .print-area * { visibility: visible; } .print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 10px; } .app-grid, .pay-btn-main, .ticker, .float-support { display: none !important; } }
     </style>
 </head>
 <body>
@@ -174,6 +184,8 @@
                     <i class="fas fa-shield-alt text-success" id="goldStar" style="position: absolute; bottom: -5px; right: -5px; font-size: 14px; display: none; background: white; border-radius: 50%;"></i>
                 </div>
                 <div>
+                    <!-- FEATURE: SMART GREETING -->
+                    <div style="font-size: 10px; color: #BDC3C7; font-weight: 700; letter-spacing: 1px;" id="greetingText">WELCOME</div>
                     <h5 class="fw-bold mb-0" id="cName" style="font-size: 18px; text-transform: uppercase;">Customer Name</h5>
                     <div class="d-flex gap-2 align-items-center mt-1">
                         <span style="font-size: 11px; font-weight: 700;">ACC ID: <span id="cId">JF-XXXX</span></span>
@@ -241,7 +253,11 @@
 
                 <!-- PAYMENT ACTION SECTION -->
                 <div id="loanClearedBanner" style="display: none; background: #E8F8F5; color: #1E8449; padding: 15px; border-radius: 6px; text-align: center; border: 1px solid #A9DFBF;">
-                    <i class="fas fa-check-circle fs-2 mb-2"></i><br><b style="font-size: 14px;">Account Settled & Closed</b><br><span style="font-size:11px;">Thank you for banking with us.</span>
+                    <i class="fas fa-check-circle fs-2 mb-2"></i><br>
+                    <b style="font-size: 14px;">Account Settled & Closed</b><br>
+                    <span style="font-size:11px;">Thank you for banking with us.</span>
+                    <!-- FEATURE: NOC DOWNLOAD BUTTON -->
+                    <button class="btn-noc" onclick="generateNOC()"><i class="fas fa-certificate me-2"></i> Download NOC</button>
                 </div>
 
                 <div id="paymentSection">
@@ -258,9 +274,8 @@
                         </div>
                     </div>
 
-                    <!-- Direct Pay Buttons (NO UTR REQUIRED) -->
+                    <!-- Direct Pay Buttons (NO CUSTOM PAY, NO UTR) -->
                     <button class="pay-btn-main" onclick="triggerUPIApp('any')"><i class="fas fa-rupee-sign"></i> PAY EMI SECURELY</button>
-                    <button class="pay-btn-custom" onclick="customPartialPay()"><i class="fas fa-edit"></i> Pay Custom Amount</button>
                 </div>
             </div>
 
@@ -308,6 +323,11 @@
         </div>
     </div>
 
+    <!-- FEATURE: FLOATING WHATSAPP SUPPORT BUTTON -->
+    <div class="float-support" onclick="sendWhatsAppIntent('Hi Admin, I need help with my loan account.')">
+        <i class="fab fa-whatsapp"></i>
+    </div>
+
     <!-- MODALS SECTION -->
     
     <!-- EMI Calculator Modal -->
@@ -349,7 +369,7 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT ENGINE (FULLY EXPANDED) -->
+    <!-- JAVASCRIPT ENGINE -->
     <script>
         const formatMoney = (amount) => '₹' + Number(amount).toLocaleString('en-IN');
         let currentCustomer = null;
@@ -360,8 +380,16 @@
         const adminUPI_ID = "7569532152@ybl"; 
         const businessName = "Jessica Finance"; 
 
+        // Set Smart Time Greeting
+        function setGreeting() {
+            let hour = new Date().getHours();
+            let greeting = hour < 12 ? "GOOD MORNING," : (hour < 17 ? "GOOD AFTERNOON," : "GOOD EVENING,");
+            document.getElementById('greetingText').innerText = greeting;
+        }
+
         // Auto Login Check
         window.onload = function() {
+            setGreeting();
             let session = localStorage.getItem('loggedInCustomer');
             if(session) {
                 let creds = JSON.parse(session);
@@ -378,11 +406,7 @@
             let phone = document.getElementById('loginPhone').value;
             let pin = document.getElementById('loginPin').value;
             
-            if(!phone || !pin) { 
-                alert("Please enter both Phone & PIN"); 
-                return; 
-            }
-
+            if(!phone || !pin) { alert("Please enter both Phone & PIN"); return; }
             document.getElementById('loginLoading').style.display = 'block';
             
             try {
@@ -401,9 +425,7 @@
                     document.getElementById('loginScreen').style.display = 'none';
                     document.getElementById('dashboardScreen').style.display = 'block';
                     updateUI();
-                } else { 
-                    alert("Invalid Details! Please check ID and PIN."); 
-                }
+                } else { alert("Invalid Details! Please check ID and PIN."); }
             } catch(e) {
                 document.getElementById('loginLoading').style.display = 'none';
                 let fallback = localStorage.getItem('jf_offline_backup'); 
@@ -416,36 +438,13 @@
                         document.getElementById('dashboardScreen').style.display = 'block'; 
                         updateUI(); 
                     }
-                } else { 
-                    alert("Server error. Please try again."); 
-                }
-            }
-        }
-
-        async function fetchMyData() {
-            let session = localStorage.getItem('loggedInCustomer');
-            if(!session) return;
-            let creds = JSON.parse(session);
-            try {
-                let res = await fetch('/api/login', { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ userId: creds.phone, password: creds.password }) 
-                });
-                let data = await res.json();
-                if(data.success && data.role === 'customer') { 
-                    currentCustomer = data.customerData; 
-                    updateUI(); 
-                }
-            } catch(e) {
-                console.log("Fetch failed, retaining UI state.");
+                } else { alert("Server error. Please try again."); }
             }
         }
 
         function updateUI() {
             const cust = currentCustomer;
             
-            // Financial Calculations
             let principal = Number(cust.amount) || 0;
             let duration = Number(cust.duration) || 1;
             let baseEmi = Math.round((principal + (principal * 0.20)) / duration);
@@ -456,7 +455,6 @@
             let pendingWeeks = duration - paidWeeks;
             let pendBal = (pendingWeeks * baseEmi) + penalty;
 
-            // DOM Updates
             document.getElementById('cName').innerText = cust.name;
             document.getElementById('cId').innerText = cust.customerId || ('JF-' + cust.phone.slice(-4)); 
             document.getElementById('cVillage').innerText = cust.village || 'Location N/A';
@@ -471,34 +469,19 @@
             document.getElementById('cReferral').innerText = cust.referralCode || ('REF-' + cust.phone.slice(-5));
             document.getElementById('cCoins').innerText = paidWeeks * 50;
 
-            // Membership Tier Logic
             let tierEl = document.getElementById('cTier');
             document.getElementById('goldStar').style.display = 'none';
-            if(cust.notes && cust.notes.includes('🚫')) { 
-                tierEl.innerText = "Defaulter"; tierEl.className = "tier-badge tier-danger"; 
-            }
-            else if(paidWeeks >= 10 && principal >= 50000) { 
-                tierEl.innerText = "Corporate VIP"; tierEl.className = "tier-badge tier-gold"; document.getElementById('goldStar').style.display = 'block'; 
-            }
-            else if(paidWeeks >= 5) { 
-                tierEl.innerText = "Gold Member"; tierEl.className = "tier-badge tier-gold"; document.getElementById('goldStar').style.display = 'block';
-            }
-            else if(paidWeeks >= 2) { 
-                tierEl.innerText = "Silver Member"; tierEl.className = "tier-badge"; 
-            }
-            else { 
-                tierEl.innerText = "Standard"; tierEl.className = "tier-badge"; 
-            }
+            if(cust.notes && cust.notes.includes('🚫')) { tierEl.innerText = "Defaulter"; tierEl.className = "tier-badge tier-danger"; }
+            else if(paidWeeks >= 10 && principal >= 50000) { tierEl.innerText = "Corporate VIP"; tierEl.className = "tier-badge tier-gold"; document.getElementById('goldStar').style.display = 'block'; }
+            else if(paidWeeks >= 5) { tierEl.innerText = "Gold Member"; tierEl.className = "tier-badge tier-gold"; document.getElementById('goldStar').style.display = 'block';}
+            else if(paidWeeks >= 2) { tierEl.innerText = "Silver Member"; tierEl.className = "tier-badge"; }
+            else { tierEl.innerText = "Standard"; tierEl.className = "tier-badge"; }
 
-            // Penalty Logic
             if (penalty > 0) {
                 document.getElementById('cPenaltyBox').style.display = 'block';
                 document.getElementById('cPenalty').innerText = formatMoney(penalty);
-            } else { 
-                document.getElementById('cPenaltyBox').style.display = 'none'; 
-            }
+            } else { document.getElementById('cPenaltyBox').style.display = 'none'; }
 
-            // Trust Score Logic
             let score = 500 + Math.floor((paidWeeks/duration)*300) - (penalty > 0 ? 100 : 0);
             score = Math.max(300, Math.min(900, score));
             let tBar = document.getElementById('trustScoreBar');
@@ -510,41 +493,22 @@
                 tBar.style.width = Math.max(50, Math.min(100, (score-300)/6)) + '%'; tBar.style.background = 'var(--success)'; tText.innerText = score+' (Good)'; tText.style.color = 'var(--success)'; 
             }
 
-            // Progress Bar
             let prog = Math.round((paidWeeks / duration) * 100);
             setTimeout(() => { document.getElementById('loanProgress').style.width = prog + '%'; }, 300);
             document.getElementById('progressText').innerText = prog + '%';
             
-            // Banners Display
             document.getElementById('topUpBanner').style.display = (prog >= 60 && penalty === 0 && pendingWeeks > 0) ? 'flex' : 'none';
             document.getElementById('preCloseBanner').style.display = (prog > 0 && pendingWeeks > 0 && pendingWeeks <= 3) ? 'flex' : 'none';
 
-            // Date & Countdown Logic (Intact)
             let dueDate = null;
             if (cust.nextDueDate) {
-                if(cust.nextDueDate.includes('-')) {
-                    dueDate = new Date(cust.nextDueDate);
-                } else {
-                    let parts = cust.nextDueDate.split('/');
-                    if(parts.length === 3) dueDate = new Date(parts[2], parts[1] - 1, parts[0]);
-                    else dueDate = new Date(cust.nextDueDate);
-                }
+                if(cust.nextDueDate.includes('-')) { dueDate = new Date(cust.nextDueDate); } 
+                else { let parts = cust.nextDueDate.split('/'); if(parts.length === 3) dueDate = new Date(parts[2], parts[1] - 1, parts[0]); else dueDate = new Date(cust.nextDueDate); }
             } else if (cust.lastPaidDate) {
-                let parts = cust.lastPaidDate.split('/');
-                if(parts.length === 3) {
-                    dueDate = new Date(parts[2], parts[1] - 1, parts[0]);
-                    dueDate.setDate(dueDate.getDate() + 7);
-                }
+                let parts = cust.lastPaidDate.split('/'); if(parts.length === 3) { dueDate = new Date(parts[2], parts[1] - 1, parts[0]); dueDate.setDate(dueDate.getDate() + 7); }
             } else if (cust.startDate) {
-                let parts = cust.startDate.split('/');
-                if(parts.length === 3) {
-                    dueDate = new Date(parts[2], parts[1] - 1, parts[0]);
-                    dueDate.setDate(dueDate.getDate() + 7);
-                }
-            } else {
-                dueDate = new Date();
-                dueDate.setDate(dueDate.getDate() + 7);
-            }
+                let parts = cust.startDate.split('/'); if(parts.length === 3) { dueDate = new Date(parts[2], parts[1] - 1, parts[0]); dueDate.setDate(dueDate.getDate() + 7); }
+            } else { dueDate = new Date(); dueDate.setDate(dueDate.getDate() + 7); }
 
             if (dueDate && !isNaN(dueDate)) {
                 document.getElementById('nextDueDate').innerText = dueDate.toLocaleDateString('en-GB');
@@ -561,16 +525,10 @@
                 document.getElementById('countdownText').innerText = '';
             }
 
-            // Notices
             let nBanner = document.getElementById('adminNoticeBanner');
-            if(cust.notes && cust.notes.includes("Notice:")) { 
-                nBanner.style.display = 'block'; 
-                document.getElementById('adminNoticeText').innerText = cust.notes.split("Notice:")[1].trim(); 
-            } else { 
-                nBanner.style.display = 'none'; 
-            }
+            if(cust.notes && cust.notes.includes("Notice:")) { nBanner.style.display = 'block'; document.getElementById('adminNoticeText').innerText = cust.notes.split("Notice:")[1].trim(); } 
+            else { nBanner.style.display = 'none'; }
 
-            // Loan Status Check
             if(pendingWeeks <= 0) {
                 document.getElementById('loanClearedBanner').style.display = 'block';
                 document.getElementById('paymentSection').style.display = 'none';
@@ -581,7 +539,6 @@
                 document.getElementById('paymentSection').style.display = 'block';
             }
 
-            // History Render
             const tbody = document.getElementById('historyBody');
             tbody.innerHTML = '';
             if(cust.history && cust.history.length > 0) {
@@ -599,41 +556,21 @@
                             <div style="font-size:10px; color:#7F8C8D; font-weight:700;">${r.date}</div>
                         </td>
                         <td class="text-success fw-bold text-end align-middle" style="font-size:14px;">${formatMoney(r.amount)}</td>
-                        <td class="text-end align-middle">
-                            <a href="https://wa.me/?text=${share}" target="_blank" style="color:#BDC3C7; font-size:14px;"><i class="fas fa-share-alt"></i></a>
-                        </td>
+                        <td class="text-end align-middle"><a href="https://wa.me/?text=${share}" target="_blank" style="color:#BDC3C7; font-size:14px;"><i class="fas fa-share-alt"></i></a></td>
                     </tr>`;
                 });
-            } else { 
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3" style="font-size:12px; font-weight:bold;">No transactions yet.</td></tr>'; 
-            }
+            } else { tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3" style="font-size:12px; font-weight:bold;">No transactions yet.</td></tr>'; }
         }
 
         // ==========================================
-        // 🚀 NEW SECURE PAYMENT LOGIC (NO UTR REQUIRED)
+        // 🚀 SECURE PAYMENT LOGIC (NO UTR REQUIRED)
         // ==========================================
-
         function triggerUPIApp(appType) { 
-            initiateDirectPayment(emiAmount); 
-        }
-
-        function customPartialPay() {
-            let amt = prompt(`Custom Payment:\nOutstanding Balance is ₹${currentCustomer.amount}\n\nEnter the exact amount you want to pay today:`, emiAmount);
-            if(amt && !isNaN(amt) && Number(amt) > 0) { 
-                initiateDirectPayment(Number(amt)); 
-            }
-        }
-
-        // The core change: No UTR box. Just open UPI and alert admin.
-        function initiateDirectPayment(amt) {
-            // Open the UPI Intent link directly
-            let intentUrl = `upi://pay?pa=${adminUPI_ID}&pn=${encodeURIComponent(businessName)}&am=${amt}&cu=INR&tn=JF_Loan_ID_${currentCustomer.phone.slice(-4)}`;
+            let intentUrl = `upi://pay?pa=${adminUPI_ID}&pn=${encodeURIComponent(businessName)}&am=${emiAmount}&cu=INR&tn=JF_Loan_ID_${currentCustomer.phone.slice(-4)}`;
             window.location.href = intentUrl;
             
-            // Wait a few seconds to let them return to the app, then ask to notify admin.
             setTimeout(() => {
-                let msg = `Hi Admin, I have just completed an online payment of Rs.${amt} via PhonePe/GPay for my EMI. Please check your bank statement and update my dashboard. \n- ${currentCustomer.name} (ID: ${currentCustomer.phone.slice(-4)})`;
-                
+                let msg = `Hi Admin, I have just completed an online payment of Rs.${emiAmount} via PhonePe/GPay for my EMI. Please check your bank statement and update my dashboard. \n- ${currentCustomer.name} (ID: JF-${currentCustomer.phone.slice(-4)})`;
                 if(confirm("Did you successfully complete the payment in your UPI App?\n\nClick 'OK' to send a verification message to Admin.")) {
                     window.open(`https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(msg)}`, '_blank');
                 }
@@ -643,21 +580,9 @@
         // ==========================================
         // UTILITY & NEW FEATURES
         // ==========================================
-
-        function sendWhatsAppIntent(msg) { 
-            window.open(`https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(msg)}`, '_blank'); 
-        }
+        function sendWhatsAppIntent(msg) { window.open(`https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(msg)}`, '_blank'); }
         
-        function syncCalendar() {
-            let due = document.getElementById('nextDueDate').innerText;
-            if(due === 'Loading...' || due === 'Not Set') return alert("No due date set.");
-            alert(`Please manually set a calendar reminder for: ${due}\nAmount to pay: ₹${emiAmount}`);
-        }
-
-        function copyReferral() { 
-            navigator.clipboard.writeText(document.getElementById('cReferral').innerText); 
-            alert("Referral Code Copied! Share to earn coins."); 
-        }
+        function copyReferral() { navigator.clipboard.writeText(document.getElementById('cReferral').innerText); alert("Referral Code Copied! Share to earn coins."); }
 
         function toggleCustomerDarkMode() { 
             document.body.classList.toggle('dark-mode'); 
@@ -670,10 +595,7 @@
             document.getElementById('calcResult').innerText = formatMoney(Math.round((p + (p * 0.20)) / w));
         }
 
-        function logoutCustomer() { 
-            localStorage.removeItem('loggedInCustomer'); 
-            window.location.reload(); 
-        }
+        function logoutCustomer() { localStorage.removeItem('loggedInCustomer'); window.location.reload(); }
         
         function fireSuccessConfetti() {
             let duration = 2000; let end = Date.now() + duration;
@@ -686,8 +608,7 @@
 
         // --- NEW FEATURES ---
         function viewIdCard() {
-            let c = currentCustomer;
-            if(!c) return;
+            let c = currentCustomer; if(!c) return;
             let w = window.open('','_blank');
             w.document.write(`
                 <style>
@@ -722,6 +643,40 @@
         function viewAgreement() {
             let msg = `LOAN AGREEMENT SUMMARY\n\nName: ${currentCustomer.name}\nPrincipal: ₹${currentCustomer.amount}\nTotal Weeks: ${currentCustomer.duration}\n\nBy continuing to use this app, you agree to pay your weekly EMI on time. Late payments will incur penalties.`;
             alert(msg);
+        }
+
+        // FEATURE: NOC GENERATOR
+        function generateNOC() {
+            let c = currentCustomer; if(!c) return;
+            let w = window.open('','_blank');
+            w.document.write(`
+                <style>
+                    body { display: flex; justify-content: center; align-items: center; background: #f4f5f7; font-family: 'Times New Roman', serif; margin: 0; padding: 20px;}
+                    .noc-card { width: 100%; max-width: 600px; background: white; padding: 40px; border: 8px solid #004C8F; position: relative; }
+                    .noc-card::before { content: ''; position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; border: 2px dashed #004C8F; pointer-events: none; }
+                    h1 { text-align: center; color: #004C8F; font-size: 28px; text-transform: uppercase; margin-bottom: 5px; }
+                    h3 { text-align: center; color: #ED232A; font-size: 18px; margin-top: 0; margin-bottom: 30px; text-decoration: underline; }
+                    .content { font-size: 16px; line-height: 1.8; color: #333; text-align: justify; z-index: 10; position: relative;}
+                    .signature { margin-top: 50px; display: flex; justify-content: space-between; font-weight: bold; }
+                    .stamp { text-align: center; margin-top: 30px; font-size: 12px; color: #7F8C8D; border-top: 1px solid #ccc; padding-top: 10px;}
+                </style>
+                <div class="noc-card">
+                    <h1>Jessica Finance Management</h1>
+                    <h3>NO DUE CERTIFICATE (NOC)</h3>
+                    <div class="content">
+                        <p>Date: <b>${new Date().toLocaleDateString('en-GB')}</b></p>
+                        <p>This is to certify that <b>Mr/Ms. ${c.name}</b> (ID: JF-${c.phone.slice(-4)}), residing at <b>${c.village || 'Registered Address'}</b>, has successfully cleared and settled their entire loan account with Jessica Finance Management.</p>
+                        <p>The total principal amount of <b>Rs.${formatMoney(c.amount)}</b> along with all respective interest and penalties has been paid in full.</p>
+                        <p>There are no outstanding dues pending against this account as of the date mentioned above. We wish them all the best for their future endeavors.</p>
+                    </div>
+                    <div class="signature">
+                        <div>___________________<br>Customer Signature</div>
+                        <div style="text-align: right;">___________________<br>Authorized Signatory<br><span style="font-size:12px; font-weight:normal;">Jessica Finance Mgt.</span></div>
+                    </div>
+                    <div class="stamp">This is a system generated secure certificate.</div>
+                </div>
+                <script>window.onload=window.print<\/script>
+            `);
         }
 
     </script>
