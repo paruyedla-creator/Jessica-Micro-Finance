@@ -81,11 +81,14 @@ app.post('/api/customers', async (req, res) => {
     newCustomer.address = newCustomer.address || '';
     newCustomer.aadhaar = newCustomer.aadhaar || '';
     newCustomer.guarantor = newCustomer.guarantor || ''; 
+    newCustomer.security = newCustomer.security || ''; // For Tracker
     
     newCustomer.paidWeeks = 0;
     newCustomer.penalty = 0;
+    newCustomer.carryForward = 0; // సగం డబ్బులు కడితే బ్యాలెన్స్ ఇక్కడ ఉంటుంది
     newCustomer.history = [];
     newCustomer.pendingApproval = false;
+    newCustomer.paymentSuccessFlag = false; // యానిమేషన్ ట్రిగ్గర్
     newCustomer.referralCode = 'REF' + Math.floor(Math.random() * 90000 + 10000);
     newCustomer.startDate = new Date().toLocaleDateString('en-GB'); 
 
@@ -96,8 +99,7 @@ app.post('/api/customers', async (req, res) => {
 
 // 4. యాక్షన్స్ (Approve, Reject, Delete, Edit, Penalty, PIN Update, Settle, UTR Tracking)
 app.post('/api/action', async (req, res) => {
-    // NEW: "mode" మరియు "utr" ని కూడా రిక్వెస్ట్ నుంచి తీసుకుంటున్నాం
-    const { phone, action, amount, mode, utr } = req.body; 
+    const { phone, action, amount, mode, utr, shortfall } = req.body; 
     let db = await getDB();
     
     // కస్టమర్ డిలీట్
@@ -112,20 +114,29 @@ app.post('/api/action', async (req, res) => {
 
     if(!customer.paidWeeks) customer.paidWeeks = 0;
     if(!customer.penalty) customer.penalty = 0;
+    if(!customer.carryForward) customer.carryForward = 0;
     if(!customer.history) customer.history = [];
 
+    // కస్టమర్ పేమెంట్ కి రిక్వెస్ట్ పెట్టినప్పుడు
     if (action === 'request_payment') {
         customer.pendingApproval = true;
         customer.requestAmount = amount;
-        // NEW: కస్టమర్ కొట్టిన UTR నెంబర్ టెంపరరీగా సేవ్ అవుతుంది
         customer.paymentUtr = utr || 'Not Provided';
+        customer.paymentSuccessFlag = false; // రిసెట్
         
+    // అడ్మిన్ APPROVE చేసినప్పుడు 
     } else if (action === 'approve_payment') {
         customer.pendingApproval = false;
+        
+        // ఒకవేళ సగం డబ్బులే కడితే (Partial Pay), మిగతాది Carry forward అవుతుంది
+        if (mode === 'custom_part' && shortfall) {
+            customer.carryForward += Number(shortfall);
+        }
+
         customer.paidWeeks += 1;
         customer.lastPaidDate = new Date().toLocaleDateString('en-GB'); 
         
-        // NEW FEATURE: పేమెంట్ మోడ్ మరియు UTR నెంబర్ ని హిస్టరీలో పక్కాగా సేవ్ చేయడం
+        // పేమెంట్ మోడ్ మరియు UTR నెంబర్ ని హిస్టరీలో పక్కాగా సేవ్ చేయడం
         customer.history.push({
             week: customer.paidWeeks, 
             amount: customer.requestAmount || amount, 
@@ -136,8 +147,16 @@ app.post('/api/action', async (req, res) => {
 
         // SMART BUSINESS LOGIC: డబ్బులు కట్టేశాడు కాబట్టి పెనాల్టీ జీరో చేయాలి
         customer.penalty = 0; 
-        customer.paymentUtr = ''; // అప్రూవ్ అయ్యాక క్లియర్ చేయడం
+        customer.paymentUtr = ''; 
         
+        // 🔥 ఫైర్ ఫీచర్: కస్టమర్ కి "Thank You" యానిమేషన్ వెళ్లడానికి సిగ్నల్
+        customer.paymentSuccessFlag = true; 
+        
+    // కస్టమర్ యానిమేషన్ చూశాక దాన్ని ఆపేయడానికి
+    } else if (action === 'clear_success_flag') {
+        customer.paymentSuccessFlag = false;
+
+    // అడ్మిన్ REJECT చేసినప్పుడు
     } else if (action === 'reject_payment') {
         customer.pendingApproval = false;
         customer.requestAmount = 0;
@@ -160,6 +179,7 @@ app.post('/api/action', async (req, res) => {
             mode: mode || 'settlement' 
         });
         customer.penalty = 0;
+        customer.carryForward = 0;
         
     } else if (action === 'update_pin') {
         // PIN RECOVERY LOGIC
@@ -176,6 +196,7 @@ app.post('/api/action', async (req, res) => {
         customer.village = req.body.editVillage || customer.village || '';
         customer.address = req.body.editAddress || customer.address || '';
         customer.aadhaar = req.body.editAadhaar || customer.aadhaar || '';
+        customer.security = req.body.editSecurity || customer.security || '';
         customer.guarantor = req.body.editGuarantor || customer.guarantor || '';
     }
 

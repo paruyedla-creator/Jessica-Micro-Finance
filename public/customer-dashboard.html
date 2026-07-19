@@ -148,10 +148,35 @@
         }
         .float-support:hover { transform: scale(1.1); }
 
+        /* SUCCESS ANIMATION SCREEN */
+        #successScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.95); z-index: 9999;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center;
+        }
+        .tick-circle {
+            width: 100px; height: 100px; background: var(--success);
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            color: white; font-size: 50px; box-shadow: 0 10px 30px rgba(39, 174, 96, 0.4);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        
+        .success-text { font-size: 24px; font-weight: 800; color: var(--success); margin-top: 20px; }
+        .success-sub { font-size: 14px; color: #7F8C8D; font-weight: 600; margin-top: 5px; }
+
         @media print { body * { visibility: hidden; } .print-area, .print-area * { visibility: visible; } .print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 10px; } .app-grid, .pay-btn-main, .ticker, .float-support { display: none !important; } }
     </style>
 </head>
 <body>
+
+    <!-- SUCCESS OVERLAY (Hidden by default) -->
+    <div id="successScreen">
+        <div class="tick-circle"><i class="fas fa-check"></i></div>
+        <div class="success-text">Payment Successful!</div>
+        <div class="success-sub">Your EMI has been approved by Admin.</div>
+    </div>
 
     <div class="ticker" id="tickerMsg">
         <marquee behavior="scroll" direction="left" scrollamount="5">⚠️ NOTIFICATION: Pay your weekly EMI strictly on time to maintain a Good Trust Score. Avoid late payment penalties.</marquee>
@@ -275,7 +300,11 @@
                     </div>
 
                     <!-- Direct Pay Buttons (NO CUSTOM PAY, NO UTR) -->
-                    <button class="pay-btn-main" onclick="triggerUPIApp('any')"><i class="fas fa-rupee-sign"></i> PAY EMI SECURELY</button>
+                    <button class="pay-btn-main" onclick="triggerUPIApp('any')" id="payEmiBtn"><i class="fas fa-rupee-sign"></i> PAY EMI SECURELY</button>
+                    
+                    <div id="pendingAlert" class="mt-3 text-warning fw-bold text-center" style="display:none; font-size: 14px;">
+                        <i class="fas fa-spinner fa-spin"></i> Waiting for Admin Approval...
+                    </div>
                 </div>
             </div>
 
@@ -370,10 +399,12 @@
     </div>
 
     <!-- JAVASCRIPT ENGINE -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const formatMoney = (amount) => '₹' + Number(amount).toLocaleString('en-IN');
         let currentCustomer = null;
         let emiAmount = 0;
+        let pollInterval = null;
         
         // --- ⚙️ UPI & WHATSAPP SETTINGS ---
         const adminWhatsApp = "917569532152"; 
@@ -425,6 +456,7 @@
                     document.getElementById('loginScreen').style.display = 'none';
                     document.getElementById('dashboardScreen').style.display = 'block';
                     updateUI();
+                    startLiveRadar();
                 } else { alert("Invalid Details! Please check ID and PIN."); }
             } catch(e) {
                 document.getElementById('loginLoading').style.display = 'none';
@@ -442,8 +474,40 @@
             }
         }
 
+        async function silentDataFetch(phone, password) {
+            try {
+                let res = await fetch('/api/login', {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: phone, password: password })
+                });
+                let data = await res.json();
+                if(data.success && data.role === 'customer') {
+                    currentCustomer = data.customerData;
+                    updateUI();
+                    
+                    // CHECK FOR SUCCESS FLAG
+                    if(currentCustomer.paymentSuccessFlag === true) {
+                        triggerSuccessAnimation();
+                    }
+                }
+            } catch(e) { console.error("Silent sync failed"); }
+        }
+
+        function startLiveRadar() {
+            if(pollInterval) clearInterval(pollInterval);
+            pollInterval = setInterval(() => {
+                let session = localStorage.getItem('loggedInCustomer');
+                if(session) {
+                    let creds = JSON.parse(session);
+                    silentDataFetch(creds.phone, creds.password);
+                }
+            }, 5000);
+        }
+
         function updateUI() {
             const cust = currentCustomer;
+            if(!cust) return;
             
             let principal = Number(cust.amount) || 0;
             let duration = Number(cust.duration) || 1;
@@ -468,6 +532,15 @@
             document.getElementById('dispPrincipal').innerText = formatMoney(principal);
             document.getElementById('cReferral').innerText = cust.referralCode || ('REF-' + cust.phone.slice(-5));
             document.getElementById('cCoins').innerText = paidWeeks * 50;
+
+            // Pending Approval State
+            if(cust.pendingApproval) {
+                document.getElementById('payEmiBtn').style.display = 'none';
+                document.getElementById('pendingAlert').style.display = 'block';
+            } else {
+                document.getElementById('payEmiBtn').style.display = 'flex';
+                document.getElementById('pendingAlert').style.display = 'none';
+            }
 
             let tierEl = document.getElementById('cTier');
             document.getElementById('goldStar').style.display = 'none';
@@ -533,7 +606,7 @@
                 document.getElementById('loanClearedBanner').style.display = 'block';
                 document.getElementById('paymentSection').style.display = 'none';
                 document.getElementById('preCloseBanner').style.display = 'none';
-                if(!localStorage.getItem('confetti')) { fireSuccessConfetti(); localStorage.setItem('confetti', '1'); }
+                if(!localStorage.getItem('confetti_' + cust.phone)) { fireSuccessConfetti(); localStorage.setItem('confetti_' + cust.phone, '1'); }
             } else {
                 document.getElementById('loanClearedBanner').style.display = 'none';
                 document.getElementById('paymentSection').style.display = 'block';
@@ -565,22 +638,71 @@
         // ==========================================
         // 🚀 SECURE PAYMENT LOGIC (NO UTR REQUIRED)
         // ==========================================
-        function triggerUPIApp(appType) { 
+        async function triggerUPIApp(appType) { 
             let intentUrl = `upi://pay?pa=${adminUPI_ID}&pn=${encodeURIComponent(businessName)}&am=${emiAmount}&cu=INR&tn=JF_Loan_ID_${currentCustomer.phone.slice(-4)}`;
+            
+            // Send Signal to Admin Dashboard First
+            await fetch('/api/action', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone: currentCustomer.phone, action: 'request_payment', amount: emiAmount, utr: 'Online Pay' })
+            });
+
+            // Update UI to pending instantly
+            document.getElementById('payEmiBtn').style.display = 'none';
+            document.getElementById('pendingAlert').style.display = 'block';
+
+            // Open UPI App
             window.location.href = intentUrl;
             
+            // Backup WhatsApp verification alert
             setTimeout(() => {
-                let msg = `Hi Admin, I have just completed an online payment of Rs.${emiAmount} via PhonePe/GPay for my EMI. Please check your bank statement and update my dashboard. \n- ${currentCustomer.name} (ID: JF-${currentCustomer.phone.slice(-4)})`;
+                let msg = `Hi Admin, I have just completed an online payment of Rs.${emiAmount} via PhonePe/GPay for my EMI. Please check your bank statement and approve my dashboard. \n- ${currentCustomer.name} (ID: JF-${currentCustomer.phone.slice(-4)})`;
                 if(confirm("Did you successfully complete the payment in your UPI App?\n\nClick 'OK' to send a verification message to Admin.")) {
-                    window.open(`https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(msg)}`, '_blank');
+                    window.open(`https://wa.me/91${adminWhatsApp}?text=${encodeURIComponent(msg)}`, '_blank');
                 }
             }, 3000);
         }
 
         // ==========================================
+        // PHONEPE STYLE SUCCESS ANIMATION
+        // ==========================================
+        async function triggerSuccessAnimation() {
+            // Show Overlay
+            const screen = document.getElementById('successScreen');
+            screen.style.display = 'flex';
+            
+            // Fire Confetti
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10000 };
+            
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) { return clearInterval(interval); }
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+
+            // Clear the flag in the database so it doesn't loop
+            await fetch('/api/action', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone: currentCustomer.phone, action: 'clear_success_flag' })
+            });
+
+            // Hide overlay after 4 seconds
+            setTimeout(() => {
+                screen.style.display = 'none';
+            }, 4000);
+        }
+
+        // ==========================================
         // UTILITY & NEW FEATURES
         // ==========================================
-        function sendWhatsAppIntent(msg) { window.open(`https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(msg)}`, '_blank'); }
+        function sendWhatsAppIntent(msg) { window.open(`https://wa.me/91${adminWhatsApp}?text=${encodeURIComponent(msg)}`, '_blank'); }
         
         function copyReferral() { navigator.clipboard.writeText(document.getElementById('cReferral').innerText); alert("Referral Code Copied! Share to earn coins."); }
 
@@ -595,7 +717,11 @@
             document.getElementById('calcResult').innerText = formatMoney(Math.round((p + (p * 0.20)) / w));
         }
 
-        function logoutCustomer() { localStorage.removeItem('loggedInCustomer'); window.location.reload(); }
+        function logoutCustomer() { 
+            localStorage.removeItem('loggedInCustomer'); 
+            if(pollInterval) clearInterval(pollInterval);
+            window.location.reload(); 
+        }
         
         function fireSuccessConfetti() {
             let duration = 2000; let end = Date.now() + duration;
@@ -645,7 +771,7 @@
             alert(msg);
         }
 
-        // FEATURE: NOC GENERATOR
+        // NOC GENERATOR
         function generateNOC() {
             let c = currentCustomer; if(!c) return;
             let w = window.open('','_blank');
