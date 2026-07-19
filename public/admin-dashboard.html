@@ -9,8 +9,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- SheetJS for Excel Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
-    <!-- FULLY EXPANDED CSS STYLESHEET FOR HDFC BANK UI -->
     <style>
         /* =========================================
            ROOT VARIABLES & COLOR THEME
@@ -37,9 +38,7 @@
             font-size: 13px; 
         }
         
-        /* =========================================
-           HEADER NAVIGATION STYLES
-           ========================================= */
+        /* HEADER NAVIGATION STYLES */
         .admin-header { 
             background-color: var(--hdfc-blue); 
             padding: 12px 25px; 
@@ -49,292 +48,78 @@
         }
 
         .brand-title { 
-            font-weight: 800; 
-            color: white; 
-            font-size: 18px; 
-            display: flex; 
-            align-items: center; 
-            gap: 12px;
-            letter-spacing: 0.5px;
+            font-weight: 800; color: white; font-size: 18px; 
+            display: flex; align-items: center; gap: 12px; letter-spacing: 0.5px;
         }
 
         .top-btn {
-            background: rgba(255,255,255,0.1); 
-            border: 1px solid rgba(255,255,255,0.2);
-            color: white; 
-            padding: 6px 14px; 
-            border-radius: 4px; 
-            font-size: 12px; 
-            font-weight: 600;
-            transition: all 0.2s ease-in-out;
-            cursor: pointer;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            color: white; padding: 6px 14px; border-radius: 4px; font-size: 12px; 
+            font-weight: 600; transition: all 0.2s ease-in-out; cursor: pointer;
         }
+        .top-btn:hover { background: var(--hdfc-red); border-color: var(--hdfc-red); color: white; }
 
-        .top-btn:hover { 
-            background: var(--hdfc-red); 
-            border-color: var(--hdfc-red); 
-            color: white;
-        }
-
-        /* =========================================
-           ANALYTICS STAT CARDS
-           ========================================= */
+        /* ANALYTICS STAT CARDS */
         .stat-card { 
-            background: white; 
-            border-radius: 6px; 
-            padding: 18px; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.04); 
-            border: 1px solid var(--border-color);
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            border-left: 4px solid var(--hdfc-blue);
-            transition: transform 0.2s ease;
+            background: white; border-radius: 6px; padding: 18px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.04); border: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+            border-left: 4px solid var(--hdfc-blue); transition: transform 0.2s ease;
         }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-        }
-
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
         .stat-card.success { border-left-color: var(--success-color); }
         .stat-card.warning { border-left-color: var(--warning-color); }
         .stat-card.danger { border-left-color: var(--danger-color); }
 
-        .stat-details h6 { 
-            font-size: 11px; 
-            font-weight: 700; 
-            color: #7F8C8D; 
-            margin: 0 0 5px 0; 
-            text-transform: uppercase;
-        }
+        .stat-details h6 { font-size: 11px; font-weight: 700; color: #7F8C8D; margin: 0 0 5px 0; text-transform: uppercase; }
+        .stat-details h3 { font-size: 22px; font-weight: 800; color: var(--text-dark); margin: 0; }
+        .stat-icon { font-size: 26px; color: #BDC3C7; background: #F8F9FA; padding: 10px; border-radius: 50%; }
 
-        .stat-details h3 { 
-            font-size: 22px; 
-            font-weight: 800; 
-            color: var(--text-dark); 
-            margin: 0;
-        }
+        /* MAIN CONTENT & TOOLBAR */
+        .content-card { background: white; border-radius: 6px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid var(--border-color); }
+        .toolbar { background: #FAFBFC; padding: 15px; border-radius: 4px; border: 1px solid var(--border-color); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
 
-        .stat-icon { 
-            font-size: 26px; 
-            color: #BDC3C7; 
-            background: #F8F9FA;
-            padding: 10px;
-            border-radius: 50%;
-        }
+        .tool-btn { background: var(--hdfc-blue); color: white; border: none; padding: 8px 15px; font-size: 12px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .tool-btn:hover { background: #003666; color: white; }
+        .tool-btn-outline { background: white; color: var(--text-dark); border: 1px solid #BDC3C7; }
+        .tool-btn-outline:hover { background: #ECF0F1; }
+        .btn-excel { background: #27AE60; color: white; border: 1px solid #1E8449; }
+        .btn-excel:hover { background: #1E8449; }
 
-        /* =========================================
-           MAIN CONTENT & TOOLBAR
-           ========================================= */
-        .content-card {
-            background: white;
-            border-radius: 6px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border: 1px solid var(--border-color);
-        }
+        .search-box { position: relative; width: 300px; }
+        .search-box input { width: 100%; border-radius: 4px; padding: 8px 15px 8px 30px; border: 1px solid #BDC3C7; font-size: 13px; font-weight: 600; }
+        .search-box input:focus { border-color: var(--hdfc-blue); outline: none; box-shadow: 0 0 0 2px rgba(0, 76, 143, 0.1); }
+        .search-box i.fa-search { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #95A5A6; font-size: 13px; }
 
-        .toolbar { 
-            background: #FAFBFC; 
-            padding: 15px; 
-            border-radius: 4px; 
-            border: 1px solid var(--border-color); 
-            margin-bottom: 20px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            flex-wrap: wrap; 
-            gap: 15px;
-        }
+        /* CUSTOMER ROW STYLES */
+        .customer-card { background: white; border: 1px solid #E4E8ED; border-radius: 6px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 10px; position: relative; transition: all 0.2s; }
+        .customer-card:hover { border-color: var(--hdfc-blue); box-shadow: 0 4px 10px rgba(0, 76, 143, 0.08); }
+        .row-overdue { border-left: 4px solid var(--hdfc-red); background: #FFF9F9; }
+        .row-blacklisted { border: 1px solid var(--hdfc-red); background: #FFF5F5; }
+        .row-paused { border-left: 4px solid var(--warning-color); background: #FFFBF2; }
 
-        .tool-btn {
-            background: var(--hdfc-blue); 
-            color: white; 
-            border: none;
-            padding: 8px 15px; 
-            font-size: 12px; 
-            border-radius: 4px; 
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
+        .cust-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #EAEDED; padding-bottom: 10px; }
+        .cust-body { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; }
+        .data-block { display: flex; flex-direction: column; min-width: 130px; }
+        .data-label { font-size: 10px; color: #7F8C8D; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+        .data-val { font-size: 14px; font-weight: 700; color: var(--text-dark); }
+        .data-val-big { font-size: 16px; font-weight: 800; color: var(--hdfc-blue); }
 
-        .tool-btn:hover { 
-            background: #003666; 
-            color: white; 
-        }
+        .profile-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--hdfc-blue); color: white; display: flex; justify-content: center; align-items: center; font-size: 16px; font-weight: 700; }
+        .avatar-bad { background: var(--hdfc-red); }
 
-        .tool-btn-outline { 
-            background: white; 
-            color: var(--text-dark); 
-            border: 1px solid #BDC3C7; 
-        }
-
-        .tool-btn-outline:hover { 
-            background: #ECF0F1; 
-        }
-
-        .search-box { 
-            position: relative; 
-            width: 300px; 
-        }
-
-        .search-box input { 
-            width: 100%; 
-            border-radius: 4px; 
-            padding: 8px 15px 8px 30px; 
-            border: 1px solid #BDC3C7; 
-            font-size: 13px; 
-            font-weight: 600;
-        }
-
-        .search-box input:focus {
-            border-color: var(--hdfc-blue);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(0, 76, 143, 0.1);
-        }
-
-        .search-box i.fa-search { 
-            position: absolute; 
-            left: 10px; 
-            top: 50%; 
-            transform: translateY(-50%); 
-            color: #95A5A6; 
-            font-size: 13px;
-        }
-
-        /* =========================================
-           CUSTOMER ROW STYLES (COMPACT SOFTWARE VIEW)
-           ========================================= */
-        .customer-card { 
-            background: white; 
-            border: 1px solid #E4E8ED; 
-            border-radius: 6px; 
-            padding: 15px; 
-            margin-bottom: 12px; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02); 
-            display: flex; 
-            flex-direction: column; 
-            gap: 10px;
-            position: relative;
-            transition: all 0.2s;
-        }
-        
-        .customer-card:hover { 
-            border-color: var(--hdfc-blue); 
-            box-shadow: 0 4px 10px rgba(0, 76, 143, 0.08); 
-        }
-
-        .row-overdue { 
-            border-left: 4px solid var(--hdfc-red); 
-            background: #FFF9F9; 
-        }
-
-        .row-blacklisted { 
-            border: 1px solid var(--hdfc-red); 
-            background: #FFF5F5; 
-        }
-
-        .row-paused { 
-            border-left: 4px solid var(--warning-color); 
-            background: #FFFBF2; 
-        }
-
-        /* Details Blocks */
-        .cust-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-bottom: 1px dashed #EAEDED; 
-            padding-bottom: 10px;
-        }
-
-        .cust-body { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 20px; 
-            align-items: center; 
-        }
-
-        .data-block { 
-            display: flex; 
-            flex-direction: column; 
-            min-width: 130px;
-        }
-
-        .data-label { 
-            font-size: 10px; 
-            color: #7F8C8D; 
-            text-transform: uppercase; 
-            font-weight: 700; 
-            margin-bottom: 4px;
-        }
-
-        .data-val { 
-            font-size: 14px; 
-            font-weight: 700; 
-            color: var(--text-dark); 
-        }
-
-        .data-val-big { 
-            font-size: 16px; 
-            font-weight: 800; 
-            color: var(--hdfc-blue); 
-        }
-
-        .profile-avatar { 
-            width: 40px; 
-            height: 40px; 
-            border-radius: 50%; 
-            background: var(--hdfc-blue); 
-            color: white; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            font-size: 16px; 
-            font-weight: 700; 
-        }
-
-        .avatar-bad { 
-            background: var(--hdfc-red); 
-        }
-
-        /* =========================================
-           TIGHT ACTION TOOLBAR (ICON BUTTONS)
-           ========================================= */
-        .action-toolbar { 
-            background: #F8F9FA; 
-            border: 1px solid #EAEDED; 
-            border-radius: 4px; 
-            padding: 8px 10px; 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 8px; 
-            align-items: center;
-            margin-top: 5px;
-        }
+        /* TIGHT ACTION TOOLBAR (ICONS WITH NAMES) */
+        .action-toolbar { background: #F8F9FA; border: 1px solid #EAEDED; border-radius: 4px; padding: 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 5px; }
         
         .icon-btn { 
-            width: 32px; 
-            height: 32px; 
-            border-radius: 4px; 
-            display: inline-flex; 
-            justify-content: center; 
-            align-items: center; 
-            border: 1px solid transparent; 
-            font-size: 14px; 
-            cursor: pointer; 
-            color: white;
-            transition: 0.2s;
+            display: inline-flex; flex-direction: column; justify-content: center; align-items: center; 
+            width: 52px; height: 50px; border-radius: 6px; border: 1px solid transparent; 
+            cursor: pointer; color: white; transition: 0.2s; gap: 4px;
         }
+        .icon-btn:hover { filter: brightness(0.9); transform: translateY(-2px); box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
+        .icon-btn i { font-size: 16px; }
+        .icon-btn span { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2px; }
 
-        .icon-btn:hover { 
-            filter: brightness(0.9); 
-            transform: translateY(-2px); 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
         /* Specific Button Colors */
         .btn-pay { background: #27AE60; }
         .btn-part { background: #2980B9; }
@@ -348,92 +133,26 @@
         .btn-wa { background: #25D366; }
         .btn-call { background: #3498DB; }
         .btn-pen { background: #E74C3C; }
+        .btn-qr { background: #004C8F; }
         
-        .btn-more { 
-            background: white; 
-            color: #34495E; 
-            border: 1px solid #BDC3C7; 
-            width: auto; 
-            padding: 0 10px; 
-            font-weight: 600;
-        }
+        .btn-more { background: white; color: #34495E; border: 1px solid #BDC3C7; width: auto; padding: 0 10px; font-weight: 600; flex-direction: row; height: 35px; }
+        .btn-more i { font-size: 14px; margin-right: 5px; }
 
-        /* =========================================
-           PROGRESS BAR & BADGES
-           ========================================= */
-        .progress-bar-custom { 
-            height: 6px; 
-            border-radius: 3px; 
-            background-color: #EAEDED; 
-            overflow: hidden; 
-            margin-top: 5px; 
-            width: 120px; 
-        }
-
-        .progress-fill { 
-            height: 100%; 
-            background: var(--hdfc-blue); 
-            transition: 0.5s ease; 
-        }
+        /* PROGRESS BAR & BADGES */
+        .progress-bar-custom { height: 6px; border-radius: 3px; background-color: #EAEDED; overflow: hidden; margin-top: 5px; width: 120px; }
+        .progress-fill { height: 100%; background: var(--hdfc-blue); transition: 0.5s ease; }
+        .status-badge { font-size: 11px; padding: 3px 8px; border-radius: 3px; font-weight: 700; }
+        .late-badge { color: white; font-weight: 700; font-size: 10px; background: var(--hdfc-red); padding: 3px 6px; border-radius: 3px; margin-left: 5px; }
         
-        .status-badge { 
-            font-size: 11px; 
-            padding: 3px 8px; 
-            border-radius: 3px; 
-            font-weight: 700;
-        }
-
-        .late-badge { 
-            color: white; 
-            font-weight: 700; 
-            font-size: 10px; 
-            background: var(--hdfc-red); 
-            padding: 3px 6px; 
-            border-radius: 3px; 
-            margin-left: 5px; 
-        }
-        
-        /* =========================================
-           SCREEN LOCK OVERLAY
-           ========================================= */
-        #lockScreen { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0, 76, 143, 0.95); /* HDFC Blue Transparent */
-            z-index: 9999; 
-            display: none; 
-            justify-content: center; 
-            align-items: center; 
-            flex-direction: column; 
-            color: white; 
-        }
-
-        .lock-input { 
-            font-size: 24px; 
-            letter-spacing: 15px; 
-            text-align: center; 
-            padding: 15px; 
-            border-radius: 6px; 
-            border: 2px solid white; 
-            background: rgba(255,255,255,0.1); 
-            color: white; 
-            width: 250px; 
-            outline: none; 
-        }
-        
-        .fa-spin-fast { 
-            animation: fa-spin 0.5s infinite linear; 
-        }
+        /* SCREEN LOCK OVERLAY */
+        #lockScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 76, 143, 0.95); z-index: 9999; display: none; justify-content: center; align-items: center; flex-direction: column; color: white; }
+        .lock-input { font-size: 24px; letter-spacing: 15px; text-align: center; padding: 15px; border-radius: 6px; border: 2px solid white; background: rgba(255,255,255,0.1); color: white; width: 250px; outline: none; }
+        .fa-spin-fast { animation: fa-spin 0.5s infinite linear; }
     </style>
 </head>
 <body>
 
-    <!-- =========================================
-         SCREEN LOCK FEATURE
-         ========================================= -->
+    <!-- SCREEN LOCK FEATURE -->
     <div id="lockScreen">
         <i class="fas fa-lock mb-3" style="font-size: 60px;"></i>
         <h3 class="fw-bold mb-4">System Locked</h3>
@@ -441,9 +160,7 @@
         <p class="small fw-bold">Enter Secure Admin PIN</p>
     </div>
 
-    <!-- =========================================
-         COMPACT TOP NAVIGATION BAR
-         ========================================= -->
+    <!-- COMPACT TOP NAVIGATION BAR -->
     <nav class="admin-header d-flex justify-content-between align-items-center">
         <div class="brand-title">
             <i class="fas fa-university" style="color: #F1C40F; font-size: 24px;"></i>
@@ -453,6 +170,10 @@
             </div>
         </div>
         <div class="d-flex gap-2 align-items-center">
+            <div id="networkStatus" class="me-3 fw-bold text-success" style="font-size: 11px;"><i class="fas fa-circle text-success me-1"></i> ONLINE MODE</div>
+            <button class="top-btn" data-bs-toggle="modal" data-bs-target="#auditLogModal" title="Audit Trail">
+                <i class="fas fa-list-alt me-1"></i> Logs
+            </button>
             <button class="top-btn" data-bs-toggle="modal" data-bs-target="#cashCounterModal" title="Cash Counter">
                 <i class="fas fa-coins me-1"></i> Cash
             </button>
@@ -468,9 +189,7 @@
         </div>
     </nav>
 
-    <!-- =========================================
-         MAIN ADMIN CONTAINER
-         ========================================= -->
+    <!-- MAIN ADMIN CONTAINER -->
     <div class="container-fluid px-4">
         
         <!-- COMPACT STAT CARDS -->
@@ -517,9 +236,13 @@
             
             <!-- COMPACT TOOLBAR -->
             <div class="toolbar">
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 flex-wrap">
                     <button class="tool-btn" data-bs-toggle="modal" data-bs-target="#addCustomerModal" id="addBtn">
-                        <i class="fas fa-plus me-1"></i> Sanction
+                        <i class="fas fa-plus me-1"></i> Sanction Loan
+                    </button>
+                    <!-- FEATURE: EXCEL DOWNLOAD -->
+                    <button class="tool-btn btn-excel" onclick="exportToExcel()">
+                        <i class="fas fa-file-excel me-1"></i> Excel Report
                     </button>
                     <button class="tool-btn tool-btn-outline" onclick="sendGlobalNotice()">
                         <i class="fas fa-bullhorn text-warning me-1"></i> Global Notice
@@ -571,6 +294,23 @@
          MODALS SECTION (HDFC Compact Style)
          ========================================= -->
     
+    <!-- Audit Trail Logs Modal -->
+    <div class="modal fade" id="auditLogModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content border-0">
+                <div class="modal-header bg-dark text-white p-3">
+                    <h6 class="modal-title fw-bold"><i class="fas fa-user-secret me-2"></i> System Security Logs</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <ul class="list-group list-group-flush" id="auditLogList" style="font-size: 12px; font-family: monospace;">
+                        <!-- Logs inject here -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Cash Counter Modal -->
     <div class="modal fade" id="cashCounterModal" tabindex="-1">
         <div class="modal-dialog modal-sm modal-dialog-centered">
@@ -637,9 +377,10 @@
                                 <label class="data-label">Aadhaar (KYC)</label>
                                 <input type="text" id="custAadhaar" class="form-control fw-bold">
                             </div>
+                            <!-- FEATURE: Security / Collateral Tracker -->
                             <div class="col-md-4">
-                                <label class="data-label">Guarantor Name</label>
-                                <input type="text" id="custGuarantor" class="form-control fw-bold" style="text-transform: capitalize;">
+                                <label class="data-label text-warning">Security/Collateral Taken</label>
+                                <input type="text" id="custSecurity" class="form-control fw-bold" placeholder="e.g. Blank Cheque, RC Book">
                             </div>
                             <div class="col-md-4">
                                 <label class="data-label">Login PIN</label>
@@ -664,6 +405,10 @@
                             <div class="col-md-4">
                                 <label class="data-label text-primary">Total Installments</label>
                                 <input type="number" id="custDuration" class="form-control fw-bold border-primary" required>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="data-label">Guarantor Name</label>
+                                <input type="text" id="custGuarantor" class="form-control fw-bold" style="text-transform: capitalize;">
                             </div>
                         </div>
                         <button type="submit" class="btn w-100 mt-4 fw-bold text-white py-2" style="background: var(--hdfc-blue); font-size: 15px;">
@@ -700,9 +445,13 @@
                                 <input type="text" id="editAadhaar" class="form-control fw-bold">
                             </div>
                             
-                            <div class="col-12">
+                            <div class="col-md-8">
                                 <label class="data-label">Full Address</label>
                                 <input type="text" id="editAddress" class="form-control fw-bold">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="data-label text-warning">Security/Collateral</label>
+                                <input type="text" id="editSecurity" class="form-control fw-bold">
                             </div>
                             
                             <div class="col-md-4">
@@ -781,7 +530,7 @@
         let currentFilter = 'all';
 
         // ----------------------------------------------------
-        // SECURITY & UI FUNCTIONS
+        // SYSTEM SECURITY, LOGS & UI FUNCTIONS
         // ----------------------------------------------------
         
         function lockSystem() { 
@@ -793,7 +542,54 @@
             if(val === '7569') { 
                 document.getElementById('lockScreen').style.display = 'none'; 
                 document.getElementById('unlockPin').value = ''; 
+                sysLog("Admin System Unlocked");
             } 
+        }
+
+        // AUDIT LOG SYSTEM (Secure local logging)
+        function sysLog(actionText) {
+            let logs = JSON.parse(localStorage.getItem('jf_logs') || '[]');
+            logs.unshift({ time: new Date().toLocaleString('en-IN'), action: actionText });
+            if(logs.length > 50) logs.pop(); // Keep last 50 logs
+            localStorage.setItem('jf_logs', JSON.stringify(logs));
+            
+            // Render logs in modal
+            const logContainer = document.getElementById('auditLogList');
+            logContainer.innerHTML = '';
+            logs.forEach(l => {
+                logContainer.innerHTML += `<li class="list-group-item py-2"><b>[${l.time}]</b> - ${l.action}</li>`;
+            });
+        }
+        
+        // Initial log render
+        sysLog("System Initialized");
+
+        // FEATURE: 12 AM DATE SYNC LOGIC
+        let lastKnownDay = new Date().getDate();
+        setInterval(() => {
+            let currentDay = new Date().getDate();
+            if(currentDay !== lastKnownDay) {
+                lastKnownDay = currentDay;
+                sysLog("12 AM Date Sync Executed. Refreshing Data.");
+                loadCustomers(); // Auto sync dates
+            }
+        }, 60000); // Check every minute
+
+        // FEATURE: EXCEL REPORT DOWNLOAD
+        function exportToExcel() {
+            let ws_data = [["Cust ID", "Full Name", "Phone", "Village", "Principal (₹)", "Duration (Wks)", "Paid Weeks", "Status", "Security/Collateral"]];
+            globalCustomers.forEach(c => {
+                let status = (c.duration - (c.paidWeeks || 0)) <= 0 ? "Settled" : "Active";
+                ws_data.push([
+                    `JF-${c.phone.slice(-4)}`, c.name, c.phone, c.village, c.amount, 
+                    c.duration, c.paidWeeks || 0, status, c.security || 'N/A'
+                ]);
+            });
+            let ws = XLSX.utils.aoa_to_sheet(ws_data);
+            let wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Jessica_Finance_Report");
+            XLSX.writeFile(wb, "Jessica_Finance_Report.xlsx");
+            sysLog("Exported Excel Report");
         }
 
         // Cash Counter Logic
@@ -833,11 +629,15 @@
                 
                 // Backup to LocalStorage
                 localStorage.setItem('jf_offline_backup', JSON.stringify(globalCustomers)); 
+                document.getElementById('networkStatus').innerHTML = `<i class="fas fa-circle text-success me-1"></i> ONLINE MODE`;
+                document.getElementById('networkStatus').className = "me-3 fw-bold text-success";
                 
                 renderCards(); 
                 calculateAnalytics();
             } catch (error) { 
                 console.log("Using local backup..."); 
+                document.getElementById('networkStatus').innerHTML = `<i class="fas fa-circle text-danger me-1"></i> OFFLINE MODE`;
+                document.getElementById('networkStatus').className = "me-3 fw-bold text-danger";
                 let local = localStorage.getItem('jf_offline_backup');
                 if(local) { 
                     globalCustomers = JSON.parse(local); 
@@ -945,14 +745,14 @@
                 let avatarClass = "profile-avatar";
                 if(isBlacklisted || isOverdue) avatarClass += " avatar-bad";
 
-                // Admin UTR Approval HTML
+                // Admin UI Approval HTML (Now works automatically if customer requests it)
                 let approvalHTML = ``;
                 if(cust.pendingApproval) {
                     approvalHTML = `
                         <div class="bg-warning bg-opacity-10 border border-warning p-2 rounded mb-3 d-flex justify-content-between align-items-center">
                             <div>
                                 <div class="fw-bold" style="font-size:12px; color:#D35400;">
-                                    Verify UTR: ${cust.paymentUtr || 'N/A'}
+                                    <i class="fas fa-bell"></i> Online Payment Triggered! (Verify Bank)
                                 </div>
                             </div>
                             <div class="d-flex gap-2">
@@ -960,7 +760,7 @@
                                     <i class="fas fa-check"></i> Approve
                                 </button>
                                 <button class="btn btn-sm btn-danger py-1 px-3 fw-bold" style="font-size:11px;" onclick="rejectFakePayment('${cust.phone}')">
-                                    <i class="fas fa-times"></i>
+                                    <i class="fas fa-times"></i> Reject
                                 </button>
                             </div>
                         </div>
@@ -974,14 +774,18 @@
                     : '';
                 
                 let noticeBtnHTML = hasNotice 
-                    ? `<button class="icon-btn btn-notice-clear" title="Clear Notice" onclick="clearNotice('${cust.phone}', '${cust.name}')"><i class="fas fa-bell-slash"></i></button>`
-                    : `<button class="icon-btn btn-notice" title="App Notice" onclick="sendIndividualNotice('${cust.phone}', '${cust.name}')"><i class="fas fa-bullhorn"></i></button>`;
+                    ? `<button class="icon-btn btn-notice-clear" title="Clear Notice" onclick="clearNotice('${cust.phone}', '${cust.name}')"><i class="fas fa-bell-slash"></i><span>Clear</span></button>`
+                    : `<button class="icon-btn btn-notice" title="App Notice" onclick="sendIndividualNotice('${cust.phone}', '${cust.name}')"><i class="fas fa-bullhorn"></i><span>Notice</span></button>`;
 
                 let penaltyHtml = penalty > 0 
                     ? `<div class="data-val text-danger" style="font-size:12px;">+ ${formatMoney(penalty)} Pen</div>` 
                     : '';
+                
+                let securityTag = cust.security 
+                    ? `<div class="mt-2 text-warning fw-bold" style="font-size:10px;"><i class="fas fa-lock"></i> Vault: ${cust.security}</div>` 
+                    : '';
 
-                // BUILD THE FULL ROW HTML
+                // BUILD THE FULL ROW HTML WITH NEW ICON LAYOUT
                 let cardHTML = `
                     <div class="${rowClass}">
                         ${approvalHTML}
@@ -995,6 +799,7 @@
                                         ID: JF-${cust.phone.slice(-4)} | 
                                         <i class="fas fa-phone"></i> ${cust.phone}
                                     </div>
+                                    ${securityTag}
                                 </div>
                             </div>
                             <div class="text-end">
@@ -1038,59 +843,63 @@
                             </div>
                         </div>
 
-                        <!-- TIGHT ACTION TOOLBAR (ICON ONLY WITH TOOLTIPS) -->
+                        <!-- ICONS WITH NAMES BELOW -->
                         <div class="action-toolbar mt-3">
                             
                             <!-- Payment Collection -->
                             <button class="icon-btn btn-pay" title="Collect Full Pay" onclick="recordCashPayment('${cust.phone}', '${cust.name}', ${nextEmiToPay})">
-                                <i class="fas fa-rupee-sign"></i>
+                                <i class="fas fa-rupee-sign"></i><span>Full Pay</span>
                             </button>
                             <button class="icon-btn btn-part" title="Partial Payment" onclick="customPayment('${cust.phone}', '${cust.name}', ${baseEmi})">
-                                <i class="fas fa-adjust"></i>
+                                <i class="fas fa-adjust"></i><span>Part Pay</span>
                             </button>
                             <button class="icon-btn btn-adv" title="Advance Payment" onclick="advancePayment('${cust.phone}', '${cust.name}', ${baseEmi})">
-                                <i class="fas fa-forward"></i>
+                                <i class="fas fa-forward"></i><span>Advance</span>
                             </button>
                             <button class="icon-btn btn-topup" title="Top-Up Loan" onclick="topUpLoan('${cust.phone}', '${cust.name}', ${pendingBalance})">
-                                <i class="fas fa-sync"></i>
+                                <i class="fas fa-sync"></i><span>Top-Up</span>
                             </button>
                             <button class="icon-btn btn-settle" title="Settle Loan" onclick="settlementCalculator('${cust.phone}', '${cust.name}', ${pendingBalance})">
-                                <i class="fas fa-balance-scale"></i>
+                                <i class="fas fa-balance-scale"></i><span>Settle</span>
                             </button>
                             
-                            <span style="border-left:1px solid #BDC3C7; height:24px; margin:0 5px;"></span>
+                            <span style="border-left:1px solid #BDC3C7; height:30px; margin:0 5px;"></span>
                             
                             <!-- Utility Features -->
                             ${noticeBtnHTML}
                             <button class="icon-btn btn-note" title="Quick Secret Note" onclick="quickNote('${cust.phone}', '${cust.name}')">
-                                <i class="fas fa-sticky-note"></i>
+                                <i class="fas fa-sticky-note"></i><span>Note</span>
                             </button>
                             <button class="icon-btn btn-vip" title="Toggle VIP Status" onclick="toggleVIP('${cust.phone}', '${cust.name}')">
-                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i><span>VIP Tag</span>
                             </button>
-                            <button class="icon-btn ${isPaused ? 'bg-success border-0 text-white' : 'btn-doc'}" title="${isPaused ? 'Resume Loan' : 'Freeze/Pause Loan'}" onclick="togglePause('${cust.phone}', '${cust.name}')">
-                                <i class="fas ${isPaused ? 'fa-play' : 'fa-pause'}"></i>
+                            <button class="icon-btn ${isPaused ? 'bg-success border-0 text-white' : 'btn-doc'}" style="${!isPaused ? 'background:#7F8C8D;' : ''}" title="${isPaused ? 'Resume Loan' : 'Freeze/Pause Loan'}" onclick="togglePause('${cust.phone}', '${cust.name}')">
+                                <i class="fas ${isPaused ? 'fa-play' : 'fa-pause'}"></i><span>${isPaused ? 'Resume' : 'Pause'}</span>
                             </button>
                             <button class="icon-btn btn-call" title="Contact Guarantor" onclick="contactGuarantor('${cust.phone}', '${cust.guarantor}')">
-                                <i class="fas fa-user-shield"></i>
+                                <i class="fas fa-user-shield"></i><span>Guarantor</span>
                             </button>
                             <button class="icon-btn btn-pen" title="Add Penalty" onclick="addPenalty('${cust.phone}', '${cust.name}')">
-                                <i class="fas fa-gavel"></i>
+                                <i class="fas fa-gavel"></i><span>Penalty</span>
                             </button>
                             
-                            <span style="border-left:1px solid #BDC3C7; height:24px; margin:0 5px;"></span>
+                            <span style="border-left:1px solid #BDC3C7; height:30px; margin:0 5px;"></span>
                             
-                            <!-- WhatsApp & More -->
+                            <!-- WhatsApp, QR & More -->
+                            <button class="icon-btn btn-qr" title="Print E-Receipt" onclick="printEReceipt('${cust.phone}', '${cust.name}', ${nextEmiToPay}, ${cust.paidWeeks+1})">
+                                <i class="fas fa-qrcode"></i><span>Receipt</span>
+                            </button>
+                            
                             <button class="icon-btn btn-wa" title="WhatsApp Actions" onclick="whatsappMenu('${cust.phone}', '${cust.name}', ${nextEmiToPay}, '${dueDate && !isNaN(dueDate) ? dueDate.toLocaleDateString('en-GB') : 'soon'}', '${cust.password}')">
-                                <i class="fab fa-whatsapp"></i>
+                                <i class="fab fa-whatsapp"></i><span>WA Menu</span>
                             </button>
                             
                             <div class="dropdown ms-auto">
-                                <button class="icon-btn btn-more dropdown-toggle" data-bs-toggle="dropdown">
-                                    <i class="fas fa-cog me-1"></i> More
+                                <button class="icon-btn btn-more dropdown-toggle" data-bs-toggle="dropdown" style="height: 50px;">
+                                    <i class="fas fa-cog"></i><span>More</span>
                                 </button>
                                 <ul class="dropdown-menu shadow-sm" style="font-size:13px; border-radius:4px; border-color:#BDC3C7;">
-                                    <li><a class="dropdown-item fw-bold py-2" href="#" onclick="openEditModal('${cust.phone}')"><i class="fas fa-edit text-primary me-2"></i> Edit Account</a></li>
+                                    <li><a class="dropdown-item fw-bold py-2" href="#" onclick="openEditModal('${cust.phone}')"><i class="fas fa-edit text-primary me-2"></i> Edit Account / KYC</a></li>
                                     <li><a class="dropdown-item fw-bold py-2" href="#" onclick="waivePenalty('${cust.phone}', '${cust.name}')"><i class="fas fa-magic text-danger me-2"></i> Waive Penalty</a></li>
                                     <li><a class="dropdown-item fw-bold py-2" href="#" onclick="printAgreement('${cust.phone}')"><i class="fas fa-file-contract text-secondary me-2"></i> Print Agreement</a></li>
                                     <li><a class="dropdown-item fw-bold py-2" href="#" onclick="printStatement('${cust.phone}')"><i class="fas fa-receipt text-success me-2"></i> Print Statement</a></li>
@@ -1128,21 +937,24 @@
                         headers: {'Content-Type':'application/json'}, 
                         body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: cleanNotes }) 
                     });
+                    sysLog(`Cleared Notice for ${name}`);
                     loadCustomers();
                 }
             }
         }
 
+        // VIP TOGGLE BUG FIXED
         async function toggleVIP(phone, name) {
             let c = globalCustomers.find(function(x) { return x.phone === phone; });
             if(c) {
                 let isVIP = c.notes && c.notes.includes('[VIP]');
-                let newNotes = isVIP ? c.notes.replace('[VIP]', '').trim() : (c.notes + ' [VIP]').trim();
+                let newNotes = isVIP ? c.notes.replace(/\[VIP\]/g, '').trim() : (c.notes ? c.notes + ' [VIP]' : '[VIP]');
                 await fetch('/api/action', { 
                     method: 'POST', 
                     headers: {'Content-Type':'application/json'}, 
                     body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: newNotes }) 
                 });
+                sysLog(isVIP ? `Removed VIP Tag for ${name}` : `Added VIP Tag for ${name}`);
                 loadCustomers();
             }
         }
@@ -1151,12 +963,13 @@
             let c = globalCustomers.find(function(x) { return x.phone === phone; });
             if(c) {
                 let isPaused = c.notes && c.notes.includes('[PAUSED]');
-                let newNotes = isPaused ? c.notes.replace('[PAUSED]', '').trim() : (c.notes + ' [PAUSED]').trim();
+                let newNotes = isPaused ? c.notes.replace(/\[PAUSED\]/g, '').trim() : (c.notes ? c.notes + ' [PAUSED]' : '[PAUSED]');
                 await fetch('/api/action', { 
                     method: 'POST', 
                     headers: {'Content-Type':'application/json'}, 
                     body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: newNotes }) 
                 });
+                sysLog(isPaused ? `Resumed Loan for ${name}` : `Paused Loan for ${name}`);
                 loadCustomers();
             }
         }
@@ -1172,6 +985,7 @@
                         headers: {'Content-Type':'application/json'}, 
                         body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: newNotes }) 
                     });
+                    sysLog(`Added secret note to ${name}`);
                     loadCustomers();
                 }
             }
@@ -1199,6 +1013,7 @@
                     headers: {'Content-Type':'application/json'}, 
                     body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: newNotes }) 
                 });
+                sysLog(`Sent App Notice to ${name}`);
                 loadCustomers();
             }
         }
@@ -1221,6 +1036,7 @@
                     });
                 }
             }
+            sysLog("Global Notice Broadcasted!");
             loadCustomers();
         }
 
@@ -1252,6 +1068,7 @@
                     headers: {'Content-Type':'application/json'}, 
                     body: JSON.stringify({phone, action:'settle_loan', amount: Number(actualPaid), mode: 'full_settlement'}) 
                 });
+                sysLog(`Settled loan for ${name}. Received ₹${actualPaid}`);
                 loadCustomers();
             }
         }
@@ -1264,6 +1081,7 @@
                     headers: {'Content-Type':'application/json'}, 
                     body: JSON.stringify({phone, action:'approve_payment', amount: Number(amt), mode: 'custom_part'}) 
                 });
+                sysLog(`Partial pay received from ${name}: ₹${amt}`);
                 loadCustomers();
             }
         }
@@ -1280,6 +1098,7 @@
                             body: JSON.stringify({phone, action:'approve_payment', amount: baseEmi, mode: 'advance'}) 
                         }); 
                     }
+                    sysLog(`Advance pay received from ${name}: ₹${amountToPay}`);
                     loadCustomers(); 
                 }
             }
@@ -1292,9 +1111,10 @@
                     headers: {'Content-Type':'application/json'}, 
                     body: JSON.stringify({phone, action:'settle_loan', amount: pendingBalance, mode: 'topup_closure'}) 
                 });
+                sysLog(`Old loan closed for Top-Up: ${name}`);
                 loadCustomers(); 
                 document.getElementById('addBtn').click(); 
-                document.getElementById('custName').value = name + " (Top-Up)"; 
+                document.getElementById('custName').value = name; 
                 document.getElementById('custPhone').value = phone; 
             }
         }
@@ -1307,6 +1127,7 @@
                     headers: { 'Content-Type': 'application/json' }, 
                     body: JSON.stringify({ phone: phone, action: 'add_penalty', amount: Number(amount) }) 
                 });
+                sysLog(`Added Penalty ₹${amount} for ${name}`);
                 loadCustomers();
             }
         }
@@ -1318,12 +1139,14 @@
                     headers: {'Content-Type':'application/json'}, 
                     body: JSON.stringify({phone, action:'waive_penalty'}) 
                 });
+                sysLog(`Waived penalty for ${name}`);
                 loadCustomers();
             }
         }
 
+        // WhatsApp Features & Voice Alert Bot Mock
         function whatsappMenu(phone, name, emi, dueDate, pin) {
-            let choice = prompt(`WHATSAPP MENU for ${name}:\n1. Send EMI Reminder\n2. Resend Login PIN\n3. Send UPI Payment Link\n4. WA Agreement\n5. Ask Location\n6. Voice Alert Note\nEnter choice (1-6):`);
+            let choice = prompt(`WHATSAPP MENU for ${name}:\n1. Send EMI Reminder\n2. Resend Login PIN\n3. Send UPI Payment Link\n4. WA Agreement\n5. Ask Location\n6. VOICE BOT Alert\n7. PDF Legal Notice\n\nEnter choice (1-7):`);
             
             if(choice === '1') {
                 window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(`Hello ${name} garu, Gentle reminder from *Jessica Finance*. Your Due amount Rs.${emi} is payable on or before *${dueDate}*.`)}`, '_blank');
@@ -1337,20 +1160,71 @@
             } else if (choice === '5') {
                 requestLiveLocation(phone);
             } else if (choice === '6') {
-                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(`Hello ${name} garu, Please check your WhatsApp. I have sent an important voice note regarding your loan due. Reply back.`)}`, '_blank');
+                sysLog(`Triggered Voice Bot Alert to ${name}`);
+                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(`Hello ${name} garu, Please check your WhatsApp. I have sent an important 🎙️ VOICE NOTE regarding your loan due. Reply back.`)}`, '_blank');
+            } else if (choice === '7') {
+                sysLog(`Sent Legal Warning Notice to ${name}`);
+                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(`⚠️ *LEGAL WARNING NOTICE*\nDear ${name}, you have failed to clear your dues despite repeated reminders. Please clear your outstanding balance immediately to avoid Legal Action and negative marks on your Guarantor's profile.\n- Jessica Finance Mgt.`)}`, '_blank');
             }
         }
 
         function bulkRemindAll() { 
             if(confirm("⚠️ Send Overdue Reminder to ALL pending customers?")) {
+                sysLog("Bulk WhatsApp Reminders dispatched to overdue accounts.");
                 alert("Reminders dispatched!"); 
             }
         }
 
         /* =========================================
-           COLORFUL MULTI-NATIONAL ID CARD
+           PRINT DOCUMENTS (E-RECEIPT, ID, LEDGER)
            ========================================= */
+
+        // E-RECEIPT WITH QR CODE
+        function printEReceipt(phone, name, amount, week) {
+            sysLog(`Generated E-Receipt for ${name} (Wk-${week})`);
+            let d = new Date().toLocaleDateString('en-GB');
+            let w = window.open('','_blank');
+            w.document.write(`
+                <style>
+                    body { display: flex; justify-content: center; align-items: center; background: #f4f5f7; font-family: 'Open Sans', Arial, sans-serif; margin: 0; padding: 20px;}
+                    .receipt-card { width: 350px; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-top: 6px solid #004C8F; text-align: center; }
+                    .logo-icon { font-size: 40px; color: #F1C40F; margin-bottom: 10px; }
+                    h2 { margin: 0; color: #004C8F; font-size: 20px; font-weight: 800; }
+                    .tagline { font-size: 10px; color: #7F8C8D; letter-spacing: 1px; margin-bottom: 20px; text-transform: uppercase; }
+                    .amount-box { background: #F8F9FA; padding: 15px; border-radius: 8px; border: 1px dashed #BDC3C7; margin-bottom: 20px; }
+                    .amount-box h1 { margin: 0; color: #27AE60; font-size: 28px; }
+                    .details { font-size: 13px; text-align: left; border-bottom: 1px solid #EAEDED; padding-bottom: 15px; margin-bottom: 15px; }
+                    .details div { display: flex; justify-content: space-between; margin-bottom: 8px; }
+                    .details span.label { color: #7F8C8D; font-weight: 700; }
+                    .details span.val { color: #2C3E50; font-weight: 800; }
+                    .qr-box { margin: 15px 0; }
+                    .footer { font-size: 10px; color: #95A5A6; font-weight: 600; }
+                </style>
+                <div class="receipt-card">
+                    <div class="logo-icon">🏢</div>
+                    <h2>JESSICA FINANCE</h2>
+                    <div class="tagline">Official E-Receipt</div>
+                    <div class="amount-box">
+                        <div style="font-size:11px; color:#7F8C8D; font-weight:700;">AMOUNT RECEIVED</div>
+                        <h1>${formatMoney(amount)}</h1>
+                    </div>
+                    <div class="details">
+                        <div><span class="label">Customer:</span> <span class="val">${name}</span></div>
+                        <div><span class="label">Account ID:</span> <span class="val">JF-${phone.slice(-4)}</span></div>
+                        <div><span class="label">Payment Date:</span> <span class="val">${d}</span></div>
+                        <div><span class="label">Installment:</span> <span class="val">Week ${week}</span></div>
+                    </div>
+                    <div class="qr-box">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Receipt_JF_${phone.slice(-4)}_Wk${week}" alt="QR">
+                    </div>
+                    <div class="footer">Thank you for your timely payment.<br>This is a system generated digital receipt.</div>
+                </div>
+                <script>setTimeout(()=>window.print(), 500);<\/script>
+            `);
+        }
+
         function printIdCard(phone) {
+            sysLog(`Printed ID Card for ${phone}`);
             let c = globalCustomers.find(function(x) { return x.phone === phone; });
             let w = window.open('','_blank');
             w.document.write(`
@@ -1379,7 +1253,7 @@
                         <div class="name">${c.name}</div>
                         <div class="id-number">JF-${c.phone.slice(-4)}</div>
                         <div class="info-row"><span class="info-label">Mobile</span><span class="info-value">${c.phone}</span></div>
-                        <div class="info-row"><span class="info-label">Aadhaar</span><span class="info-value">${c.aadhaar || 'Verified'}</span></div>
+                        <div class="info-row"><span class="info-label">KYC Verification</span><span class="info-value">Verified</span></div>
                         <div class="info-row"><span class="info-label">Branch</span><span class="info-value">${c.village || 'Main Office'}</span></div>
                     </div>
                     <div class="footer">Property of Jessica Finance Management.<br>Valid strictly for internal loan processing.</div>
@@ -1390,6 +1264,7 @@
 
         // --- PRINTING & DOCUMENTS ---
         function printAgreement(phone) {
+            sysLog(`Printed Loan Agreement for ${phone}`);
             let cust = globalCustomers.find(function(c) { return c.phone === phone; }); 
             let emi = Math.round((Number(cust.amount) * 1.2) / cust.duration);
             let w = window.open('','_blank'); 
@@ -1432,6 +1307,7 @@
                     headers: {'Content-Type':'application/json'}, 
                     body: JSON.stringify({amount: amt, reason: reason}) 
                 }); 
+                sysLog(`Expense Added: ₹${amt} (${reason})`);
                 alert("Expense Added!"); 
             }
         }
@@ -1497,15 +1373,17 @@
                     headers: { 'Content-Type': 'application/json' }, 
                     body: JSON.stringify({ phone: phone, action: 'approve_payment', amount: amount, mode: 'cash' }) 
                 });
-                if(confirm("Payment Recorded! Send WA Receipt?")) {
-                    sendReceiptWA(phone, name);
+                sysLog(`Approved Full Cash Payment for ${name} (₹${amount})`);
+                if(confirm("Payment Recorded! Generate E-Receipt?")) {
+                    let c = globalCustomers.find(function(x) { return x.phone === phone; });
+                    printEReceipt(phone, name, amount, c.paidWeeks+1);
                 }
                 loadCustomers();
             }
         }
 
         async function approvePayment(phone, name, amount) { 
-            let mode = prompt(`Approve UTR payment for ${name}.\nEnter Mode (e.g., PhonePe, GPay):`, "PhonePe");
+            let mode = prompt(`Approve Online payment for ${name}.\nEnter Mode (e.g., PhonePe, GPay):`, "PhonePe");
             if (mode === null) return; 
             
             await fetch('/api/action', { 
@@ -1513,6 +1391,7 @@
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify({ phone, action: 'approve_payment', amount, mode: mode.toLowerCase() }) 
             }); 
+            sysLog(`Approved Online Payment for ${name} (₹${amount})`);
             loadCustomers(); 
         }
 
@@ -1522,6 +1401,7 @@
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify({ phone, action: 'reject_payment' }) 
             }); 
+            sysLog(`Rejected Fake Online Payment for ID ${phone}`);
             loadCustomers(); 
         }
 
@@ -1540,6 +1420,7 @@
             document.getElementById('editName').value = c.name;
             document.getElementById('editVillage').value = c.village||''; 
             document.getElementById('editAadhaar').value = c.aadhaar||'';
+            document.getElementById('editSecurity').value = c.security||''; // Security vault
             document.getElementById('editAmount').value = c.amount; 
             document.getElementById('editDuration').value = c.duration;
             document.getElementById('editGuarantor').value = c.guarantor||'';
@@ -1566,6 +1447,7 @@
                 editName: document.getElementById('editName').value, 
                 editVillage: document.getElementById('editVillage').value, 
                 editAadhaar: document.getElementById('editAadhaar').value, 
+                editSecurity: document.getElementById('editSecurity').value, 
                 editAmount: document.getElementById('editAmount').value, 
                 editDuration: document.getElementById('editDuration').value, 
                 editGuarantor: document.getElementById('editGuarantor').value, 
@@ -1579,6 +1461,7 @@
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify(payload) 
             });
+            sysLog(`Updated profile for ${payload.editName}`);
             bootstrap.Modal.getInstance(document.getElementById('editCustomerModal')).hide(); 
             loadCustomers();
         });
@@ -1591,6 +1474,7 @@
                 phone: document.getElementById('custPhone').value, 
                 village: document.getElementById('custVillage').value, 
                 aadhaar: document.getElementById('custAadhaar').value, 
+                security: document.getElementById('custSecurity').value, // Collateral logic
                 guarantor: document.getElementById('custGuarantor').value, 
                 password: document.getElementById('custPass').value, 
                 category: document.getElementById('custCategory').value, 
@@ -1603,6 +1487,7 @@
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify(payload) 
             });
+            sysLog(`Sanctioned new loan for ${payload.name} (₹${payload.amount})`);
             bootstrap.Modal.getInstance(document.getElementById('addCustomerModal')).hide(); 
             loadCustomers(); 
         });
@@ -1615,6 +1500,7 @@
                     headers: { 'Content-Type': 'application/json' }, 
                     body: JSON.stringify({ phone: phone, action: 'delete_customer' }) 
                 }); 
+                sysLog(`Permanently deleted account ID ${phone}`);
                 loadCustomers();
             }
         }
@@ -1628,6 +1514,7 @@
                     headers: {'Content-Type':'application/json'}, 
                     body: JSON.stringify({phone: phone, action:'update_pin', password: newPin}) 
                 });
+                sysLog(`Reset Login PIN for ${name}`);
                 alert("PIN updated successfully!"); 
                 loadCustomers();
             }
