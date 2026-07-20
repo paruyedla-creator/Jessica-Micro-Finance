@@ -1803,6 +1803,51 @@
             }
         }
 
+        // ==========================================
+        // NEW CUSTOMER ADD FUNCTION (LOCAL STORAGE)
+        // ==========================================
+        document.getElementById('addCustomerForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // ఫామ్ సబ్మిట్ అవ్వకుండా ఆపి మనం రాసిన కోడ్ రన్ చేస్తుంది
+            
+            // 1. ఫామ్ నుండి డీటెయిల్స్ తీసుకోవడం
+            const newCustomer = { 
+                name: document.getElementById('custName').value, 
+                phone: document.getElementById('custPhone').value, 
+                village: document.getElementById('custVillage').value,
+                aadhaar: document.getElementById('custAadhaar').value,
+                security: document.getElementById('custSecurity').value,
+                category: document.getElementById('custCategory').value,
+                amount: Number(document.getElementById('custAmount').value), 
+                duration: Number(document.getElementById('custDuration').value), 
+                guarantor: document.getElementById('custGuarantor').value,
+                password: document.getElementById('custPass').value,
+                paidWeeks: 0,
+                history: [],
+                pendingApproval: false,
+                notes: ""
+            };
+            
+            // 2. పాత కస్టమర్ల లిస్ట్ కి ఈ కొత్త డేటా యాడ్ చేసి లోకల్ గా సేవ్ చేయడం
+            globalCustomers.push(newCustomer);
+            localStorage.setItem('jf_offline_backup', JSON.stringify(globalCustomers));
+            
+            // 3. యాడ్ విండో (Modal) క్లోజ్ చేసి, ఫామ్ క్లియర్ చేయడం
+            let modalElement = document.getElementById('addCustomerModal');
+            let modalInstance = bootstrap.Modal.getInstance(modalElement);
+            if(modalInstance) {
+                modalInstance.hide();
+            }
+            document.getElementById('addCustomerForm').reset();
+            
+            // 4. బ్యాక్ ఎండ్ లాగ్స్ అండ్ టేబుల్స్ రీఫ్రెష్
+            sysLog(`Sanctioned New Loan for ${newCustomer.name}`);
+            renderDataView(); // Cards/Table లో చూపించడానికి
+            calculateAnalytics(); // పైన ఉన్న లెక్కలు అప్డేట్ అవ్వడానికి
+            
+            // 5. సక్సెస్ మెసేజ్
+            alert("Customer Added Successfully! 🎉");
+        });
+
         // Boot
         loadCustomers();
 
