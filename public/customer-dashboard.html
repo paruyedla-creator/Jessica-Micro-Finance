@@ -209,7 +209,6 @@
                     <i class="fas fa-shield-alt text-success" id="goldStar" style="position: absolute; bottom: -5px; right: -5px; font-size: 14px; display: none; background: white; border-radius: 50%;"></i>
                 </div>
                 <div>
-                    <!-- FEATURE: SMART GREETING -->
                     <div style="font-size: 10px; color: #BDC3C7; font-weight: 700; letter-spacing: 1px;" id="greetingText">WELCOME</div>
                     <h5 class="fw-bold mb-0" id="cName" style="font-size: 18px; text-transform: uppercase;">Customer Name</h5>
                     <div class="d-flex gap-2 align-items-center mt-1">
@@ -237,7 +236,7 @@
                     <div>
                         <div style="font-size: 10px; color: #7F8C8D; font-weight: 800; text-transform: uppercase;">Outstanding Balance</div>
                         <h2 class="fw-bold mb-0 mt-1" style="color: var(--primary);" id="cPendingBal">₹0</h2>
-                        <div style="font-size: 11px; font-weight: 700; color: #34495E; mt-1">Sanctioned: <span id="dispPrincipal">₹0</span></div>
+                        <div style="font-size: 11px; font-weight: 700; color: #34495E; margin-top: 2px;">Sanctioned: <span id="dispPrincipal">₹0</span></div>
                     </div>
                     <div class="text-end">
                         <div style="font-size: 10px; font-weight: 800; color: #7F8C8D; text-transform: uppercase;">CIBIL / Trust</div>
@@ -281,7 +280,6 @@
                     <i class="fas fa-check-circle fs-2 mb-2"></i><br>
                     <b style="font-size: 14px;">Account Settled & Closed</b><br>
                     <span style="font-size:11px;">Thank you for banking with us.</span>
-                    <!-- FEATURE: NOC DOWNLOAD BUTTON -->
                     <button class="btn-noc" onclick="generateNOC()"><i class="fas fa-certificate me-2"></i> Download NOC</button>
                 </div>
 
@@ -299,8 +297,8 @@
                         </div>
                     </div>
 
-                    <!-- Direct Pay Buttons (NO CUSTOM PAY, NO UTR) -->
-                    <button class="pay-btn-main" onclick="triggerUPIApp('any')" id="payEmiBtn"><i class="fas fa-rupee-sign"></i> PAY EMI SECURELY</button>
+                    <!-- Direct Pay Buttons -->
+                    <button class="pay-btn-main" onclick="triggerUPIApp()" id="payEmiBtn"><i class="fas fa-rupee-sign"></i> PAY EMI SECURELY</button>
                     
                     <div id="pendingAlert" class="mt-3 text-warning fw-bold text-center" style="display:none; font-size: 14px;">
                         <i class="fas fa-spinner fa-spin"></i> Waiting for Admin Approval...
@@ -312,7 +310,7 @@
             <div class="app-card card-normal">
                 <h6 class="fw-bold mb-3" style="font-size: 13px; color: #34495E; text-transform: uppercase;">Service Requests</h6>
                 <div class="app-grid">
-                    <div class="grid-item" onclick="window.print()"><div class="icon-circle ic-1"><i class="fas fa-file-invoice"></i></div><span>Ledger</span></div>
+                    <div class="grid-item" onclick="printStatement()"><div class="icon-circle ic-1"><i class="fas fa-file-invoice"></i></div><span>Ledger</span></div>
                     <div class="grid-item" onclick="viewIdCard()"><div class="icon-circle ic-7"><i class="fas fa-id-card-alt"></i></div><span>ID Card</span></div>
                     <div class="grid-item" data-bs-toggle="modal" data-bs-target="#calculatorModal"><div class="icon-circle ic-3"><i class="fas fa-calculator"></i></div><span>EMI Calc</span></div>
                     <div class="grid-item" onclick="viewAgreement()"><div class="icon-circle ic-6"><i class="fas fa-file-signature"></i></div><span>Agreement</span></div>
@@ -407,7 +405,7 @@
         let pollInterval = null;
         
         // --- ⚙️ UPI & WHATSAPP SETTINGS ---
-        const adminWhatsApp = "917569532152"; 
+        const adminWhatsApp = "917569532152"; // Removed extra 91 logic below
         const adminUPI_ID = "7569532152@ybl"; 
         const businessName = "Jessica Finance"; 
 
@@ -629,16 +627,19 @@
                             <div style="font-size:10px; color:#7F8C8D; font-weight:700;">${r.date}</div>
                         </td>
                         <td class="text-success fw-bold text-end align-middle" style="font-size:14px;">${formatMoney(r.amount)}</td>
-                        <td class="text-end align-middle"><a href="https://wa.me/?text=${share}" target="_blank" style="color:#BDC3C7; font-size:14px;"><i class="fas fa-share-alt"></i></a></td>
+                        <td class="text-end align-middle">
+                            <a href="#" onclick="printEReceipt('${cust.phone}', '${cust.name}', ${r.amount}, ${r.week}, '${r.date}')" style="color:#2980B9; font-size:14px; margin-right:8px;" title="View Receipt"><i class="fas fa-receipt"></i></a>
+                            <a href="https://wa.me/?text=${share}" target="_blank" style="color:#BDC3C7; font-size:14px;" title="Share"><i class="fas fa-share-alt"></i></a>
+                        </td>
                     </tr>`;
                 });
             } else { tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3" style="font-size:12px; font-weight:bold;">No transactions yet.</td></tr>'; }
         }
 
         // ==========================================
-        // 🚀 SECURE PAYMENT LOGIC (NO UTR REQUIRED)
+        // 🚀 SECURE PAYMENT LOGIC 
         // ==========================================
-        async function triggerUPIApp(appType) { 
+        async function triggerUPIApp() { 
             let intentUrl = `upi://pay?pa=${adminUPI_ID}&pn=${encodeURIComponent(businessName)}&am=${emiAmount}&cu=INR&tn=JF_Loan_ID_${currentCustomer.phone.slice(-4)}`;
             
             // Send Signal to Admin Dashboard First
@@ -655,13 +656,8 @@
             // Open UPI App
             window.location.href = intentUrl;
             
-            // Backup WhatsApp verification alert
-            setTimeout(() => {
-                let msg = `Hi Admin, I have just completed an online payment of Rs.${emiAmount} via PhonePe/GPay for my EMI. Please check your bank statement and approve my dashboard. \n- ${currentCustomer.name} (ID: JF-${currentCustomer.phone.slice(-4)})`;
-                if(confirm("Did you successfully complete the payment in your UPI App?\n\nClick 'OK' to send a verification message to Admin.")) {
-                    window.open(`https://wa.me/91${adminWhatsApp}?text=${encodeURIComponent(msg)}`, '_blank');
-                }
-            }, 3000);
+            // Silent wait without annoying pop-ups
+            // WA verification popup removed to make it smooth. Admin will see it on their dashboard anyway.
         }
 
         // ==========================================
@@ -700,9 +696,9 @@
         }
 
         // ==========================================
-        // UTILITY & NEW FEATURES
+        // UTILITY & FIXES
         // ==========================================
-        function sendWhatsAppIntent(msg) { window.open(`https://wa.me/91${adminWhatsApp}?text=${encodeURIComponent(msg)}`, '_blank'); }
+        function sendWhatsAppIntent(msg) { window.open(`https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(msg)}`, '_blank'); }
         
         function copyReferral() { navigator.clipboard.writeText(document.getElementById('cReferral').innerText); alert("Referral Code Copied! Share to earn coins."); }
 
@@ -732,7 +728,47 @@
             }());
         }
 
-        // --- NEW FEATURES ---
+        // --- NEW PRINT & DOCUMENT FEATURES (HDFC LEVEL) ---
+        function printEReceipt(phone, name, amount, week, customDate) {
+            let d = customDate ? customDate : new Date().toLocaleDateString('en-GB') + " " + new Date().toLocaleTimeString('en-US', {hour:'numeric', minute:'numeric'});
+            let txnId = "TXN" + Math.floor(10000000 + Math.random() * 90000000);
+            let w = window.open('','_blank');
+            w.document.write(`
+                <style>
+                    body { display: flex; justify-content: center; align-items: center; background: #EAECEE; font-family: 'Courier New', Courier, monospace; margin: 0; padding: 20px;}
+                    .receipt-card { width: 380px; background: white; padding: 20px; border: 1px solid #BDC3C7; box-shadow: 0 10px 20px rgba(0,0,0,0.1); position: relative;}
+                    .header { text-align: center; border-bottom: 2px dashed #7F8C8D; padding-bottom: 15px; margin-bottom: 15px; }
+                    .header h2 { margin: 0; color: #2C3E50; font-size: 24px; font-weight: 800; letter-spacing: 1px; }
+                    .header p { margin: 5px 0 0 0; font-size: 12px; color: #34495E; font-weight: bold; }
+                    .details { font-size: 14px; color: #2C3E50; line-height: 1.8; }
+                    .row { display: flex; justify-content: space-between; border-bottom: 1px solid #F2F3F4; padding: 5px 0; }
+                    .row.total { font-weight: bold; font-size: 18px; border-bottom: 2px solid #2C3E50; border-top: 2px solid #2C3E50; margin-top: 10px; padding: 10px 0; }
+                    .qr-box { text-align: center; margin: 20px 0; }
+                    .footer { text-align: center; font-size: 11px; color: #7F8C8D; margin-top: 20px; border-top: 1px dashed #BDC3C7; padding-top: 10px; }
+                </style>
+                <div class="receipt-card">
+                    <div class="header">
+                        <h2>JESSICA FINANCE</h2>
+                        <p>DIGITAL PAYMENT RECEIPT</p>
+                    </div>
+                    <div class="details">
+                        <div class="row"><span>Date & Time:</span> <span>${d}</span></div>
+                        <div class="row"><span>Txn ID:</span> <span>${txnId}</span></div>
+                        <div class="row"><span>Customer Name:</span> <span>${name}</span></div>
+                        <div class="row"><span>Account ID:</span> <span>JF-${phone.slice(-4)}</span></div>
+                        <div class="row"><span>Installment:</span> <span>Week ${week}</span></div>
+                        <div class="row total"><span>TOTAL PAID:</span> <span>${formatMoney(amount)}</span></div>
+                    </div>
+                    <div class="qr-box">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${txnId}_JF_${phone.slice(-4)}" alt="QR">
+                        <div style="font-size:10px; margin-top:5px;">Verified Payment</div>
+                    </div>
+                    <div class="footer">Thank you for your business.<br>*** CUSTOMER COPY ***</div>
+                </div>
+                <script>setTimeout(()=>window.print(), 500);<\/script>
+            `);
+        }
+
         function viewIdCard() {
             let c = currentCustomer; if(!c) return;
             let w = window.open('','_blank');
@@ -766,9 +802,78 @@
             `);
         }
 
+        function printStatement() {
+            let cust = currentCustomer; if(!cust) return;
+            let w = window.open('','_blank');
+            w.document.write(`
+                <style>body { font-family: Arial; padding: 20px; } table { width: 100%; border-collapse: collapse; margin-top:20px;} th, td { border: 1px solid #000; padding: 8px; text-align: left; }</style>
+                <h2 style="text-align:center;">CUSTOMER LEDGER STATEMENT</h2>
+                <div style="margin-bottom:20px;">
+                    <p><b>Name:</b> ${cust.name}<br><b>Account ID:</b> JF-${cust.phone.slice(-4)}<br><b>Total Paid Weeks:</b> ${cust.paidWeeks} / ${cust.duration}</p>
+                </div>
+                <table><tr><th>Week</th><th>Date</th><th>Mode</th><th>Amount Paid</th></tr>
+                ${(cust.history||[]).map(h => `<tr><td>Wk-${h.week}</td><td>${h.date}</td><td>${(h.mode||'N/A').toUpperCase()}</td><td>${formatMoney(h.amount)}</td></tr>`).join('')}
+                </table>
+                <p style="text-align:center; margin-top:30px; font-size:12px;">Generated by Jessica Finance</p>
+                <script>setTimeout(()=>window.print(), 500);<\/script>
+            `);
+        }
+
         function viewAgreement() {
-            let msg = `LOAN AGREEMENT SUMMARY\n\nName: ${currentCustomer.name}\nPrincipal: ₹${currentCustomer.amount}\nTotal Weeks: ${currentCustomer.duration}\n\nBy continuing to use this app, you agree to pay your weekly EMI on time. Late payments will incur penalties.`;
-            alert(msg);
+            let c = currentCustomer; if(!c) return;
+            let emi = Math.round((Number(c.amount) * 1.2) / c.duration);
+            let w = window.open('','_blank'); 
+            w.document.write(`
+                <style>
+                    body { background: #f4f5f7; font-family: 'Times New Roman', serif; padding: 20px; display:flex; justify-content:center;}
+                    .bond-paper { width: 100%; max-width: 800px; background: white; padding: 50px; border: 15px solid #2C3E50; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.2); }
+                    .bond-paper::before { content: ''; position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; border: 2px solid #2C3E50; pointer-events: none; }
+                    .stamp { text-align: center; color: #2C3E50; margin-bottom: 40px; border-bottom: 3px double #2C3E50; padding-bottom: 20px; }
+                    .stamp h1 { margin: 0; font-size: 32px; letter-spacing: 2px; }
+                    .stamp h3 { margin: 5px 0; font-size: 16px; letter-spacing: 1px; color: #7F8C8D; }
+                    .title { text-align: center; font-size: 22px; font-weight: bold; text-decoration: underline; margin-bottom: 30px; }
+                    .content { font-size: 16px; line-height: 1.8; text-align: justify; }
+                    .highlight { font-weight: bold; font-size: 18px; }
+                    .terms { margin-top: 30px; }
+                    .terms li { margin-bottom: 10px; }
+                    .signatures { display: flex; justify-content: space-between; margin-top: 80px; }
+                    .sig-box { text-align: center; font-weight: bold; border-top: 1px solid black; padding-top: 5px; width: 30%; }
+                </style>
+                <div class="bond-paper">
+                    <div class="stamp">
+                        <h1>NON-JUDICIAL STAMP PAPER</h1>
+                        <h3>JESSICA FINANCE MANAGEMENT</h3>
+                    </div>
+                    <div class="title">LOAN & REPAYMENT AGREEMENT</div>
+                    <div class="content">
+                        This Agreement is made and executed on <b>${c.startDate || new Date().toLocaleDateString('en-GB')}</b> between <b>Jessica Finance</b> (hereinafter referred to as "Lender") and:<br><br>
+                        <b>Borrower Name:</b> <span class="highlight">${c.name}</span><br>
+                        <b>Mobile Number:</b> ${c.phone}<br>
+                        <b>Address / Village:</b> ${c.village || 'N/A'}<br>
+                        <b>KYC / Aadhaar:</b> ${c.aadhaar || 'Verified'}<br>
+                        <b>Guarantor Name:</b> ${c.guarantor && c.guarantor !== 'None' ? c.guarantor : 'Self-Guaranteed'}<br><br>
+                        
+                        The Borrower has requested a principal loan amount of <span class="highlight">Rs. ${formatMoney(c.amount)}</span>. The loan is approved with a total tenure of <b>${c.duration} Weeks</b>. The agreed Weekly EMI to be paid by the Borrower is <span class="highlight">Rs. ${formatMoney(emi)}</span>.
+                        
+                        <div class="terms">
+                            <b>Terms and Conditions:</b>
+                            <ol>
+                                <li>The Borrower agrees to pay the Weekly EMI strictly on or before the due date.</li>
+                                <li>In case of default or delay, a late payment penalty will be added to the outstanding balance.</li>
+                                <li>The Guarantor (if any) holds equal legal liability for the repayment of this loan.</li>
+                                <li>Any security/collateral provided by the Borrower shall remain with the Lender until the loan is settled in full.</li>
+                                <li>The Lender reserves the right to take legal action under the Negotiable Instruments Act in case of intentional default.</li>
+                            </ol>
+                        </div>
+                    </div>
+                    
+                    <div class="signatures">
+                        <div class="sig-box">Borrower Signature</div>
+                        <div class="sig-box">Guarantor Signature</div>
+                        <div class="sig-box">Authorized Signatory<br><span style="font-size:12px; font-weight:normal;">Jessica Finance Mgt.</span></div>
+                    </div>
+                </div>
+            `);
         }
 
         // NOC GENERATOR

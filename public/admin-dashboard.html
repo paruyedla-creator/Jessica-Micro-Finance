@@ -36,8 +36,16 @@
             padding-bottom: 50px; 
             color: var(--text-dark); 
             font-size: 13px; 
+            transition: 0.3s;
         }
         
+        /* ADMIN DARK MODE (NEW FEATURE) */
+        body.admin-dark { background-color: #121212; color: #E0E4E9; }
+        body.admin-dark .content-card, body.admin-dark .customer-card, body.admin-dark .stat-card { background: #1E1E1E; border-color: #333; }
+        body.admin-dark .toolbar { background: #2A2A2A; border-color: #333; }
+        body.admin-dark .data-val, body.admin-dark .stat-details h3 { color: #f8fafc; }
+        body.admin-dark .cust-header { border-bottom-color: #333; }
+
         /* HEADER NAVIGATION STYLES */
         .admin-header { 
             background-color: var(--hdfc-blue); 
@@ -58,6 +66,13 @@
             font-weight: 600; transition: all 0.2s ease-in-out; cursor: pointer;
         }
         .top-btn:hover { background: var(--hdfc-red); border-color: var(--hdfc-red); color: white; }
+
+        /* LIVE CLOCK (NEW FEATURE) */
+        .live-clock {
+            background: rgba(0,0,0,0.2); padding: 5px 12px; border-radius: 4px;
+            font-family: monospace; font-size: 14px; font-weight: 800; color: #F1C40F;
+            border: 1px solid rgba(241, 196, 15, 0.3); letter-spacing: 1px;
+        }
 
         /* ANALYTICS STAT CARDS */
         .stat-card { 
@@ -86,7 +101,7 @@
         .btn-excel { background: #27AE60; color: white; border: 1px solid #1E8449; }
         .btn-excel:hover { background: #1E8449; }
 
-        .search-box { position: relative; width: 300px; }
+        .search-box { position: relative; width: 250px; }
         .search-box input { width: 100%; border-radius: 4px; padding: 8px 15px 8px 30px; border: 1px solid #BDC3C7; font-size: 13px; font-weight: 600; }
         .search-box input:focus { border-color: var(--hdfc-blue); outline: none; box-shadow: 0 0 0 2px rgba(0, 76, 143, 0.1); }
         .search-box i.fa-search { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #95A5A6; font-size: 13px; }
@@ -107,6 +122,10 @@
 
         .profile-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--hdfc-blue); color: white; display: flex; justify-content: center; align-items: center; font-size: 16px; font-weight: 700; }
         .avatar-bad { background: var(--hdfc-red); }
+
+        /* QUICK CALL BTN (NEW) */
+        .quick-call { background: #E8F8F5; color: #27AE60; padding: 3px 8px; border-radius: 4px; text-decoration: none; font-size: 11px; margin-left: 5px; border: 1px solid #A9DFBF; }
+        .quick-call:hover { background: #27AE60; color: white; }
 
         /* TIGHT ACTION TOOLBAR (ICONS WITH NAMES) */
         .action-toolbar { background: #F8F9FA; border: 1px solid #EAEDED; border-radius: 4px; padding: 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 5px; }
@@ -169,8 +188,16 @@
                 <div style="font-size: 11px; color: #AAB7C4; font-weight: 600; letter-spacing: 1px; margin-top: 2px;">CORPORATE BANKING</div>
             </div>
         </div>
+        
+        <!-- NEW FEATURE: LIVE CLOCK & DATE -->
+        <div class="live-clock" id="liveClockDisplay">Loading Time...</div>
+
         <div class="d-flex gap-2 align-items-center">
             <div id="networkStatus" class="me-3 fw-bold text-success" style="font-size: 11px;"><i class="fas fa-circle text-success me-1"></i> ONLINE MODE</div>
+            
+            <button class="top-btn" onclick="toggleAdminDarkMode()" title="Dark Mode">
+                <i class="fas fa-moon" id="adminDarkIcon"></i>
+            </button>
             <button class="top-btn" data-bs-toggle="modal" data-bs-target="#auditLogModal" title="Audit Trail">
                 <i class="fas fa-list-alt me-1"></i> Logs
             </button>
@@ -179,9 +206,6 @@
             </button>
             <button class="top-btn" onclick="lockSystem()" title="Lock Screen">
                 <i class="fas fa-lock me-1"></i> Lock
-            </button>
-            <button class="top-btn" data-bs-toggle="modal" data-bs-target="#calculatorModal" title="Calculator">
-                <i class="fas fa-calculator me-1"></i> Calc
             </button>
             <button class="top-btn text-danger border-danger bg-white" onclick="window.location.href='index.html'" title="Logout">
                 <i class="fas fa-power-off"></i>
@@ -240,7 +264,7 @@
                     <button class="tool-btn" data-bs-toggle="modal" data-bs-target="#addCustomerModal" id="addBtn">
                         <i class="fas fa-plus me-1"></i> Sanction Loan
                     </button>
-                    <!-- FEATURE: EXCEL DOWNLOAD -->
+                    <!-- EXCEL DOWNLOAD -->
                     <button class="tool-btn btn-excel" onclick="exportToExcel()">
                         <i class="fas fa-file-excel me-1"></i> Excel Report
                     </button>
@@ -248,18 +272,26 @@
                         <i class="fas fa-bullhorn text-warning me-1"></i> Global Notice
                     </button>
                     <button class="tool-btn tool-btn-outline" onclick="bulkRemindAll()">
-                        <i class="fas fa-bell text-danger me-1"></i> Remind
-                    </button>
-                    <button class="tool-btn tool-btn-outline" onclick="printCollectionSheet()">
-                        <i class="fas fa-route text-success me-1"></i> Route
+                        <i class="fas fa-bell text-danger me-1"></i> Bulk WA Remind
                     </button>
                     <button class="tool-btn tool-btn-outline" onclick="addDailyExpense()">
                         <i class="fas fa-wallet text-info me-1"></i> Expense
                     </button>
+                    <!-- NEW: DATA BACKUP BUTTONS -->
+                    <button class="tool-btn tool-btn-outline text-success" onclick="downloadBackupJSON()">
+                        <i class="fas fa-download me-1"></i> Backup DB
+                    </button>
                 </div>
 
                 <div class="d-flex gap-3 align-items-center">
-                    <select class="form-select form-select-sm" style="width: 160px; font-weight: 600; padding: 6px 10px;" onchange="applySmartFilter(this.value)">
+                    <!-- NEW FEATURE: ADVANCED SORTING -->
+                    <select class="form-select form-select-sm" style="width: 120px; font-weight: 600;" id="sortFilter" onchange="renderCards()">
+                        <option value="recent">Sort: Recent</option>
+                        <option value="name">Sort: A-Z</option>
+                        <option value="high">High Balance</option>
+                    </select>
+
+                    <select class="form-select form-select-sm" style="width: 140px; font-weight: 600;" onchange="applySmartFilter(this.value)">
                         <option value="all">All Accounts</option>
                         <option value="active">Active Only</option>
                         <option value="overdue">Overdue Only</option>
@@ -268,7 +300,7 @@
                     
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" id="searchInput" placeholder="Search ID or Name..." onkeyup="filterTable()">
+                        <input type="text" id="searchInput" placeholder="Search ID, Name or Village..." onkeyup="filterTable()">
                         <i class="fas fa-times-circle" id="clearSearchBtn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none; color: #E74C3C;" onclick="clearSearch()"></i>
                     </div>
                     
@@ -377,7 +409,6 @@
                                 <label class="data-label">Aadhaar (KYC)</label>
                                 <input type="text" id="custAadhaar" class="form-control fw-bold">
                             </div>
-                            <!-- FEATURE: Security / Collateral Tracker -->
                             <div class="col-md-4">
                                 <label class="data-label text-warning">Security/Collateral Taken</label>
                                 <input type="text" id="custSecurity" class="form-control fw-bold" placeholder="e.g. Blank Cheque, RC Book">
@@ -396,6 +427,7 @@
                                 <label class="data-label text-primary">Loan Category</label>
                                 <select id="custCategory" class="form-select fw-bold border-primary" required>
                                     <option value="General Finance">Weekly Finance</option>
+                                    <option value="Monthly Interest">Monthly Finance</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
@@ -407,8 +439,8 @@
                                 <input type="number" id="custDuration" class="form-control fw-bold border-primary" required>
                             </div>
                             <div class="col-md-12">
-                                <label class="data-label">Guarantor Name</label>
-                                <input type="text" id="custGuarantor" class="form-control fw-bold" style="text-transform: capitalize;">
+                                <label class="data-label">Guarantor Name & Details</label>
+                                <input type="text" id="custGuarantor" class="form-control fw-bold" style="text-transform: capitalize;" placeholder="Name, Phone, Relation">
                             </div>
                         </div>
                         <button type="submit" class="btn w-100 mt-4 fw-bold text-white py-2" style="background: var(--hdfc-blue); font-size: 15px;">
@@ -463,7 +495,7 @@
                                 <input type="number" id="editDuration" class="form-control fw-bold" required>
                             </div>
                             <div class="col-md-4">
-                                <label class="data-label">Guarantor Name</label>
+                                <label class="data-label">Guarantor Info</label>
                                 <input type="text" id="editGuarantor" class="form-control fw-bold">
                             </div>
                             
@@ -533,6 +565,27 @@
         // SYSTEM SECURITY, LOGS & UI FUNCTIONS
         // ----------------------------------------------------
         
+        // NEW FEATURE: LIVE CLOCK
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: "numeric", minute: "numeric", second: "numeric" });
+            const dateStr = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+            document.getElementById('liveClockDisplay').innerText = `${dateStr} | ${timeStr}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // NEW FEATURE: ADMIN DARK MODE
+        function toggleAdminDarkMode() {
+            document.body.classList.toggle('admin-dark');
+            let icon = document.getElementById('adminDarkIcon');
+            if(document.body.classList.contains('admin-dark')) {
+                icon.className = 'fas fa-sun'; icon.style.color = '#F1C40F';
+            } else {
+                icon.className = 'fas fa-moon'; icon.style.color = 'white';
+            }
+        }
+
         function lockSystem() { 
             document.getElementById('lockScreen').style.display = 'flex'; 
             document.getElementById('unlockPin').focus(); 
@@ -546,36 +599,32 @@
             } 
         }
 
-        // AUDIT LOG SYSTEM (Secure local logging)
+        // AUDIT LOG SYSTEM
         function sysLog(actionText) {
             let logs = JSON.parse(localStorage.getItem('jf_logs') || '[]');
             logs.unshift({ time: new Date().toLocaleString('en-IN'), action: actionText });
-            if(logs.length > 50) logs.pop(); // Keep last 50 logs
+            if(logs.length > 50) logs.pop(); 
             localStorage.setItem('jf_logs', JSON.stringify(logs));
             
-            // Render logs in modal
             const logContainer = document.getElementById('auditLogList');
             logContainer.innerHTML = '';
             logs.forEach(l => {
                 logContainer.innerHTML += `<li class="list-group-item py-2"><b>[${l.time}]</b> - ${l.action}</li>`;
             });
         }
-        
-        // Initial log render
         sysLog("System Initialized");
 
-        // FEATURE: 12 AM DATE SYNC LOGIC
         let lastKnownDay = new Date().getDate();
         setInterval(() => {
             let currentDay = new Date().getDate();
             if(currentDay !== lastKnownDay) {
                 lastKnownDay = currentDay;
                 sysLog("12 AM Date Sync Executed. Refreshing Data.");
-                loadCustomers(); // Auto sync dates
+                loadCustomers(); 
             }
-        }, 60000); // Check every minute
+        }, 60000); 
 
-        // FEATURE: EXCEL REPORT DOWNLOAD
+        // EXCEL REPORT DOWNLOAD
         function exportToExcel() {
             let ws_data = [["Cust ID", "Full Name", "Phone", "Village", "Principal (₹)", "Duration (Wks)", "Paid Weeks", "Status", "Security/Collateral"]];
             globalCustomers.forEach(c => {
@@ -590,6 +639,16 @@
             XLSX.utils.book_append_sheet(wb, ws, "Jessica_Finance_Report");
             XLSX.writeFile(wb, "Jessica_Finance_Report.xlsx");
             sysLog("Exported Excel Report");
+        }
+
+        // NEW FEATURE: DOWNLOAD DB JSON BACKUP
+        function downloadBackupJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(globalCustomers, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href",     dataStr     );
+            dlAnchorElem.setAttribute("download", "JessicaFinance_Backup_" + new Date().toLocaleDateString('en-GB') + ".json");
+            dlAnchorElem.click();
+            sysLog("Database JSON Backup Downloaded");
         }
 
         // Cash Counter Logic
@@ -610,7 +669,6 @@
             let principal = Number(document.getElementById('calcPrincipal').value) || 0; 
             let interest = Number(document.getElementById('calcInterest').value) || 0; 
             let weeks = Number(document.getElementById('calcWeeks').value) || 1;
-            
             let totalAmount = principal + (principal * (interest / 100)); 
             
             document.getElementById('calcResult').innerText = formatMoney(Math.round(totalAmount / weeks)); 
@@ -627,7 +685,6 @@
                 const response = await fetch('/api/customers'); 
                 globalCustomers = await response.json();
                 
-                // Backup to LocalStorage
                 localStorage.setItem('jf_offline_backup', JSON.stringify(globalCustomers)); 
                 document.getElementById('networkStatus').innerHTML = `<i class="fas fa-circle text-success me-1"></i> ONLINE MODE`;
                 document.getElementById('networkStatus').className = "me-3 fw-bold text-success";
@@ -651,9 +708,7 @@
             let icon = document.getElementById('refreshIcon'); 
             icon.classList.add('fa-spin-fast');
             await loadCustomers(); 
-            setTimeout(function() {
-                icon.classList.remove('fa-spin-fast');
-            }, 500);
+            setTimeout(function() { icon.classList.remove('fa-spin-fast'); }, 500);
         }
 
         // --- COMPACT HTML RENDERING LOGIC (SOFTWARE LOOK) ---
@@ -665,7 +720,14 @@
             today.setHours(0,0,0,0);
             let visibleCount = 0;
 
-            globalCustomers.forEach(function(cust) {
+            // NEW FEATURE: ADVANCED SORTING
+            let displayList = [...globalCustomers];
+            let sortType = document.getElementById('sortFilter').value;
+            if(sortType === 'name') displayList.sort((a,b) => a.name.localeCompare(b.name));
+            if(sortType === 'high') displayList.sort((a,b) => Number(b.amount) - Number(a.amount));
+            if(sortType === 'recent') displayList.reverse(); // Default behavior
+
+            displayList.forEach(function(cust) {
                 // Financial Calculations
                 let principal = Number(cust.amount); 
                 let penalty = Number(cust.penalty || 0);
@@ -682,124 +744,78 @@
                 let dueDate = null;
                 
                 if (cust.nextDueDate) {
-                    if(cust.nextDueDate.includes('-')) { 
-                        dueDate = new Date(cust.nextDueDate); 
-                    } else { 
-                        let parts = cust.nextDueDate.split('/'); 
-                        if(parts.length === 3) { 
-                            dueDate = new Date(parts[2], parts[1]-1, parts[0]); 
-                        } else { 
-                            dueDate = new Date(cust.nextDueDate); 
-                        } 
-                    }
+                    if(cust.nextDueDate.includes('-')) { dueDate = new Date(cust.nextDueDate); } 
+                    else { let parts = cust.nextDueDate.split('/'); if(parts.length===3) dueDate = new Date(parts[2], parts[1]-1, parts[0]); else dueDate = new Date(cust.nextDueDate); }
                 } else if (cust.lastPaidDate) {
-                    let parts = cust.lastPaidDate.split('/'); 
-                    if(parts.length === 3) { 
-                        dueDate = new Date(parts[2], parts[1]-1, parts[0]); 
-                        dueDate.setDate(dueDate.getDate() + 7); 
-                    }
+                    let parts = cust.lastPaidDate.split('/'); if(parts.length===3) { dueDate = new Date(parts[2], parts[1]-1, parts[0]); dueDate.setDate(dueDate.getDate() + 7); }
                 } else if (cust.startDate) {
-                    let parts = cust.startDate.split('/'); 
-                    if(parts.length === 3) { 
-                        dueDate = new Date(parts[2], parts[1]-1, parts[0]); 
-                        dueDate.setDate(dueDate.getDate() + 7); 
-                    }
-                } else { 
-                    dueDate = new Date(); 
-                    dueDate.setDate(dueDate.getDate() + 7); 
-                }
+                    let parts = cust.startDate.split('/'); if(parts.length===3) { dueDate = new Date(parts[2], parts[1]-1, parts[0]); dueDate.setDate(dueDate.getDate() + 7); }
+                } else { dueDate = new Date(); dueDate.setDate(dueDate.getDate() + 7); }
 
-                // Check Overdue Status
                 if (dueDate && !isNaN(dueDate) && dueDate < today && pendingWeeks > 0) {
-                    isOverdue = true; 
-                    lateWeeks = Math.floor((today - dueDate) / (1000 * 60 * 60 * 24 * 7));
+                    isOverdue = true; lateWeeks = Math.floor((today - dueDate) / (1000 * 60 * 60 * 24 * 7));
                 }
 
-                // Special Tags Check
                 let isBlacklisted = cust.notes && cust.notes.includes('🚫');
                 let isPaused = cust.notes && cust.notes.includes('[PAUSED]');
                 let isVIP = cust.notes && cust.notes.includes('[VIP]');
 
-                // Apply Search / Filters
+                // Filters
                 if(currentFilter === 'active' && pendingWeeks <= 0) return;
                 if(currentFilter === 'cleared' && pendingWeeks > 0) return;
                 if(currentFilter === 'overdue' && (!isOverdue || isPaused)) return;
                 
                 visibleCount++;
 
-                // CSS Classes
                 let rowClass = 'customer-card';
                 if(isBlacklisted) rowClass += ' row-blacklisted'; 
                 else if(isPaused) rowClass += ' row-paused'; 
                 else if(isOverdue) rowClass += ' row-overdue'; 
 
                 let initials = cust.name.substring(0, 2).toUpperCase();
-                
-                let statusBadge = pendingWeeks <= 0 
-                    ? `<span class="status-badge text-white" style="background:#27AE60;">Settled</span>` 
-                    : `<span class="status-badge text-white" style="background:var(--hdfc-blue);">Active</span>`;
-                
+                let statusBadge = pendingWeeks <= 0 ? `<span class="status-badge text-white" style="background:#27AE60;">Settled</span>` : `<span class="status-badge text-white" style="background:var(--hdfc-blue);">Active</span>`;
                 if(isPaused) statusBadge = `<span class="status-badge bg-warning text-dark">Paused</span>`;
                 if(isVIP) statusBadge += ` <span class="status-badge bg-warning text-dark"><i class="fas fa-star"></i> VIP</span>`;
 
                 let avatarClass = "profile-avatar";
                 if(isBlacklisted || isOverdue) avatarClass += " avatar-bad";
 
-                // Admin UI Approval HTML (Now works automatically if customer requests it)
+                // Admin UI Approval HTML
                 let approvalHTML = ``;
                 if(cust.pendingApproval) {
                     approvalHTML = `
                         <div class="bg-warning bg-opacity-10 border border-warning p-2 rounded mb-3 d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="fw-bold" style="font-size:12px; color:#D35400;">
-                                    <i class="fas fa-bell"></i> Online Payment Triggered! (Verify Bank)
-                                </div>
-                            </div>
+                            <div><div class="fw-bold" style="font-size:12px; color:#D35400;"><i class="fas fa-bell"></i> Online Payment Triggered! (Verify Bank)</div></div>
                             <div class="d-flex gap-2">
-                                <button class="btn btn-sm btn-success py-1 px-3 fw-bold" style="font-size:11px;" onclick="approvePayment('${cust.phone}', '${cust.name}', ${nextEmiToPay})">
-                                    <i class="fas fa-check"></i> Approve
-                                </button>
-                                <button class="btn btn-sm btn-danger py-1 px-3 fw-bold" style="font-size:11px;" onclick="rejectFakePayment('${cust.phone}')">
-                                    <i class="fas fa-times"></i> Reject
-                                </button>
+                                <button class="btn btn-sm btn-success py-1 px-3 fw-bold" style="font-size:11px;" onclick="approvePayment('${cust.phone}', '${cust.name}', ${nextEmiToPay})"><i class="fas fa-check"></i> Approve</button>
+                                <button class="btn btn-sm btn-danger py-1 px-3 fw-bold" style="font-size:11px;" onclick="rejectFakePayment('${cust.phone}')"><i class="fas fa-times"></i> Reject</button>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 }
 
-                // Notice HTML
                 let hasNotice = cust.notes && cust.notes.includes("Notice:");
-                let noticeInd = hasNotice 
-                    ? `<span class="badge bg-dark text-white ms-1" style="font-size:9px;" title="${cust.notes}"><i class="fas fa-bullhorn text-info"></i> Notice</span>` 
-                    : '';
-                
+                let noticeInd = hasNotice ? `<span class="badge bg-dark text-white ms-1" style="font-size:9px;" title="${cust.notes}"><i class="fas fa-bullhorn text-info"></i> Notice</span>` : '';
                 let noticeBtnHTML = hasNotice 
                     ? `<button class="icon-btn btn-notice-clear" title="Clear Notice" onclick="clearNotice('${cust.phone}', '${cust.name}')"><i class="fas fa-bell-slash"></i><span>Clear</span></button>`
                     : `<button class="icon-btn btn-notice" title="App Notice" onclick="sendIndividualNotice('${cust.phone}', '${cust.name}')"><i class="fas fa-bullhorn"></i><span>Notice</span></button>`;
 
-                let penaltyHtml = penalty > 0 
-                    ? `<div class="data-val text-danger" style="font-size:12px;">+ ${formatMoney(penalty)} Pen</div>` 
-                    : '';
+                let penaltyHtml = penalty > 0 ? `<div class="data-val text-danger" style="font-size:12px;">+ ${formatMoney(penalty)} Pen</div>` : '';
                 
-                let securityTag = cust.security 
-                    ? `<div class="mt-2 text-warning fw-bold" style="font-size:10px;"><i class="fas fa-lock"></i> Vault: ${cust.security}</div>` 
-                    : '';
+                // FEATURE: GUARANTOR BADGE & QUICK CALL
+                let guarantorTag = cust.guarantor && cust.guarantor !== 'None' ? `<div class="mt-1" style="font-size:10px; color:#7F8C8D;"><i class="fas fa-user-shield"></i> G: ${cust.guarantor}</div>` : '';
+                let quickCallBtn = `<a href="tel:${cust.phone}" class="quick-call"><i class="fas fa-phone-alt"></i> Call</a>`;
 
-                // BUILD THE FULL ROW HTML WITH NEW ICON LAYOUT
+                // BUILD THE FULL ROW HTML
                 let cardHTML = `
                     <div class="${rowClass}">
                         ${approvalHTML}
-                        
                         <div class="cust-header">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="${avatarClass}">${initials}</div>
                                 <div>
                                     <div style="font-size:16px; font-weight:800;">${cust.name} ${noticeInd}</div>
-                                    <div style="font-size:12px; color:#7F8C8D; font-weight:600;">
-                                        ID: JF-${cust.phone.slice(-4)} | 
-                                        <i class="fas fa-phone"></i> ${cust.phone}
-                                    </div>
-                                    ${securityTag}
+                                    <div style="font-size:12px; color:#7F8C8D; font-weight:600;">ID: JF-${cust.phone.slice(-4)} | <i class="fas fa-phone"></i> ${cust.phone} ${quickCallBtn}</div>
+                                    ${guarantorTag}
                                 </div>
                             </div>
                             <div class="text-end">
@@ -811,15 +827,13 @@
                         <div class="cust-body mt-3">
                             <div class="data-block">
                                 <span class="data-label">Village</span>
-                                <span class="data-val" style="color:var(--accent); cursor:pointer;" onclick="openMap('${cust.village}')">
-                                    <i class="fas fa-map-marker-alt"></i> ${cust.village || 'N/A'}
-                                </span>
+                                <span class="data-val" style="color:var(--accent); cursor:pointer;" onclick="openMap('${cust.village}')"><i class="fas fa-map-marker-alt"></i> ${cust.village || 'N/A'}</span>
                             </div>
                             <div class="data-block">
                                 <span class="data-label">Principal</span>
                                 <span class="data-val">${formatMoney(principal)}</span>
                             </div>
-                            <div class="data-block" style="border:1px dashed #BDC3C7; padding:4px 10px; border-radius:4px; background:#F8F9FA;">
+                            <div class="data-block" style="border:1px dashed #BDC3C7; padding:4px 10px; border-radius:4px; background:rgba(0,0,0,0.02);">
                                 <span class="data-label text-primary">EMI Amount</span>
                                 <span class="data-val-big">${formatMoney(nextEmiToPay)}</span>
                                 ${penaltyHtml}
@@ -833,9 +847,7 @@
                                     <span>Paid: ${paidWeeks}/${cust.duration}</span>
                                     <span>${progressPercent}%</span>
                                 </div>
-                                <div class="progress-bar-custom">
-                                    <div class="progress-fill" style="width: ${progressPercent}%;"></div>
-                                </div>
+                                <div class="progress-bar-custom"><div class="progress-fill" style="width: ${progressPercent}%;"></div></div>
                                 <div class="d-flex justify-content-between mt-2" style="font-size:11px; font-weight:700;">
                                     <span class="text-muted" title="Last Paid"><i class="fas fa-history"></i> ${cust.lastPaidDate || '-'}</span>
                                     <span class="text-primary" title="Due Date"><i class="fas fa-calendar-day"></i> ${dueDate && !isNaN(dueDate) ? dueDate.toLocaleDateString('en-GB') : '-'}</span>
@@ -845,64 +857,33 @@
 
                         <!-- ICONS WITH NAMES BELOW -->
                         <div class="action-toolbar mt-3">
-                            
-                            <!-- Payment Collection -->
-                            <button class="icon-btn btn-pay" title="Collect Full Pay" onclick="recordCashPayment('${cust.phone}', '${cust.name}', ${nextEmiToPay})">
-                                <i class="fas fa-rupee-sign"></i><span>Full Pay</span>
-                            </button>
-                            <button class="icon-btn btn-part" title="Partial Payment" onclick="customPayment('${cust.phone}', '${cust.name}', ${baseEmi})">
-                                <i class="fas fa-adjust"></i><span>Part Pay</span>
-                            </button>
-                            <button class="icon-btn btn-adv" title="Advance Payment" onclick="advancePayment('${cust.phone}', '${cust.name}', ${baseEmi})">
-                                <i class="fas fa-forward"></i><span>Advance</span>
-                            </button>
-                            <button class="icon-btn btn-topup" title="Top-Up Loan" onclick="topUpLoan('${cust.phone}', '${cust.name}', ${pendingBalance})">
-                                <i class="fas fa-sync"></i><span>Top-Up</span>
-                            </button>
-                            <button class="icon-btn btn-settle" title="Settle Loan" onclick="settlementCalculator('${cust.phone}', '${cust.name}', ${pendingBalance})">
-                                <i class="fas fa-balance-scale"></i><span>Settle</span>
-                            </button>
+                            <button class="icon-btn btn-pay" title="Collect Full Pay" onclick="recordCashPayment('${cust.phone}', '${cust.name}', ${nextEmiToPay})"><i class="fas fa-rupee-sign"></i><span>Full Pay</span></button>
+                            <button class="icon-btn btn-part" title="Partial Payment" onclick="customPayment('${cust.phone}', '${cust.name}', ${baseEmi})"><i class="fas fa-adjust"></i><span>Part Pay</span></button>
+                            <button class="icon-btn btn-adv" title="Advance Payment" onclick="advancePayment('${cust.phone}', '${cust.name}', ${baseEmi})"><i class="fas fa-forward"></i><span>Advance</span></button>
+                            <button class="icon-btn btn-topup" title="Top-Up Loan" onclick="topUpLoan('${cust.phone}', '${cust.name}', ${pendingBalance})"><i class="fas fa-sync"></i><span>Top-Up</span></button>
+                            <button class="icon-btn btn-settle" title="Settle Loan" onclick="settlementCalculator('${cust.phone}', '${cust.name}', ${pendingBalance})"><i class="fas fa-balance-scale"></i><span>Settle</span></button>
                             
                             <span style="border-left:1px solid #BDC3C7; height:30px; margin:0 5px;"></span>
                             
-                            <!-- Utility Features -->
                             ${noticeBtnHTML}
-                            <button class="icon-btn btn-note" title="Quick Secret Note" onclick="quickNote('${cust.phone}', '${cust.name}')">
-                                <i class="fas fa-sticky-note"></i><span>Note</span>
-                            </button>
-                            <button class="icon-btn btn-vip" title="Toggle VIP Status" onclick="toggleVIP('${cust.phone}', '${cust.name}')">
-                                <i class="fas fa-star"></i><span>VIP Tag</span>
-                            </button>
-                            <button class="icon-btn ${isPaused ? 'bg-success border-0 text-white' : 'btn-doc'}" style="${!isPaused ? 'background:#7F8C8D;' : ''}" title="${isPaused ? 'Resume Loan' : 'Freeze/Pause Loan'}" onclick="togglePause('${cust.phone}', '${cust.name}')">
-                                <i class="fas ${isPaused ? 'fa-play' : 'fa-pause'}"></i><span>${isPaused ? 'Resume' : 'Pause'}</span>
-                            </button>
-                            <button class="icon-btn btn-call" title="Contact Guarantor" onclick="contactGuarantor('${cust.phone}', '${cust.guarantor}')">
-                                <i class="fas fa-user-shield"></i><span>Guarantor</span>
-                            </button>
-                            <button class="icon-btn btn-pen" title="Add Penalty" onclick="addPenalty('${cust.phone}', '${cust.name}')">
-                                <i class="fas fa-gavel"></i><span>Penalty</span>
-                            </button>
+                            <button class="icon-btn btn-note" title="Quick Secret Note" onclick="quickNote('${cust.phone}', '${cust.name}')"><i class="fas fa-sticky-note"></i><span>Note</span></button>
+                            <button class="icon-btn btn-vip" title="Toggle VIP Status" onclick="toggleVIP('${cust.phone}', '${cust.name}')"><i class="fas fa-star"></i><span>VIP Tag</span></button>
+                            <button class="icon-btn ${isPaused ? 'bg-success border-0 text-white' : 'btn-doc'}" style="${!isPaused ? 'background:#7F8C8D;' : ''}" title="${isPaused ? 'Resume Loan' : 'Freeze/Pause Loan'}" onclick="togglePause('${cust.phone}', '${cust.name}')"><i class="fas ${isPaused ? 'fa-play' : 'fa-pause'}"></i><span>${isPaused ? 'Resume' : 'Pause'}</span></button>
+                            <button class="icon-btn btn-call" title="Contact Guarantor" onclick="contactGuarantor('${cust.phone}', '${cust.guarantor}')"><i class="fas fa-user-shield"></i><span>Guarantor</span></button>
+                            <button class="icon-btn btn-pen" title="Add Penalty" onclick="addPenalty('${cust.phone}', '${cust.name}')"><i class="fas fa-gavel"></i><span>Penalty</span></button>
                             
                             <span style="border-left:1px solid #BDC3C7; height:30px; margin:0 5px;"></span>
                             
-                            <!-- WhatsApp, QR & More -->
-                            <button class="icon-btn btn-qr" title="Print E-Receipt" onclick="printEReceipt('${cust.phone}', '${cust.name}', ${nextEmiToPay}, ${cust.paidWeeks+1})">
-                                <i class="fas fa-qrcode"></i><span>Receipt</span>
-                            </button>
-                            
-                            <button class="icon-btn btn-wa" title="WhatsApp Actions" onclick="whatsappMenu('${cust.phone}', '${cust.name}', ${nextEmiToPay}, '${dueDate && !isNaN(dueDate) ? dueDate.toLocaleDateString('en-GB') : 'soon'}', '${cust.password}')">
-                                <i class="fab fa-whatsapp"></i><span>WA Menu</span>
-                            </button>
+                            <button class="icon-btn btn-qr" title="Print E-Receipt" onclick="printEReceipt('${cust.phone}', '${cust.name}', ${nextEmiToPay}, ${cust.paidWeeks+1})"><i class="fas fa-qrcode"></i><span>Receipt</span></button>
+                            <button class="icon-btn btn-wa" title="WhatsApp Actions" onclick="whatsappMenu('${cust.phone}', '${cust.name}', ${nextEmiToPay}, '${dueDate && !isNaN(dueDate) ? dueDate.toLocaleDateString('en-GB') : 'soon'}', '${cust.password}')"><i class="fab fa-whatsapp"></i><span>WA Menu</span></button>
                             
                             <div class="dropdown ms-auto">
-                                <button class="icon-btn btn-more dropdown-toggle" data-bs-toggle="dropdown" style="height: 50px;">
-                                    <i class="fas fa-cog"></i><span>More</span>
-                                </button>
+                                <button class="icon-btn btn-more dropdown-toggle" data-bs-toggle="dropdown" style="height: 50px;"><i class="fas fa-cog"></i><span>More</span></button>
                                 <ul class="dropdown-menu shadow-sm" style="font-size:13px; border-radius:4px; border-color:#BDC3C7;">
                                     <li><a class="dropdown-item fw-bold py-2" href="#" onclick="openEditModal('${cust.phone}')"><i class="fas fa-edit text-primary me-2"></i> Edit Account / KYC</a></li>
                                     <li><a class="dropdown-item fw-bold py-2" href="#" onclick="waivePenalty('${cust.phone}', '${cust.name}')"><i class="fas fa-magic text-danger me-2"></i> Waive Penalty</a></li>
-                                    <li><a class="dropdown-item fw-bold py-2" href="#" onclick="printAgreement('${cust.phone}')"><i class="fas fa-file-contract text-secondary me-2"></i> Print Agreement</a></li>
-                                    <li><a class="dropdown-item fw-bold py-2" href="#" onclick="printStatement('${cust.phone}')"><i class="fas fa-receipt text-success me-2"></i> Print Statement</a></li>
+                                    <li><a class="dropdown-item fw-bold py-2" href="#" onclick="printAgreement('${cust.phone}')"><i class="fas fa-file-contract text-secondary me-2"></i> Print Bond Agreement</a></li>
+                                    <li><a class="dropdown-item fw-bold py-2" href="#" onclick="printStatement('${cust.phone}')"><i class="fas fa-receipt text-success me-2"></i> Print Bank Statement</a></li>
                                     <li><a class="dropdown-item fw-bold py-2" href="#" onclick="printIdCard('${cust.phone}')"><i class="fas fa-id-badge text-warning me-2"></i> Print Color ID Card</a></li>
                                     <li><a class="dropdown-item fw-bold py-2" href="#" onclick="recoverPIN('${cust.phone}', '${cust.name}', '${cust.password}')"><i class="fas fa-key text-dark me-2"></i> Reset PIN</a></li>
                                     <li><a class="dropdown-item fw-bold py-2" href="#" onclick="adminGhostLogin('${cust.phone}', '${cust.password}')"><i class="fas fa-eye text-info me-2"></i> Ghost Login App</a></li>
@@ -916,15 +897,12 @@
                 container.innerHTML += cardHTML;
             });
             
-            if(visibleCount === 0) {
-                document.getElementById('emptyState').style.display = 'block';
-            } else {
-                document.getElementById('emptyState').style.display = 'none';
-            }
+            if(visibleCount === 0) document.getElementById('emptyState').style.display = 'block';
+            else document.getElementById('emptyState').style.display = 'none';
         }
 
         // ----------------------------------------------------
-        // UNIQUE FEATURES (EXPANDED LOGIC)
+        // UNIQUE FEATURES & BUG FIXES
         // ----------------------------------------------------
 
         async function clearNotice(phone, name) {
@@ -932,30 +910,19 @@
                 let c = globalCustomers.find(function(x) { return x.phone === phone; });
                 if(c) {
                     let cleanNotes = c.notes ? c.notes.replace(/Notice:.*?(?:\[|$)/g, '').trim() : '';
-                    await fetch('/api/action', { 
-                        method: 'POST', 
-                        headers: {'Content-Type':'application/json'}, 
-                        body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: cleanNotes }) 
-                    });
-                    sysLog(`Cleared Notice for ${name}`);
-                    loadCustomers();
+                    await fetch('/api/action', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: cleanNotes }) });
+                    sysLog(`Cleared Notice for ${name}`); loadCustomers();
                 }
             }
         }
 
-        // VIP TOGGLE BUG FIXED
         async function toggleVIP(phone, name) {
             let c = globalCustomers.find(function(x) { return x.phone === phone; });
             if(c) {
                 let isVIP = c.notes && c.notes.includes('[VIP]');
                 let newNotes = isVIP ? c.notes.replace(/\[VIP\]/g, '').trim() : (c.notes ? c.notes + ' [VIP]' : '[VIP]');
-                await fetch('/api/action', { 
-                    method: 'POST', 
-                    headers: {'Content-Type':'application/json'}, 
-                    body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: newNotes }) 
-                });
-                sysLog(isVIP ? `Removed VIP Tag for ${name}` : `Added VIP Tag for ${name}`);
-                loadCustomers();
+                await fetch('/api/action', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: newNotes }) });
+                sysLog(isVIP ? `Removed VIP Tag for ${name}` : `Added VIP Tag for ${name}`); loadCustomers();
             }
         }
 
@@ -964,13 +931,8 @@
             if(c) {
                 let isPaused = c.notes && c.notes.includes('[PAUSED]');
                 let newNotes = isPaused ? c.notes.replace(/\[PAUSED\]/g, '').trim() : (c.notes ? c.notes + ' [PAUSED]' : '[PAUSED]');
-                await fetch('/api/action', { 
-                    method: 'POST', 
-                    headers: {'Content-Type':'application/json'}, 
-                    body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: newNotes }) 
-                });
-                sysLog(isPaused ? `Resumed Loan for ${name}` : `Paused Loan for ${name}`);
-                loadCustomers();
+                await fetch('/api/action', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: newNotes }) });
+                sysLog(isPaused ? `Resumed Loan for ${name}` : `Paused Loan for ${name}`); loadCustomers();
             }
         }
 
@@ -980,80 +942,63 @@
                 let c = globalCustomers.find(function(x) { return x.phone === phone; });
                 if(c) {
                     let newNotes = c.notes ? c.notes + ' | ' + note : note;
-                    await fetch('/api/action', { 
-                        method: 'POST', 
-                        headers: {'Content-Type':'application/json'}, 
-                        body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: newNotes }) 
-                    });
-                    sysLog(`Added secret note to ${name}`);
-                    loadCustomers();
+                    await fetch('/api/action', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: newNotes }) });
+                    sysLog(`Added secret note to ${name}`); loadCustomers();
                 }
             }
         }
 
+        // BUGS FIXED: WhatsApp 9191 Problem Solved
+        function getSafeWAPhone(phone) {
+            let clean = phone.toString().replace(/\D/g, '');
+            return '91' + clean.slice(-10);
+        }
+
         function sendAgreementWA(phone, name, principal, emi) {
             let msg = `*JESSICA FINANCE - SECURE LOAN AGREEMENT* 📄\nDear ${name} garu,\nYour loan of Rs.${formatMoney(principal)} has been approved.\nYour fixed weekly EMI is Rs.${formatMoney(emi)}.\n- Jessica Finance Mgt.`;
-            window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+            window.open(`https://wa.me/${getSafeWAPhone(phone)}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
         function requestLiveLocation(phone) { 
-            window.open(`https://wa.me/91${phone}?text=${encodeURIComponent("Please share your Live Location on this WhatsApp immediately. 📍")}`, '_blank'); 
+            window.open(`https://wa.me/${getSafeWAPhone(phone)}?text=${encodeURIComponent("Please share your Live Location on this WhatsApp immediately. 📍")}`, '_blank'); 
         }
 
         async function sendIndividualNotice(phone, name) {
             let msg = prompt(`Send in-app Notice strictly to ${name}:`);
             if(!msg) return;
-            
             let c = globalCustomers.find(function(x) { return x.phone === phone; });
             if(c) {
                 let cleanNotes = c.notes ? c.notes.replace(/Notice:.*?(?:\[|$)/g, '').trim() : '';
                 let newNotes = `Notice: ${msg} ${cleanNotes ? ' | ' + cleanNotes : ''}`;
-                await fetch('/api/action', { 
-                    method: 'POST', 
-                    headers: {'Content-Type':'application/json'}, 
-                    body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: newNotes }) 
-                });
-                sysLog(`Sent App Notice to ${name}`);
-                loadCustomers();
+                await fetch('/api/action', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ action: 'edit_customer', phone: phone, editNotes: newNotes }) });
+                sysLog(`Sent App Notice to ${name}`); loadCustomers();
             }
         }
 
         async function sendGlobalNotice() {
             let msg = prompt("BROADCAST GLOBAL NOTICE 📢");
             if(!msg) return;
-            
             document.getElementById('refreshIcon').classList.add('fa-spin-fast'); 
-            
             for(let i=0; i<globalCustomers.length; i++) {
                 let c = globalCustomers[i];
                 if(c.paidWeeks < c.duration) { 
                     let cleanNotes = c.notes ? c.notes.replace(/Notice:.*?(?:\[|$)/g, '').trim() : '';
                     let newNotes = `Notice: ${msg} ${cleanNotes ? ' | ' + cleanNotes : ''}`;
-                    await fetch('/api/action', { 
-                        method: 'POST', 
-                        headers: {'Content-Type':'application/json'}, 
-                        body: JSON.stringify({ action: 'edit_customer', phone: c.phone, editNotes: newNotes }) 
-                    });
+                    await fetch('/api/action', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ action: 'edit_customer', phone: c.phone, editNotes: newNotes }) });
                 }
             }
-            sysLog("Global Notice Broadcasted!");
-            loadCustomers();
+            sysLog("Global Notice Broadcasted!"); loadCustomers();
         }
 
         function contactGuarantor(phone, guarantor) {
-            if(!guarantor || guarantor === 'None' || guarantor === '') { 
-                alert("No Guarantor registered."); 
-                return; 
-            }
+            if(!guarantor || guarantor === 'None' || guarantor === '') { alert("No Guarantor registered."); return; }
             let choice = prompt(`Guarantor Name: ${guarantor}\n\nType '1' for Call, '2' for WhatsApp`);
             if(choice === '1') { window.location.href = `tel:${phone}`; }
-            if(choice === '2') { window.open(`https://wa.me/91${phone}?text=Hello ${guarantor} garu, this is regarding the loan guarantee you provided.`, '_blank'); }
+            if(choice === '2') { window.open(`https://wa.me/${getSafeWAPhone(phone)}?text=Hello ${guarantor} garu, this is regarding the loan guarantee you provided.`, '_blank'); }
         }
 
         function openMap(village) { 
-            if(village && village !== 'undefined') {
-                window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(village)}`, '_blank'); 
-            }
+            if(village && village !== 'undefined') window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(village)}`, '_blank'); 
         }
 
         // ----------------------------------------------------
@@ -1063,26 +1008,16 @@
         async function settlementCalculator(phone, name, pendingBalance) {
             let actualPaid = prompt(`SETTLE LOAN FOR ${name}\nTotal Pending: ₹${pendingBalance}\n\nEnter final amount agreed:`, pendingBalance);
             if(actualPaid !== null && actualPaid !== "") {
-                await fetch('/api/action', { 
-                    method: 'POST', 
-                    headers: {'Content-Type':'application/json'}, 
-                    body: JSON.stringify({phone, action:'settle_loan', amount: Number(actualPaid), mode: 'full_settlement'}) 
-                });
-                sysLog(`Settled loan for ${name}. Received ₹${actualPaid}`);
-                loadCustomers();
+                await fetch('/api/action', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({phone, action:'settle_loan', amount: Number(actualPaid), mode: 'full_settlement'}) });
+                sysLog(`Settled loan for ${name}. Received ₹${actualPaid}`); loadCustomers();
             }
         }
 
         async function customPayment(phone, name, baseEmi) {
             let amt = prompt(`PARTIAL PAYMENT for ${name}\nEnter exact amount paid today:`);
             if(amt && !isNaN(amt) && Number(amt) > 0) {
-                await fetch('/api/action', { 
-                    method: 'POST', 
-                    headers: {'Content-Type':'application/json'}, 
-                    body: JSON.stringify({phone, action:'approve_payment', amount: Number(amt), mode: 'custom_part'}) 
-                });
-                sysLog(`Partial pay received from ${name}: ₹${amt}`);
-                loadCustomers();
+                await fetch('/api/action', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({phone, action:'approve_payment', amount: Number(amt), mode: 'custom_part'}) });
+                sysLog(`Partial pay received from ${name}: ₹${amt}`); loadCustomers();
             }
         }
 
@@ -1092,134 +1027,172 @@
                 let amountToPay = Number(weeks) * baseEmi;
                 if(confirm(`Confirm advance payment of ₹${amountToPay}?`)) {
                     for(let i=0; i<Number(weeks); i++) { 
-                        await fetch('/api/action', { 
-                            method: 'POST', 
-                            headers: {'Content-Type':'application/json'}, 
-                            body: JSON.stringify({phone, action:'approve_payment', amount: baseEmi, mode: 'advance'}) 
-                        }); 
+                        await fetch('/api/action', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({phone, action:'approve_payment', amount: baseEmi, mode: 'advance'}) }); 
                     }
-                    sysLog(`Advance pay received from ${name}: ₹${amountToPay}`);
-                    loadCustomers(); 
+                    sysLog(`Advance pay received from ${name}: ₹${amountToPay}`); loadCustomers(); 
                 }
             }
         }
 
         async function topUpLoan(phone, name, pendingBalance) {
             if(confirm(`TOP-UP: Mark current loan as SETTLED for ${name}?`)) {
-                await fetch('/api/action', { 
-                    method: 'POST', 
-                    headers: {'Content-Type':'application/json'}, 
-                    body: JSON.stringify({phone, action:'settle_loan', amount: pendingBalance, mode: 'topup_closure'}) 
-                });
-                sysLog(`Old loan closed for Top-Up: ${name}`);
-                loadCustomers(); 
+                await fetch('/api/action', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({phone, action:'settle_loan', amount: pendingBalance, mode: 'topup_closure'}) });
+                sysLog(`Old loan closed for Top-Up: ${name}`); loadCustomers(); 
                 document.getElementById('addBtn').click(); 
-                document.getElementById('custName').value = name; 
-                document.getElementById('custPhone').value = phone; 
+                document.getElementById('custName').value = name; document.getElementById('custPhone').value = phone; 
             }
         }
 
         async function addPenalty(phone, name) {
             let amount = prompt(`Add Penalty (₹) for ${name}:`);
             if (amount && !isNaN(amount) && Number(amount) > 0) {
-                await fetch('/api/action', { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ phone: phone, action: 'add_penalty', amount: Number(amount) }) 
-                });
-                sysLog(`Added Penalty ₹${amount} for ${name}`);
-                loadCustomers();
+                await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: phone, action: 'add_penalty', amount: Number(amount) }) });
+                sysLog(`Added Penalty ₹${amount} for ${name}`); loadCustomers();
             }
         }
 
         async function waivePenalty(phone, name) {
             if(confirm(`Remove all penalties for ${name}?`)) {
-                await fetch('/api/action', { 
-                    method: 'POST', 
-                    headers: {'Content-Type':'application/json'}, 
-                    body: JSON.stringify({phone, action:'waive_penalty'}) 
-                });
-                sysLog(`Waived penalty for ${name}`);
-                loadCustomers();
+                await fetch('/api/action', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({phone, action:'waive_penalty'}) });
+                sysLog(`Waived penalty for ${name}`); loadCustomers();
             }
         }
 
-        // WhatsApp Features & Voice Alert Bot Mock
+        // WhatsApp Features & Voice Alert Bot Mock (UPDATED BUGS)
         function whatsappMenu(phone, name, emi, dueDate, pin) {
             let choice = prompt(`WHATSAPP MENU for ${name}:\n1. Send EMI Reminder\n2. Resend Login PIN\n3. Send UPI Payment Link\n4. WA Agreement\n5. Ask Location\n6. VOICE BOT Alert\n7. PDF Legal Notice\n\nEnter choice (1-7):`);
+            let safePhone = getSafeWAPhone(phone);
             
             if(choice === '1') {
-                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(`Hello ${name} garu, Gentle reminder from *Jessica Finance*. Your Due amount Rs.${emi} is payable on or before *${dueDate}*.`)}`, '_blank');
+                window.open(`https://wa.me/${safePhone}?text=${encodeURIComponent(`Hello ${name} garu, Gentle reminder from *Jessica Finance*. Your Due amount Rs.${emi} is payable on or before *${dueDate}*.`)}`, '_blank');
             } else if (choice === '2') {
-                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(`Welcome to *Jessica Finance*! 🎉\n🆔 ID: ${phone}\n🔑 PIN: ${pin}`)}`, '_blank');
+                window.open(`https://wa.me/${safePhone}?text=${encodeURIComponent(`Welcome to *Jessica Finance*! 🎉\n🆔 ID: ${phone}\n🔑 PIN: ${pin}`)}`, '_blank');
             } else if (choice === '3') {
-                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(`Hello ${name} garu, Click to pay your EMI of Rs.${emi} via UPI:\nupi://pay?pa=7569532152@ybl&pn=JessicaFinance&am=${emi}&cu=INR`)}`, '_blank');
+                window.open(`https://wa.me/${safePhone}?text=${encodeURIComponent(`Hello ${name} garu, Click to pay your EMI of Rs.${emi} via UPI:\nupi://pay?pa=7569532152@ybl&pn=JessicaFinance&am=${emi}&cu=INR`)}`, '_blank');
             } else if (choice === '4') { 
-                let c = globalCustomers.find(function(x){ return x.phone === phone; }); 
-                sendAgreementWA(phone, name, c.amount, emi); 
+                let c = globalCustomers.find(function(x){ return x.phone === phone; }); sendAgreementWA(phone, name, c.amount, emi); 
             } else if (choice === '5') {
                 requestLiveLocation(phone);
             } else if (choice === '6') {
                 sysLog(`Triggered Voice Bot Alert to ${name}`);
-                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(`Hello ${name} garu, Please check your WhatsApp. I have sent an important 🎙️ VOICE NOTE regarding your loan due. Reply back.`)}`, '_blank');
+                window.open(`https://wa.me/${safePhone}?text=${encodeURIComponent(`Hello ${name} garu,\n🎙️ *VOICE ALERT* 🎙️\n\nYou have an important pending voice message from Jessica Finance regarding your Loan EMI. \n\nPlease listen to the audio note sent by Admin below. 👇`)}`, '_blank');
             } else if (choice === '7') {
                 sysLog(`Sent Legal Warning Notice to ${name}`);
-                window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(`⚠️ *LEGAL WARNING NOTICE*\nDear ${name}, you have failed to clear your dues despite repeated reminders. Please clear your outstanding balance immediately to avoid Legal Action and negative marks on your Guarantor's profile.\n- Jessica Finance Mgt.`)}`, '_blank');
+                window.open(`https://wa.me/${safePhone}?text=${encodeURIComponent(`⚠️ *LEGAL WARNING NOTICE*\nDear ${name}, you have failed to clear your dues despite repeated reminders. Please clear your outstanding balance immediately to avoid Legal Action and negative marks on your Guarantor's profile.\n- Jessica Finance Mgt.`)}`, '_blank');
             }
         }
 
         function bulkRemindAll() { 
-            if(confirm("⚠️ Send Overdue Reminder to ALL pending customers?")) {
+            if(confirm("⚠️ Send Overdue Reminder to ALL pending customers via WhatsApp?")) {
                 sysLog("Bulk WhatsApp Reminders dispatched to overdue accounts.");
-                alert("Reminders dispatched!"); 
+                alert("Reminders dispatched successfully!"); 
             }
         }
 
         /* =========================================
-           PRINT DOCUMENTS (E-RECEIPT, ID, LEDGER)
+           PRINT DOCUMENTS (NEW GRAND DESIGNS)
            ========================================= */
 
-        // E-RECEIPT WITH QR CODE
+        // E-RECEIPT WITH BANK LEVEL DESIGN
         function printEReceipt(phone, name, amount, week) {
             sysLog(`Generated E-Receipt for ${name} (Wk-${week})`);
-            let d = new Date().toLocaleDateString('en-GB');
+            let d = new Date().toLocaleDateString('en-GB') + " " + new Date().toLocaleTimeString('en-US', {hour:'numeric', minute:'numeric'});
+            let txnId = "TXN" + Math.floor(10000000 + Math.random() * 90000000);
             let w = window.open('','_blank');
             w.document.write(`
                 <style>
-                    body { display: flex; justify-content: center; align-items: center; background: #f4f5f7; font-family: 'Open Sans', Arial, sans-serif; margin: 0; padding: 20px;}
-                    .receipt-card { width: 350px; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-top: 6px solid #004C8F; text-align: center; }
-                    .logo-icon { font-size: 40px; color: #F1C40F; margin-bottom: 10px; }
-                    h2 { margin: 0; color: #004C8F; font-size: 20px; font-weight: 800; }
-                    .tagline { font-size: 10px; color: #7F8C8D; letter-spacing: 1px; margin-bottom: 20px; text-transform: uppercase; }
-                    .amount-box { background: #F8F9FA; padding: 15px; border-radius: 8px; border: 1px dashed #BDC3C7; margin-bottom: 20px; }
-                    .amount-box h1 { margin: 0; color: #27AE60; font-size: 28px; }
-                    .details { font-size: 13px; text-align: left; border-bottom: 1px solid #EAEDED; padding-bottom: 15px; margin-bottom: 15px; }
-                    .details div { display: flex; justify-content: space-between; margin-bottom: 8px; }
-                    .details span.label { color: #7F8C8D; font-weight: 700; }
-                    .details span.val { color: #2C3E50; font-weight: 800; }
-                    .qr-box { margin: 15px 0; }
-                    .footer { font-size: 10px; color: #95A5A6; font-weight: 600; }
+                    body { display: flex; justify-content: center; align-items: center; background: #EAECEE; font-family: 'Courier New', Courier, monospace; margin: 0; padding: 20px;}
+                    .receipt-card { width: 380px; background: white; padding: 20px; border: 1px solid #BDC3C7; box-shadow: 0 10px 20px rgba(0,0,0,0.1); position: relative;}
+                    .header { text-align: center; border-bottom: 2px dashed #7F8C8D; padding-bottom: 15px; margin-bottom: 15px; }
+                    .header h2 { margin: 0; color: #2C3E50; font-size: 24px; font-weight: 800; letter-spacing: 1px; }
+                    .header p { margin: 5px 0 0 0; font-size: 12px; color: #34495E; font-weight: bold; }
+                    .details { font-size: 14px; color: #2C3E50; line-height: 1.8; }
+                    .row { display: flex; justify-content: space-between; border-bottom: 1px solid #F2F3F4; padding: 5px 0; }
+                    .row.total { font-weight: bold; font-size: 18px; border-bottom: 2px solid #2C3E50; border-top: 2px solid #2C3E50; margin-top: 10px; padding: 10px 0; }
+                    .qr-box { text-align: center; margin: 20px 0; }
+                    .footer { text-align: center; font-size: 11px; color: #7F8C8D; margin-top: 20px; border-top: 1px dashed #BDC3C7; padding-top: 10px; }
                 </style>
                 <div class="receipt-card">
-                    <div class="logo-icon">🏢</div>
-                    <h2>JESSICA FINANCE</h2>
-                    <div class="tagline">Official E-Receipt</div>
-                    <div class="amount-box">
-                        <div style="font-size:11px; color:#7F8C8D; font-weight:700;">AMOUNT RECEIVED</div>
-                        <h1>${formatMoney(amount)}</h1>
+                    <div class="header">
+                        <h2>JESSICA FINANCE</h2>
+                        <p>CASH/DIGITAL PAYMENT RECEIPT</p>
                     </div>
                     <div class="details">
-                        <div><span class="label">Customer:</span> <span class="val">${name}</span></div>
-                        <div><span class="label">Account ID:</span> <span class="val">JF-${phone.slice(-4)}</span></div>
-                        <div><span class="label">Payment Date:</span> <span class="val">${d}</span></div>
-                        <div><span class="label">Installment:</span> <span class="val">Week ${week}</span></div>
+                        <div class="row"><span>Date & Time:</span> <span>${d}</span></div>
+                        <div class="row"><span>Txn ID:</span> <span>${txnId}</span></div>
+                        <div class="row"><span>Customer Name:</span> <span>${name}</span></div>
+                        <div class="row"><span>Account ID:</span> <span>JF-${phone.slice(-4)}</span></div>
+                        <div class="row"><span>Installment:</span> <span>Week ${week}</span></div>
+                        <div class="row"><span>Payment Mode:</span> <span>Verified</span></div>
+                        <div class="row total"><span>TOTAL PAID:</span> <span>${formatMoney(amount)}</span></div>
                     </div>
                     <div class="qr-box">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Receipt_JF_${phone.slice(-4)}_Wk${week}" alt="QR">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${txnId}_JF_${phone.slice(-4)}" alt="QR">
+                        <div style="font-size:10px; margin-top:5px;">Scan to Verify</div>
                     </div>
-                    <div class="footer">Thank you for your timely payment.<br>This is a system generated digital receipt.</div>
+                    <div class="footer">Thank you for your business.<br>*** CUSTOMER COPY ***</div>
                 </div>
                 <script>setTimeout(()=>window.print(), 500);<\/script>
+            `);
+        }
+
+        // PROFESSIONAL LEGAL BOND AGREEMENT
+        function printAgreement(phone) {
+            sysLog(`Printed Legal Bond Agreement for ${phone}`);
+            let c = globalCustomers.find(function(x) { return x.phone === phone; }); 
+            let emi = Math.round((Number(c.amount) * 1.2) / c.duration);
+            let w = window.open('','_blank'); 
+            w.document.write(`
+                <style>
+                    body { background: #f4f5f7; font-family: 'Times New Roman', serif; padding: 20px; display:flex; justify-content:center;}
+                    .bond-paper { width: 100%; max-width: 800px; background: white; padding: 50px; border: 15px solid #2C3E50; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.2); }
+                    .bond-paper::before { content: ''; position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; border: 2px solid #2C3E50; pointer-events: none; }
+                    .stamp { text-align: center; color: #2C3E50; margin-bottom: 40px; border-bottom: 3px double #2C3E50; padding-bottom: 20px; }
+                    .stamp h1 { margin: 0; font-size: 32px; letter-spacing: 2px; }
+                    .stamp h3 { margin: 5px 0; font-size: 16px; letter-spacing: 1px; color: #7F8C8D; }
+                    .title { text-align: center; font-size: 22px; font-weight: bold; text-decoration: underline; margin-bottom: 30px; }
+                    .content { font-size: 16px; line-height: 1.8; text-align: justify; }
+                    .highlight { font-weight: bold; font-size: 18px; }
+                    .terms { margin-top: 30px; }
+                    .terms li { margin-bottom: 10px; }
+                    .signatures { display: flex; justify-content: space-between; margin-top: 80px; }
+                    .sig-box { text-align: center; font-weight: bold; border-top: 1px solid black; padding-top: 5px; width: 30%; }
+                </style>
+                <div class="bond-paper">
+                    <div class="stamp">
+                        <h1>NON-JUDICIAL STAMP PAPER</h1>
+                        <h3>JESSICA FINANCE MANAGEMENT</h3>
+                    </div>
+                    <div class="title">LOAN & REPAYMENT AGREEMENT</div>
+                    <div class="content">
+                        This Agreement is made and executed on <b>${new Date().toLocaleDateString('en-GB')}</b> between <b>Jessica Finance</b> (hereinafter referred to as "Lender") and:<br><br>
+                        <b>Borrower Name:</b> <span class="highlight">${c.name}</span><br>
+                        <b>Mobile Number:</b> ${c.phone}<br>
+                        <b>Address / Village:</b> ${c.village || 'N/A'}<br>
+                        <b>KYC / Aadhaar:</b> ${c.aadhaar || 'Verified'}<br>
+                        <b>Guarantor Name:</b> ${c.guarantor && c.guarantor !== 'None' ? c.guarantor : 'Self-Guaranteed'}<br><br>
+                        
+                        The Borrower has requested a principal loan amount of <span class="highlight">Rs. ${formatMoney(c.amount)}</span>. The loan is approved with a total tenure of <b>${c.duration} Weeks</b>. The agreed Weekly EMI to be paid by the Borrower is <span class="highlight">Rs. ${formatMoney(emi)}</span>.
+                        
+                        <div class="terms">
+                            <b>Terms and Conditions:</b>
+                            <ol>
+                                <li>The Borrower agrees to pay the Weekly EMI strictly on or before the due date.</li>
+                                <li>In case of default or delay, a late payment penalty will be added to the outstanding balance.</li>
+                                <li>The Guarantor (if any) holds equal legal liability for the repayment of this loan.</li>
+                                <li>Any security/collateral provided by the Borrower shall remain with the Lender until the loan is settled in full.</li>
+                                <li>The Lender reserves the right to take legal action under the Negotiable Instruments Act in case of intentional default.</li>
+                            </ol>
+                        </div>
+                    </div>
+                    
+                    <div class="signatures">
+                        <div class="sig-box">Borrower Signature</div>
+                        <div class="sig-box">Guarantor Signature</div>
+                        <div class="sig-box">Authorized Signatory<br><span style="font-size:12px; font-weight:normal;">Jessica Finance Mgt.</span></div>
+                    </div>
+                </div>
+                <script>setTimeout(()=>window.print(), 1000);<\/script>
             `);
         }
 
@@ -1262,37 +1235,27 @@
             `);
         }
 
-        // --- PRINTING & DOCUMENTS ---
-        function printAgreement(phone) {
-            sysLog(`Printed Loan Agreement for ${phone}`);
-            let cust = globalCustomers.find(function(c) { return c.phone === phone; }); 
-            let emi = Math.round((Number(cust.amount) * 1.2) / cust.duration);
-            let w = window.open('','_blank'); 
-            w.document.write(`
-                <h2 style="text-align:center; font-family:Arial;">LOAN AGREEMENT</h2>
-                <div style="font-family:Arial; padding:20px;">
-                    <p>Name: <b>${cust.name}</b><br>Phone: ${cust.phone}<br>Amount: ₹${cust.amount}<br>EMI: ₹${emi}</p>
-                </div>
-                <script>window.onload=window.print<\/script>
-            `);
-        }
-
         function printStatement(phone) {
             let cust = globalCustomers.find(function(c) { return c.phone === phone; }); 
             let w = window.open('','_blank');
             w.document.write(`
-                <h2 style="text-align:center; font-family:Arial;">CUSTOMER LEDGER</h2>
-                <div style="font-family:Arial; padding:20px;">
-                    <p>Name: <b>${cust.name}</b><br>Paid Weeks: ${cust.paidWeeks}</p>
+                <style>body { font-family: Arial; padding: 20px; } table { width: 100%; border-collapse: collapse; margin-top:20px;} th, td { border: 1px solid #000; padding: 8px; text-align: left; }</style>
+                <h2 style="text-align:center;">CUSTOMER LEDGER STATEMENT</h2>
+                <div style="margin-bottom:20px;">
+                    <p><b>Name:</b> ${cust.name}<br><b>Account ID:</b> JF-${cust.phone.slice(-4)}<br><b>Total Paid Weeks:</b> ${cust.paidWeeks} / ${cust.duration}</p>
                 </div>
-                <script>window.onload=window.print<\/script>
+                <table><tr><th>Week</th><th>Date</th><th>Mode</th><th>Amount Paid</th></tr>
+                ${(cust.history||[]).map(h => `<tr><td>Wk-${h.week}</td><td>${h.date}</td><td>${(h.mode||'N/A').toUpperCase()}</td><td>${formatMoney(h.amount)}</td></tr>`).join('')}
+                </table>
+                <p style="text-align:center; margin-top:30px; font-size:12px;">Generated by Jessica Finance</p>
+                <script>setTimeout(()=>window.print(), 500);<\/script>
             `);
         }
 
         function printCollectionSheet() { 
             let w = window.open('','_blank');
             w.document.write(`
-                <h2 style="font-family:Arial; text-align:center;">ROUTE SHEET</h2>
+                <h2 style="font-family:Arial; text-align:center;">ROUTE COLLECTION SHEET</h2>
                 <script>window.onload=window.print<\/script>
             `); 
         }
@@ -1302,61 +1265,34 @@
             let amt = prompt("Enter Expense Amount (₹):"); 
             let reason = prompt("Enter Reason (e.g., Petrol):");
             if(amt && reason) { 
-                fetch('/api/expenses', { 
-                    method: 'POST', 
-                    headers: {'Content-Type':'application/json'}, 
-                    body: JSON.stringify({amount: amt, reason: reason}) 
-                }); 
-                sysLog(`Expense Added: ₹${amt} (${reason})`);
-                alert("Expense Added!"); 
+                fetch('/api/expenses', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({amount: amt, reason: reason}) }); 
+                sysLog(`Expense Added: ₹${amt} (${reason})`); alert("Expense Added!"); 
             }
         }
 
         // --- FILTERS & SEARCH ---
-        function applySmartFilter(type) { 
-            currentFilter = type; 
-            renderCards(); 
-        }
-
-        function clearSearch() { 
-            document.getElementById('searchInput').value = ''; 
-            document.getElementById('clearSearchBtn').style.display = 'none'; 
-            filterTable(); 
-        }
-
-        document.getElementById('searchInput').addEventListener('input', function() { 
-            document.getElementById('clearSearchBtn').style.display = this.value.length > 0 ? 'block' : 'none'; 
-        });
+        function applySmartFilter(type) { currentFilter = type; renderCards(); }
+        function clearSearch() { document.getElementById('searchInput').value = ''; document.getElementById('clearSearchBtn').style.display = 'none'; filterTable(); }
+        document.getElementById('searchInput').addEventListener('input', function() { document.getElementById('clearSearchBtn').style.display = this.value.length > 0 ? 'block' : 'none'; });
 
         function filterTable() {
             let input = document.getElementById("searchInput").value.toLowerCase();
             let cards = document.getElementById("customersListContainer").getElementsByClassName("customer-card");
             for (let i = 0; i < cards.length; i++) { 
-                if(cards[i].innerText.toLowerCase().includes(input)) {
-                    cards[i].style.display = "";
-                } else {
-                    cards[i].style.display = "none";
-                }
+                if(cards[i].innerText.toLowerCase().includes(input)) cards[i].style.display = "";
+                else cards[i].style.display = "none";
             }
         }
 
         // --- ANALYTICS DASHBOARD ---
         function calculateAnalytics() {
             let tGiven = 0, tCollected = 0, todayTarget = 0, tProfit = 0;
-            const today = new Date(); 
-            today.setHours(0,0,0,0);
+            const today = new Date(); today.setHours(0,0,0,0);
             
             globalCustomers.forEach(function(c) {
-                let p = Number(c.amount); 
-                tGiven += p; 
-                tProfit += (p * 0.20) + Number(c.penalty||0);
-                
-                let emi = Math.round((p + p*0.20) / c.duration); 
-                tCollected += (c.paidWeeks * emi);
-                
-                if(c.paidWeeks < c.duration && c.nextDueDate && new Date(c.nextDueDate) <= today && !(c.notes && c.notes.includes('[PAUSED]'))) { 
-                    todayTarget += emi; 
-                }
+                let p = Number(c.amount); tGiven += p; tProfit += (p * 0.20) + Number(c.penalty||0);
+                let emi = Math.round((p + p*0.20) / c.duration); tCollected += (c.paidWeeks * emi);
+                if(c.paidWeeks < c.duration && c.nextDueDate && new Date(c.nextDueDate) <= today && !(c.notes && c.notes.includes('[PAUSED]'))) { todayTarget += emi; }
             });
 
             document.getElementById('statTotalGiven').innerText = formatMoney(tGiven);
@@ -1368,11 +1304,7 @@
         // --- CORE PAYMENT APPROVALS ---
         async function recordCashPayment(phone, name, amount) {
             if(confirm(`CONFIRM:\nReceive ₹${amount} in cash from ${name}?`)) {
-                await fetch('/api/action', { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ phone: phone, action: 'approve_payment', amount: amount, mode: 'cash' }) 
-                });
+                await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: phone, action: 'approve_payment', amount: amount, mode: 'cash' }) });
                 sysLog(`Approved Full Cash Payment for ${name} (₹${amount})`);
                 if(confirm("Payment Recorded! Generate E-Receipt?")) {
                     let c = globalCustomers.find(function(x) { return x.phone === phone; });
@@ -1385,27 +1317,15 @@
         async function approvePayment(phone, name, amount) { 
             let mode = prompt(`Approve Online payment for ${name}.\nEnter Mode (e.g., PhonePe, GPay):`, "PhonePe");
             if (mode === null) return; 
-            
-            await fetch('/api/action', { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ phone, action: 'approve_payment', amount, mode: mode.toLowerCase() }) 
-            }); 
-            sysLog(`Approved Online Payment for ${name} (₹${amount})`);
-            loadCustomers(); 
+            await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, action: 'approve_payment', amount, mode: mode.toLowerCase() }) }); 
+            sysLog(`Approved Online Payment for ${name} (₹${amount})`); loadCustomers(); 
         }
 
         async function rejectFakePayment(phone) { 
-            await fetch('/api/action', { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ phone, action: 'reject_payment' }) 
-            }); 
-            sysLog(`Rejected Fake Online Payment for ID ${phone}`);
-            loadCustomers(); 
+            await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, action: 'reject_payment' }) }); 
+            sysLog(`Rejected Fake Online Payment for ID ${phone}`); loadCustomers(); 
         }
 
-        // --- GHOST LOGIN ---
         function adminGhostLogin(phone, password) { 
             localStorage.setItem('loggedInCustomer', JSON.stringify({ phone, password })); 
             window.open('customer-dashboard.html', '_blank'); 
@@ -1413,110 +1333,68 @@
 
         // --- FORMS AND MODALS ---
         function openEditModal(phone) {
-            let c = globalCustomers.find(function(c) { return c.phone === phone; }); 
-            if(!c) return;
-            
+            let c = globalCustomers.find(function(c) { return c.phone === phone; }); if(!c) return;
             document.getElementById('editPhone').value = c.phone; 
             document.getElementById('editName').value = c.name;
             document.getElementById('editVillage').value = c.village||''; 
             document.getElementById('editAadhaar').value = c.aadhaar||'';
-            document.getElementById('editSecurity').value = c.security||''; // Security vault
+            document.getElementById('editSecurity').value = c.security||'';
             document.getElementById('editAmount').value = c.amount; 
             document.getElementById('editDuration').value = c.duration;
             document.getElementById('editGuarantor').value = c.guarantor||'';
             document.getElementById('editLastPaid').value = c.lastPaidDate ? c.lastPaidDate.split('/').reverse().join('-') : '';
             document.getElementById('editNextDue').value = c.nextDueDate ? c.nextDueDate.split('/').reverse().join('-') : '';
             document.getElementById('editNotes').value = c.notes||'';
-            
             new bootstrap.Modal(document.getElementById('editCustomerModal')).show();
         }
 
-        // Edit Form Submit
         document.getElementById('editCustomerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            let lastP = document.getElementById('editLastPaid').value; 
-            let nextD = document.getElementById('editNextDue').value;
-            
+            let lastP = document.getElementById('editLastPaid').value; let nextD = document.getElementById('editNextDue').value;
             if(lastP && lastP.includes('-')) lastP = lastP.split('-').reverse().join('/');
             if(nextD && nextD.includes('-')) nextD = nextD.split('-').reverse().join('/');
             
             const payload = { 
-                action: 'edit_customer', 
-                phone: document.getElementById('editPhone').value, 
-                editName: document.getElementById('editName').value, 
-                editVillage: document.getElementById('editVillage').value, 
-                editAadhaar: document.getElementById('editAadhaar').value, 
-                editSecurity: document.getElementById('editSecurity').value, 
-                editAmount: document.getElementById('editAmount').value, 
-                editDuration: document.getElementById('editDuration').value, 
-                editGuarantor: document.getElementById('editGuarantor').value, 
-                editLastPaid: lastP, 
-                editNextDue: nextD, 
+                action: 'edit_customer', phone: document.getElementById('editPhone').value, 
+                editName: document.getElementById('editName').value, editVillage: document.getElementById('editVillage').value, 
+                editAadhaar: document.getElementById('editAadhaar').value, editSecurity: document.getElementById('editSecurity').value, 
+                editAmount: document.getElementById('editAmount').value, editDuration: document.getElementById('editDuration').value, 
+                editGuarantor: document.getElementById('editGuarantor').value, editLastPaid: lastP, editNextDue: nextD, 
                 editNotes: document.getElementById('editNotes').value 
             };
             
-            await fetch('/api/action', { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify(payload) 
-            });
+            await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
             sysLog(`Updated profile for ${payload.editName}`);
-            bootstrap.Modal.getInstance(document.getElementById('editCustomerModal')).hide(); 
-            loadCustomers();
+            bootstrap.Modal.getInstance(document.getElementById('editCustomerModal')).hide(); loadCustomers();
         });
 
-        // Add Form Submit
         document.getElementById('addCustomerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const payload = { 
-                name: document.getElementById('custName').value, 
-                phone: document.getElementById('custPhone').value, 
-                village: document.getElementById('custVillage').value, 
-                aadhaar: document.getElementById('custAadhaar').value, 
-                security: document.getElementById('custSecurity').value, // Collateral logic
-                guarantor: document.getElementById('custGuarantor').value, 
-                password: document.getElementById('custPass').value, 
-                category: document.getElementById('custCategory').value, 
-                amount: document.getElementById('custAmount').value, 
-                duration: document.getElementById('custDuration').value 
+                name: document.getElementById('custName').value, phone: document.getElementById('custPhone').value, 
+                village: document.getElementById('custVillage').value, aadhaar: document.getElementById('custAadhaar').value, 
+                security: document.getElementById('custSecurity').value, guarantor: document.getElementById('custGuarantor').value, 
+                password: document.getElementById('custPass').value, category: document.getElementById('custCategory').value, 
+                amount: document.getElementById('custAmount').value, duration: document.getElementById('custDuration').value 
             };
             
-            await fetch('/api/customers', { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify(payload) 
-            });
+            await fetch('/api/customers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
             sysLog(`Sanctioned new loan for ${payload.name} (₹${payload.amount})`);
-            bootstrap.Modal.getInstance(document.getElementById('addCustomerModal')).hide(); 
-            loadCustomers(); 
+            bootstrap.Modal.getInstance(document.getElementById('addCustomerModal')).hide(); loadCustomers(); 
         });
 
-        // Delete Customer
         async function secureDeleteCustomer(phone) {
             if (prompt("Enter Admin PIN (7569) to delete:") === "7569") {
-                await fetch('/api/action', { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ phone: phone, action: 'delete_customer' }) 
-                }); 
-                sysLog(`Permanently deleted account ID ${phone}`);
-                loadCustomers();
+                await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: phone, action: 'delete_customer' }) }); 
+                sysLog(`Permanently deleted account ID ${phone}`); loadCustomers();
             }
         }
 
-        // Recover PIN
         function recoverPIN(phone, name, currentPin) {
             let newPin = prompt(`SECURITY ACCESS:\nCustomer: ${name}\nCurrent PIN: ${currentPin}\n\nEnter a new PIN to reset, or click Cancel to keep it:`, currentPin);
             if(newPin && newPin !== currentPin) {
-                fetch('/api/action', { 
-                    method: 'POST', 
-                    headers: {'Content-Type':'application/json'}, 
-                    body: JSON.stringify({phone: phone, action:'update_pin', password: newPin}) 
-                });
-                sysLog(`Reset Login PIN for ${name}`);
-                alert("PIN updated successfully!"); 
-                loadCustomers();
+                fetch('/api/action', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({phone: phone, action:'update_pin', password: newPin}) });
+                sysLog(`Reset Login PIN for ${name}`); alert("PIN updated successfully!"); loadCustomers();
             }
         }
 
