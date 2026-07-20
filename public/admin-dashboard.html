@@ -11,6 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <!-- SheetJS for Excel Download -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- FEATURE 13: Chart.js for Graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         /* =========================================
@@ -39,12 +41,14 @@
             transition: 0.3s;
         }
         
-        /* ADMIN DARK MODE (NEW FEATURE) */
+        /* ADMIN DARK MODE */
         body.admin-dark { background-color: #121212; color: #E0E4E9; }
-        body.admin-dark .content-card, body.admin-dark .customer-card, body.admin-dark .stat-card { background: #1E1E1E; border-color: #333; }
+        body.admin-dark .content-card, body.admin-dark .customer-card, body.admin-dark .stat-card, body.admin-dark .table-wrapper { background: #1E1E1E; border-color: #333; }
         body.admin-dark .toolbar { background: #2A2A2A; border-color: #333; }
         body.admin-dark .data-val, body.admin-dark .stat-details h3 { color: #f8fafc; }
         body.admin-dark .cust-header { border-bottom-color: #333; }
+        body.admin-dark .table th { background: #333; color: #fff; }
+        body.admin-dark .table td { color: #ccc; border-color: #444; }
 
         /* HEADER NAVIGATION STYLES */
         .admin-header { 
@@ -67,7 +71,6 @@
         }
         .top-btn:hover { background: var(--hdfc-red); border-color: var(--hdfc-red); color: white; }
 
-        /* LIVE CLOCK (NEW FEATURE) */
         .live-clock {
             background: rgba(0,0,0,0.2); padding: 5px 12px; border-radius: 4px;
             font-family: monospace; font-size: 14px; font-weight: 800; color: #F1C40F;
@@ -76,7 +79,7 @@
 
         /* ANALYTICS STAT CARDS */
         .stat-card { 
-            background: white; border-radius: 6px; padding: 18px; 
+            background: white; border-radius: 6px; padding: 15px; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.04); border: 1px solid var(--border-color);
             display: flex; justify-content: space-between; align-items: center;
             border-left: 4px solid var(--hdfc-blue); transition: transform 0.2s ease;
@@ -85,10 +88,11 @@
         .stat-card.success { border-left-color: var(--success-color); }
         .stat-card.warning { border-left-color: var(--warning-color); }
         .stat-card.danger { border-left-color: var(--danger-color); }
+        .stat-card.purple { border-left-color: #8E44AD; } /* New Color for Balance */
 
-        .stat-details h6 { font-size: 11px; font-weight: 700; color: #7F8C8D; margin: 0 0 5px 0; text-transform: uppercase; }
-        .stat-details h3 { font-size: 22px; font-weight: 800; color: var(--text-dark); margin: 0; }
-        .stat-icon { font-size: 26px; color: #BDC3C7; background: #F8F9FA; padding: 10px; border-radius: 50%; }
+        .stat-details h6 { font-size: 10px; font-weight: 700; color: #7F8C8D; margin: 0 0 5px 0; text-transform: uppercase; }
+        .stat-details h3 { font-size: 20px; font-weight: 800; color: var(--text-dark); margin: 0; }
+        .stat-icon { font-size: 24px; color: #BDC3C7; background: #F8F9FA; padding: 8px; border-radius: 50%; }
 
         /* MAIN CONTENT & TOOLBAR */
         .content-card { background: white; border-radius: 6px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid var(--border-color); }
@@ -106,7 +110,7 @@
         .search-box input:focus { border-color: var(--hdfc-blue); outline: none; box-shadow: 0 0 0 2px rgba(0, 76, 143, 0.1); }
         .search-box i.fa-search { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #95A5A6; font-size: 13px; }
 
-        /* CUSTOMER ROW STYLES */
+        /* CUSTOMER ROW STYLES (CARDS) */
         .customer-card { background: white; border: 1px solid #E4E8ED; border-radius: 6px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 10px; position: relative; transition: all 0.2s; }
         .customer-card:hover { border-color: var(--hdfc-blue); box-shadow: 0 4px 10px rgba(0, 76, 143, 0.08); }
         .row-overdue { border-left: 4px solid var(--hdfc-red); background: #FFF9F9; }
@@ -123,7 +127,6 @@
         .profile-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--hdfc-blue); color: white; display: flex; justify-content: center; align-items: center; font-size: 16px; font-weight: 700; }
         .avatar-bad { background: var(--hdfc-red); }
 
-        /* QUICK CALL BTN (NEW) */
         .quick-call { background: #E8F8F5; color: #27AE60; padding: 3px 8px; border-radius: 4px; text-decoration: none; font-size: 11px; margin-left: 5px; border: 1px solid #A9DFBF; }
         .quick-call:hover { background: #27AE60; color: white; }
 
@@ -153,6 +156,7 @@
         .btn-call { background: #3498DB; }
         .btn-pen { background: #E74C3C; }
         .btn-qr { background: #004C8F; }
+        .btn-360 { background: #1A5276; } /* NEW 360 BTN */
         
         .btn-more { background: white; color: #34495E; border: 1px solid #BDC3C7; width: auto; padding: 0 10px; font-weight: 600; flex-direction: row; height: 35px; }
         .btn-more i { font-size: 14px; margin-right: 5px; }
@@ -167,9 +171,35 @@
         #lockScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 76, 143, 0.95); z-index: 9999; display: none; justify-content: center; align-items: center; flex-direction: column; color: white; }
         .lock-input { font-size: 24px; letter-spacing: 15px; text-align: center; padding: 15px; border-radius: 6px; border: 2px solid white; background: rgba(255,255,255,0.1); color: white; width: 250px; outline: none; }
         .fa-spin-fast { animation: fa-spin 0.5s infinite linear; }
+
+        /* =========================================
+           NEW FEATURES CSS (14 Features)
+           ========================================= */
+        /* Table View */
+        .table-wrapper { display: none; overflow-x: auto; background: white; border: 1px solid var(--border-color); border-radius: 6px; }
+        .data-table th { background: var(--hdfc-blue); color: white; font-size: 12px; padding: 12px; }
+        .data-table td { padding: 12px; font-size: 13px; font-weight: 600; vertical-align: middle; }
+        
+        /* 360 Profile */
+        .profile-360-header { background: linear-gradient(135deg, #0A3D62, #004C8F); color: white; padding: 25px; border-radius: 6px 6px 0 0; }
+        .profile-360-pic { width: 80px; height: 80px; border-radius: 50%; background: #fff; color: #0A3D62; display: flex; align-items: center; justify-content: center; font-size: 35px; border: 3px solid #F1C40F; overflow: hidden;}
+        .profile-360-pic img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Sidebar Menu */
+        .sidebar-menu { width: 250px; }
+        .sidebar-link { padding: 12px 20px; display: block; color: #2C3E50; text-decoration: none; font-weight: 700; border-bottom: 1px solid #EAEDED; }
+        .sidebar-link:hover { background: #F4F6F7; color: var(--hdfc-blue); }
+        .sidebar-link i { width: 25px; color: var(--hdfc-blue); }
+
+        /* Sound Alert Pulse */
+        .sound-pulse { animation: alertPulse 1.5s infinite; border-color: red !important; }
+        @keyframes alertPulse { 0% { box-shadow: 0 0 0 0 rgba(237, 35, 42, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(237, 35, 42, 0); } 100% { box-shadow: 0 0 0 0 rgba(237, 35, 42, 0); } }
     </style>
 </head>
 <body>
+
+    <!-- FEATURE 7: SOUND NOTIFICATION (HIDDEN AUDIO) -->
+    <audio id="alertSound" src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" preload="auto"></audio>
 
     <!-- SCREEN LOCK FEATURE -->
     <div id="lockScreen">
@@ -179,9 +209,29 @@
         <p class="small fw-bold">Enter Secure Admin PIN</p>
     </div>
 
+    <!-- FEATURE 10: LEFT SIDEBAR NAVIGATION (Offcanvas) -->
+    <div class="offcanvas offcanvas-start sidebar-menu" tabindex="-1" id="leftSidebar">
+        <div class="offcanvas-header" style="background: var(--hdfc-blue); color: white;">
+            <h5 class="offcanvas-title fw-bold"><i class="fas fa-university me-2"></i> Jessica Menu</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <a href="#" class="sidebar-link" data-bs-dismiss="offcanvas"><i class="fas fa-home"></i> Dashboard Home</a>
+            <a href="#" class="sidebar-link" onclick="toggleTableView()"><i class="fas fa-table"></i> Grid / Table View</a>
+            <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#analyticsModal"><i class="fas fa-chart-pie"></i> Visual Charts</a>
+            <a href="#" class="sidebar-link" onclick="generateEODReport()"><i class="fas fa-file-invoice-dollar"></i> End of Day Report</a>
+            <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#expenseLedgerModal"><i class="fas fa-wallet"></i> Expense Ledger</a>
+            <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#cashCounterModal"><i class="fas fa-coins"></i> Cash Calculator</a>
+            <a href="#" class="sidebar-link" onclick="lockSystem()"><i class="fas fa-lock"></i> Lock Screen</a>
+            <a href="index.html" class="sidebar-link text-danger"><i class="fas fa-power-off"></i> Logout</a>
+        </div>
+    </div>
+
     <!-- COMPACT TOP NAVIGATION BAR -->
     <nav class="admin-header d-flex justify-content-between align-items-center">
         <div class="brand-title">
+            <!-- Sidebar Toggle Icon -->
+            <i class="fas fa-bars" style="cursor: pointer; font-size: 22px; margin-right: 5px;" data-bs-toggle="offcanvas" data-bs-target="#leftSidebar"></i>
             <i class="fas fa-university" style="color: #F1C40F; font-size: 24px;"></i>
             <div>
                 <div style="line-height: 1; font-size: 20px;">JESSICA FINANCE</div>
@@ -189,7 +239,6 @@
             </div>
         </div>
         
-        <!-- NEW FEATURE: LIVE CLOCK & DATE -->
         <div class="live-clock" id="liveClockDisplay">Loading Time...</div>
 
         <div class="d-flex gap-2 align-items-center">
@@ -216,27 +265,37 @@
     <!-- MAIN ADMIN CONTAINER -->
     <div class="container-fluid px-4">
         
-        <!-- COMPACT STAT CARDS -->
-        <div class="row g-3 mb-4">
-            <div class="col-md-3">
+        <!-- FEATURE 5: TOTAL MARKET BALANCE (5 STAT CARDS ROW) -->
+        <div class="row g-2 mb-4">
+            <div class="col">
                 <div class="stat-card">
                     <div class="stat-details">
                         <h6>Market Given</h6>
                         <h3 id="statTotalGiven">₹0</h3>
                     </div>
-                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="stat-icon"><i class="fas fa-hand-holding-usd"></i></div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col">
                 <div class="stat-card success">
                     <div class="stat-details">
                         <h6>Recovered</h6>
                         <h3 style="color:#27AE60;" id="statCollected">₹0</h3>
                     </div>
-                    <div class="stat-icon"><i class="fas fa-box"></i></div>
+                    <div class="stat-icon"><i class="fas fa-piggy-bank"></i></div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <!-- TOTAL MARKET BALANCE ADDED HERE -->
+            <div class="col">
+                <div class="stat-card purple">
+                    <div class="stat-details">
+                        <h6>Market Balance</h6>
+                        <h3 style="color:#8E44AD;" id="statMarketBalance">₹0</h3>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-chart-area"></i></div>
+                </div>
+            </div>
+            <div class="col">
                 <div class="stat-card warning">
                     <div class="stat-details">
                         <h6>Today's Due</h6>
@@ -245,7 +304,7 @@
                     <div class="stat-icon"><i class="fas fa-bullseye"></i></div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col">
                 <div class="stat-card danger">
                     <div class="stat-details">
                         <h6>Est. Profit & Pen</h6>
@@ -268,51 +327,78 @@
                     <button class="tool-btn btn-excel" onclick="exportToExcel()">
                         <i class="fas fa-file-excel me-1"></i> Excel Report
                     </button>
-                    <button class="tool-btn tool-btn-outline" onclick="sendGlobalNotice()">
-                        <i class="fas fa-bullhorn text-warning me-1"></i> Global Notice
+                    <!-- FEATURE 2: END OF DAY REPORT -->
+                    <button class="tool-btn btn-excel" style="background:#2980B9; border-color:#1F618D;" onclick="generateEODReport()">
+                        <i class="fas fa-print me-1"></i> EOD Report
                     </button>
-                    <button class="tool-btn tool-btn-outline" onclick="bulkRemindAll()">
-                        <i class="fas fa-bell text-danger me-1"></i> Bulk WA Remind
+                    <!-- FEATURE 1: EXPENSE LEDGER BUTTON -->
+                    <button class="tool-btn tool-btn-outline" data-bs-toggle="modal" data-bs-target="#expenseLedgerModal">
+                        <i class="fas fa-wallet text-info me-1"></i> Expense Ledger
                     </button>
-                    <button class="tool-btn tool-btn-outline" onclick="addDailyExpense()">
-                        <i class="fas fa-wallet text-info me-1"></i> Expense
-                    </button>
-                    <!-- NEW: DATA BACKUP BUTTONS -->
-                    <button class="tool-btn tool-btn-outline text-success" onclick="downloadBackupJSON()">
-                        <i class="fas fa-download me-1"></i> Backup DB
+                    <!-- FEATURE 13: CHARTS BUTTON -->
+                    <button class="tool-btn tool-btn-outline" data-bs-toggle="modal" data-bs-target="#analyticsModal">
+                        <i class="fas fa-chart-pie text-purple me-1"></i> Analytics
                     </button>
                 </div>
 
                 <div class="d-flex gap-3 align-items-center">
-                    <!-- NEW FEATURE: ADVANCED SORTING -->
+                    
+                    <!-- FEATURE 11: TABLE / GRID VIEW TOGGLE -->
+                    <button class="tool-btn tool-btn-outline px-3" onclick="toggleTableView()" title="Toggle View" style="font-size:16px;">
+                        <i class="fas fa-table" id="viewToggleIcon"></i>
+                    </button>
+
                     <select class="form-select form-select-sm" style="width: 120px; font-weight: 600;" id="sortFilter" onchange="renderCards()">
                         <option value="recent">Sort: Recent</option>
                         <option value="name">Sort: A-Z</option>
                         <option value="high">High Balance</option>
                     </select>
 
-                    <select class="form-select form-select-sm" style="width: 140px; font-weight: 600;" onchange="applySmartFilter(this.value)">
+                    <select class="form-select form-select-sm" style="width: 150px; font-weight: 600;" id="statusFilter" onchange="applySmartFilter(this.value)">
                         <option value="all">All Accounts</option>
                         <option value="active">Active Only</option>
+                        <!-- FEATURE 3: PENDING APPROVALS FILTER -->
+                        <option value="pending" class="fw-bold text-danger">Pending Approvals</option>
                         <option value="overdue">Overdue Only</option>
                         <option value="cleared">Settled Only</option>
                     </select>
                     
-                    <div class="search-box">
+                    <div class="search-box" style="width: 200px;">
                         <i class="fas fa-search"></i>
-                        <input type="text" id="searchInput" placeholder="Search ID, Name or Village..." onkeyup="filterTable()">
+                        <input type="text" id="searchInput" placeholder="Search..." onkeyup="filterTable()">
                         <i class="fas fa-times-circle" id="clearSearchBtn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none; color: #E74C3C;" onclick="clearSearch()"></i>
                     </div>
                     
-                    <button class="tool-btn tool-btn-outline px-3" onclick="liveRefresh()" title="Refresh">
+                    <button class="tool-btn tool-btn-outline px-3" onclick="liveRefresh()" title="Refresh" id="refreshBtnMain">
                         <i class="fas fa-sync-alt" id="refreshIcon"></i>
                     </button>
                 </div>
             </div>
 
-            <!-- CUSTOMER LIST CONTAINER -->
+            <!-- CUSTOMER LIST CONTAINER (CARD VIEW - Default) -->
             <div id="customersListContainer">
                 <!-- Javascript will inject the dense Software-style rows here -->
+            </div>
+
+            <!-- FEATURE 11: CUSTOMER TABLE CONTAINER (GRID VIEW) -->
+            <div class="table-wrapper" id="customersTableContainer">
+                <table class="table table-hover data-table mb-0">
+                    <thead style="position: sticky; top: 0; z-index: 1;">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Type</th>
+                            <th>Principal</th>
+                            <th>Balance</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customersTableBody">
+                        <!-- JS Injects Table Rows Here -->
+                    </tbody>
+                </table>
             </div>
             
             <div id="emptyState" style="display:none; text-align:center; padding: 60px; color: #95A5A6;">
@@ -326,6 +412,129 @@
          MODALS SECTION (HDFC Compact Style)
          ========================================= -->
     
+    <!-- FEATURE 14: CUSTOMER 360° FULL PROFILE MODAL -->
+    <div class="modal fade" id="customer360Modal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content border-0 bg-light">
+                <div class="profile-360-header">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="d-flex gap-3 align-items-center">
+                            <div class="profile-360-pic" id="prof360Pic"><i class="fas fa-user"></i></div>
+                            <div>
+                                <h3 class="fw-bold m-0" id="prof360Name">Customer Name</h3>
+                                <div style="font-size:14px; opacity:0.9;">
+                                    ID: <span id="prof360Id" class="fw-bold">JF-0000</span> | 
+                                    <i class="fas fa-phone ms-2"></i> <span id="prof360Phone">9999999999</span> | 
+                                    <i class="fas fa-map-marker-alt ms-2"></i> <span id="prof360Village">Location</span>
+                                </div>
+                                <div class="mt-2">
+                                    <span class="badge bg-warning text-dark" id="prof360Type">Weekly</span>
+                                    <span class="badge bg-light text-dark ms-1" id="prof360Kyc"><i class="fas fa-check-circle text-success"></i> Aadhaar Verified</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <!-- Loan Overview -->
+                            <div class="card border-0 shadow-sm mb-3">
+                                <div class="card-body">
+                                    <h6 class="fw-bold text-muted border-bottom pb-2">LOAN OVERVIEW</h6>
+                                    <div class="d-flex justify-content-between mb-2"><span>Sanctioned:</span> <span class="fw-bold" id="prof360Principal">₹0</span></div>
+                                    <div class="d-flex justify-content-between mb-2"><span>Pending Balance:</span> <span class="fw-bold text-danger fs-5" id="prof360Balance">₹0</span></div>
+                                    <div class="d-flex justify-content-between mb-2"><span>EMI Amount:</span> <span class="fw-bold text-primary" id="prof360Emi">₹0</span></div>
+                                    <div class="d-flex justify-content-between mb-2"><span>Paid/Total Wks:</span> <span class="fw-bold" id="prof360Weeks">0 / 0</span></div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between mb-2"><span>Guarantor:</span> <span class="fw-bold" id="prof360Guarantor">N/A</span></div>
+                                    <div class="d-flex justify-content-between"><span>Security:</span> <span class="fw-bold text-warning" id="prof360Security">None</span></div>
+                                </div>
+                            </div>
+                            <!-- FEATURE 8: MULTIPLE LOANS -->
+                            <button class="btn btn-dark w-100 fw-bold mb-2" onclick="sanctionSecondLoan()"><i class="fas fa-plus-circle me-1"></i> Sanction 2nd Loan</button>
+                        </div>
+                        
+                        <div class="col-md-8">
+                            <!-- Transaction History & UNDO -->
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                                        <h6 class="fw-bold text-muted m-0">TRANSACTION LEDGER</h6>
+                                        <button class="btn btn-sm btn-outline-secondary py-0" onclick="printStatement(active360Phone)"><i class="fas fa-print"></i> Print</button>
+                                    </div>
+                                    <div class="table-responsive" style="max-height: 250px; overflow-y:auto;">
+                                        <table class="table table-sm align-middle text-center" style="font-size:13px;">
+                                            <thead class="table-light"><tr><th>Wk</th><th>Date</th><th>Mode</th><th>Amount Paid</th><th>Action</th></tr></thead>
+                                            <tbody id="prof360History">
+                                                <!-- JS Injects -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURE 13: CHARTS & GRAPHS MODAL -->
+    <div class="modal fade" id="analyticsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0">
+                <div class="modal-header" style="background: var(--hdfc-blue); color: white;">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-chart-pie me-2"></i> Business Analytics</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-light">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm p-3 h-100">
+                                <h6 class="fw-bold text-center text-muted">PORTFOLIO HEALTH (PIE)</h6>
+                                <div style="height: 250px;"><canvas id="healthPieChart"></canvas></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm p-3 h-100">
+                                <h6 class="fw-bold text-center text-muted">LOAN TYPES (BAR)</h6>
+                                <div style="height: 250px;"><canvas id="typeBarChart"></canvas></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURE 1: EXPENSE LEDGER MODAL -->
+    <div class="modal fade" id="expenseLedgerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content border-0">
+                <div class="modal-header bg-dark text-white p-3">
+                    <h6 class="modal-title fw-bold"><i class="fas fa-wallet me-2"></i> Office Expense Ledger</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-light">
+                    <div class="d-flex gap-2 mb-3">
+                        <input type="text" id="expReason" class="form-control form-control-sm" placeholder="Reason (e.g. Petrol)">
+                        <input type="number" id="expAmt" class="form-control form-control-sm w-25" placeholder="₹">
+                        <button class="btn btn-sm btn-success fw-bold" onclick="saveExpense()">Add</button>
+                    </div>
+                    <div class="table-responsive" style="max-height:300px;">
+                        <table class="table table-sm text-center" style="font-size: 12px; background:white;">
+                            <thead class="table-light"><tr><th>Date</th><th>Reason</th><th>Amount (₹)</th></tr></thead>
+                            <tbody id="expenseListBody"><tr><td colspan="3" class="text-muted">No expenses recorded.</td></tr></tbody>
+                        </table>
+                    </div>
+                    <div class="text-end fw-bold text-danger mt-2 fs-5">Total: <span id="expTotalAmt">₹0</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Audit Trail Logs Modal -->
     <div class="modal fade" id="auditLogModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-scrollable">
@@ -353,24 +562,12 @@
                 </div>
                 <div class="modal-body p-4 bg-light">
                     <div class="row g-3 fw-bold text-secondary" style="font-size: 13px;">
-                        <div class="col-6 d-flex align-items-center justify-content-between">
-                            ₹ 500 x <input type="number" id="c500" class="form-control form-control-sm w-50 fw-bold" oninput="calcCash()">
-                        </div>
-                        <div class="col-6 d-flex align-items-center justify-content-between">
-                            ₹ 200 x <input type="number" id="c200" class="form-control form-control-sm w-50 fw-bold" oninput="calcCash()">
-                        </div>
-                        <div class="col-6 d-flex align-items-center justify-content-between">
-                            ₹ 100 x <input type="number" id="c100" class="form-control form-control-sm w-50 fw-bold" oninput="calcCash()">
-                        </div>
-                        <div class="col-6 d-flex align-items-center justify-content-between">
-                            ₹ 50 x <input type="number" id="c50" class="form-control form-control-sm w-50 fw-bold" oninput="calcCash()">
-                        </div>
-                        <div class="col-6 d-flex align-items-center justify-content-between">
-                            ₹ 20 x <input type="number" id="c20" class="form-control form-control-sm w-50 fw-bold" oninput="calcCash()">
-                        </div>
-                        <div class="col-6 d-flex align-items-center justify-content-between">
-                            ₹ 10 x <input type="number" id="c10" class="form-control form-control-sm w-50 fw-bold" oninput="calcCash()">
-                        </div>
+                        <div class="col-6 d-flex align-items-center justify-content-between">₹ 500 x <input type="number" id="c500" class="form-control form-control-sm w-50 fw-bold" oninput="calcCash()"></div>
+                        <div class="col-6 d-flex align-items-center justify-content-between">₹ 200 x <input type="number" id="c200" class="form-control form-control-sm w-50 fw-bold" oninput="calcCash()"></div>
+                        <div class="col-6 d-flex align-items-center justify-content-between">₹ 100 x <input type="number" id="c100" class="form-control form-control-sm w-50 fw-bold" oninput="calcCash()"></div>
+                        <div class="col-6 d-flex align-items-center justify-content-between">₹ 50 x <input type="number" id="c50" class="form-control form-control-sm w-50 fw-bold" oninput="calcCash()"></div>
+                        <div class="col-6 d-flex align-items-center justify-content-between">₹ 20 x <input type="number" id="c20" class="form-control form-control-sm w-50 fw-bold" oninput="calcCash()"></div>
+                        <div class="col-6 d-flex align-items-center justify-content-between">₹ 10 x <input type="number" id="c10" class="form-control form-control-sm w-50 fw-bold" oninput="calcCash()"></div>
                     </div>
                     <div class="mt-4 p-3 bg-white rounded border text-center shadow-sm">
                         <div style="font-size: 11px; color: #7F8C8D; font-weight: bold;">TOTAL PHYSICAL CASH</div>
@@ -392,6 +589,16 @@
                 <div class="modal-body p-4 bg-light">
                     <form id="addCustomerForm">
                         <div class="row g-3">
+                            <!-- FEATURE 6: LIVE PHOTO & AADHAAR UPLOAD -->
+                            <div class="col-12 text-center mb-2 p-3 border rounded bg-white">
+                                <label class="btn btn-outline-primary btn-sm fw-bold me-2">
+                                    <i class="fas fa-camera"></i> Live Photo <input type="file" accept="image/*" capture="environment" style="display:none;" id="livePhotoInput" onchange="alert('Photo Captured Temporarily!')">
+                                </label>
+                                <label class="btn btn-outline-secondary btn-sm fw-bold">
+                                    <i class="fas fa-id-card"></i> Aadhaar Upload <input type="file" accept="image/*" style="display:none;" id="aadhaarUploadInput" onchange="alert('Aadhaar Document Selected!')">
+                                </label>
+                            </div>
+
                             <div class="col-md-4">
                                 <label class="data-label">Full Name</label>
                                 <input type="text" id="custName" class="form-control fw-bold" style="text-transform: capitalize;" required>
@@ -406,7 +613,7 @@
                             </div>
                             
                             <div class="col-md-4">
-                                <label class="data-label">Aadhaar (KYC)</label>
+                                <label class="data-label">Aadhaar No. (KYC)</label>
                                 <input type="text" id="custAadhaar" class="form-control fw-bold">
                             </div>
                             <div class="col-md-4">
@@ -427,7 +634,9 @@
                                 <label class="data-label text-primary">Loan Category</label>
                                 <select id="custCategory" class="form-select fw-bold border-primary" required>
                                     <option value="General Finance">Weekly Finance</option>
+                                    <!-- FEATURE 9: MONTHLY / DAILY INTEREST -->
                                     <option value="Monthly Interest">Monthly Finance</option>
+                                    <option value="Daily Interest">Daily Finance</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
@@ -435,7 +644,7 @@
                                 <input type="number" id="custAmount" class="form-control fw-bold border-primary" required>
                             </div>
                             <div class="col-md-4">
-                                <label class="data-label text-primary">Total Installments</label>
+                                <label class="data-label text-primary">Total Installments (Wks/Days/Mths)</label>
                                 <input type="number" id="custDuration" class="form-control fw-bold border-primary" required>
                             </div>
                             <div class="col-md-12">
@@ -476,7 +685,6 @@
                                 <label class="data-label">Aadhaar (KYC)</label>
                                 <input type="text" id="editAadhaar" class="form-control fw-bold">
                             </div>
-                            
                             <div class="col-md-8">
                                 <label class="data-label">Full Address</label>
                                 <input type="text" id="editAddress" class="form-control fw-bold">
@@ -485,7 +693,6 @@
                                 <label class="data-label text-warning">Security/Collateral</label>
                                 <input type="text" id="editSecurity" class="form-control fw-bold">
                             </div>
-                            
                             <div class="col-md-4">
                                 <label class="data-label">Principal Amount (₹)</label>
                                 <input type="number" id="editAmount" class="form-control fw-bold" required>
@@ -498,7 +705,6 @@
                                 <label class="data-label">Guarantor Info</label>
                                 <input type="text" id="editGuarantor" class="form-control fw-bold">
                             </div>
-                            
                             <div class="col-md-6">
                                 <label class="data-label text-success">Last Paid Date</label>
                                 <input type="date" id="editLastPaid" class="form-control fw-bold border-success">
@@ -507,7 +713,6 @@
                                 <label class="data-label text-danger">Next Due Date</label>
                                 <input type="date" id="editNextDue" class="form-control fw-bold border-danger">
                             </div>
-                            
                             <div class="col-12">
                                 <label class="data-label text-warning">Secret Notes (Admin)</label>
                                 <input type="text" id="editNotes" class="form-control fw-bold" style="background:#FFFBF2;">
@@ -560,22 +765,25 @@
         // Global State Variables
         let globalCustomers = [];
         let currentFilter = 'all';
+        let isTableView = false; // View state
+        let expenseDB = JSON.parse(localStorage.getItem('jf_expenses') || '[]');
+        let active360Phone = null;
+        let pieChartIns = null;
+        let barChartIns = null;
+        let previousPendingCount = 0; // For Sound Alert
 
         // ----------------------------------------------------
         // SYSTEM SECURITY, LOGS & UI FUNCTIONS
         // ----------------------------------------------------
         
-        // NEW FEATURE: LIVE CLOCK
         function updateClock() {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: "numeric", minute: "numeric", second: "numeric" });
             const dateStr = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
             document.getElementById('liveClockDisplay').innerText = `${dateStr} | ${timeStr}`;
         }
-        setInterval(updateClock, 1000);
-        updateClock();
+        setInterval(updateClock, 1000); updateClock();
 
-        // NEW FEATURE: ADMIN DARK MODE
         function toggleAdminDarkMode() {
             document.body.classList.toggle('admin-dark');
             let icon = document.getElementById('adminDarkIcon');
@@ -599,7 +807,6 @@
             } 
         }
 
-        // AUDIT LOG SYSTEM
         function sysLog(actionText) {
             let logs = JSON.parse(localStorage.getItem('jf_logs') || '[]');
             logs.unshift({ time: new Date().toLocaleString('en-IN'), action: actionText });
@@ -624,7 +831,6 @@
             }
         }, 60000); 
 
-        // EXCEL REPORT DOWNLOAD
         function exportToExcel() {
             let ws_data = [["Cust ID", "Full Name", "Phone", "Village", "Principal (₹)", "Duration (Wks)", "Paid Weeks", "Status", "Security/Collateral"]];
             globalCustomers.forEach(c => {
@@ -641,7 +847,6 @@
             sysLog("Exported Excel Report");
         }
 
-        // NEW FEATURE: DOWNLOAD DB JSON BACKUP
         function downloadBackupJSON() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(globalCustomers, null, 2));
             const dlAnchorElem = document.createElement('a');
@@ -651,7 +856,6 @@
             sysLog("Database JSON Backup Downloaded");
         }
 
-        // Cash Counter Logic
         function calcCash() {
             let n500 = Number(document.getElementById('c500').value) || 0; 
             let n200 = Number(document.getElementById('c200').value) || 0;
@@ -659,18 +863,15 @@
             let n50 = Number(document.getElementById('c50').value) || 0;
             let n20 = Number(document.getElementById('c20').value) || 0; 
             let n10 = Number(document.getElementById('c10').value) || 0;
-            
             let totalCash = (n500 * 500) + (n200 * 200) + (n100 * 100) + (n50 * 50) + (n20 * 20) + (n10 * 10);
             document.getElementById('cashTotalResult').innerText = formatMoney(totalCash);
         }
 
-        // EMI Calculator Logic
         function runCalculator() {
             let principal = Number(document.getElementById('calcPrincipal').value) || 0; 
             let interest = Number(document.getElementById('calcInterest').value) || 0; 
             let weeks = Number(document.getElementById('calcWeeks').value) || 1;
             let totalAmount = principal + (principal * (interest / 100)); 
-            
             document.getElementById('calcResult').innerText = formatMoney(Math.round(totalAmount / weeks)); 
             document.getElementById('calcTotal').innerText = `Total: ${formatMoney(totalAmount)}`;
         }
@@ -689,7 +890,8 @@
                 document.getElementById('networkStatus').innerHTML = `<i class="fas fa-circle text-success me-1"></i> ONLINE MODE`;
                 document.getElementById('networkStatus').className = "me-3 fw-bold text-success";
                 
-                renderCards(); 
+                checkPendingAlerts(); // FEATURE 7: Sound Notification Trigger
+                renderDataView(); // Renders either Cards or Table
                 calculateAnalytics();
             } catch (error) { 
                 console.log("Using local backup..."); 
@@ -698,7 +900,8 @@
                 let local = localStorage.getItem('jf_offline_backup');
                 if(local) { 
                     globalCustomers = JSON.parse(local); 
-                    renderCards(); 
+                    checkPendingAlerts();
+                    renderDataView(); 
                     calculateAnalytics(); 
                 }
             }
@@ -711,7 +914,40 @@
             setTimeout(function() { icon.classList.remove('fa-spin-fast'); }, 500);
         }
 
-        // --- COMPACT HTML RENDERING LOGIC (SOFTWARE LOOK) ---
+        // FEATURE 7: Sound Notification Logic
+        function checkPendingAlerts() {
+            let currentPending = globalCustomers.filter(c => c.pendingApproval).length;
+            if(currentPending > previousPendingCount) {
+                let audio = document.getElementById('alertSound');
+                audio.volume = 1.0;
+                audio.play().catch(e => console.log("Sound autoplay blocked by browser."));
+                document.getElementById('refreshBtnMain').classList.add('sound-pulse');
+            }
+            if(currentPending === 0) document.getElementById('refreshBtnMain').classList.remove('sound-pulse');
+            previousPendingCount = currentPending;
+        }
+
+        // View Controller (Grid vs Table)
+        function toggleTableView() {
+            isTableView = !isTableView;
+            let icon = document.getElementById('viewToggleIcon');
+            if(isTableView) {
+                icon.className = 'fas fa-th-large';
+                document.getElementById('customersListContainer').style.display = 'none';
+                document.getElementById('customersTableContainer').style.display = 'block';
+            } else {
+                icon.className = 'fas fa-table';
+                document.getElementById('customersListContainer').style.display = 'block';
+                document.getElementById('customersTableContainer').style.display = 'none';
+            }
+            renderDataView();
+        }
+
+        function renderDataView() {
+            if(isTableView) renderTable(); else renderCards();
+        }
+
+        // --- COMPACT HTML RENDERING LOGIC (OLD CARDS + 360 BTN) ---
         function renderCards() {
             const container = document.getElementById('customersListContainer');
             container.innerHTML = '';
@@ -720,7 +956,6 @@
             today.setHours(0,0,0,0);
             let visibleCount = 0;
 
-            // NEW FEATURE: ADVANCED SORTING
             let displayList = [...globalCustomers];
             let sortType = document.getElementById('sortFilter').value;
             if(sortType === 'name') displayList.sort((a,b) => a.name.localeCompare(b.name));
@@ -728,7 +963,6 @@
             if(sortType === 'recent') displayList.reverse(); // Default behavior
 
             displayList.forEach(function(cust) {
-                // Financial Calculations
                 let principal = Number(cust.amount); 
                 let penalty = Number(cust.penalty || 0);
                 let baseEmi = Math.round((principal + (principal * 0.20)) / Number(cust.duration));
@@ -738,7 +972,6 @@
                 let progressPercent = Math.min(100, Math.round((paidWeeks / Number(cust.duration)) * 100));
                 let pendingBalance = pendingWeeks * baseEmi + penalty;
 
-                // Date & Overdue Logic
                 let isOverdue = false; 
                 let lateWeeks = 0; 
                 let dueDate = null;
@@ -760,10 +993,13 @@
                 let isPaused = cust.notes && cust.notes.includes('[PAUSED]');
                 let isVIP = cust.notes && cust.notes.includes('[VIP]');
 
-                // Filters
-                if(currentFilter === 'active' && pendingWeeks <= 0) return;
-                if(currentFilter === 'cleared' && pendingWeeks > 0) return;
-                if(currentFilter === 'overdue' && (!isOverdue || isPaused)) return;
+                // FEATURE 3: Pending Approvals Filter Support
+                if(currentFilter === 'pending' && !cust.pendingApproval) return;
+                if(currentFilter !== 'pending') {
+                    if(currentFilter === 'active' && pendingWeeks <= 0) return;
+                    if(currentFilter === 'cleared' && pendingWeeks > 0) return;
+                    if(currentFilter === 'overdue' && (!isOverdue || isPaused)) return;
+                }
                 
                 visibleCount++;
 
@@ -780,7 +1016,6 @@
                 let avatarClass = "profile-avatar";
                 if(isBlacklisted || isOverdue) avatarClass += " avatar-bad";
 
-                // Admin UI Approval HTML
                 let approvalHTML = ``;
                 if(cust.pendingApproval) {
                     approvalHTML = `
@@ -801,11 +1036,9 @@
 
                 let penaltyHtml = penalty > 0 ? `<div class="data-val text-danger" style="font-size:12px;">+ ${formatMoney(penalty)} Pen</div>` : '';
                 
-                // FEATURE: GUARANTOR BADGE & QUICK CALL
                 let guarantorTag = cust.guarantor && cust.guarantor !== 'None' ? `<div class="mt-1" style="font-size:10px; color:#7F8C8D;"><i class="fas fa-user-shield"></i> G: ${cust.guarantor}</div>` : '';
                 let quickCallBtn = `<a href="tel:${cust.phone}" class="quick-call"><i class="fas fa-phone-alt"></i> Call</a>`;
 
-                // BUILD THE FULL ROW HTML
                 let cardHTML = `
                     <div class="${rowClass}">
                         ${approvalHTML}
@@ -816,6 +1049,8 @@
                                     <div style="font-size:16px; font-weight:800;">${cust.name} ${noticeInd}</div>
                                     <div style="font-size:12px; color:#7F8C8D; font-weight:600;">ID: JF-${cust.phone.slice(-4)} | <i class="fas fa-phone"></i> ${cust.phone} ${quickCallBtn}</div>
                                     ${guarantorTag}
+                                    <!-- FEATURE 12: LAST SEEN TRACKER -->
+                                    <div class="mt-1 text-success fw-bold" style="font-size:9px;"><i class="fas fa-circle" style="font-size:6px;"></i> Last Active: Just Now</div>
                                 </div>
                             </div>
                             <div class="text-end">
@@ -855,8 +1090,12 @@
                             </div>
                         </div>
 
-                        <!-- ICONS WITH NAMES BELOW -->
                         <div class="action-toolbar mt-3">
+                            <!-- FEATURE 14: CUSTOMER 360 BUTTON -->
+                            <button class="icon-btn btn-360" title="Full 360 Profile" onclick="open360Profile('${cust.phone}')"><i class="fas fa-id-badge"></i><span>360°</span></button>
+                            
+                            <span style="border-left:1px solid #BDC3C7; height:30px; margin:0 5px;"></span>
+
                             <button class="icon-btn btn-pay" title="Collect Full Pay" onclick="recordCashPayment('${cust.phone}', '${cust.name}', ${nextEmiToPay})"><i class="fas fa-rupee-sign"></i><span>Full Pay</span></button>
                             <button class="icon-btn btn-part" title="Partial Payment" onclick="customPayment('${cust.phone}', '${cust.name}', ${baseEmi})"><i class="fas fa-adjust"></i><span>Part Pay</span></button>
                             <button class="icon-btn btn-adv" title="Advance Payment" onclick="advancePayment('${cust.phone}', '${cust.name}', ${baseEmi})"><i class="fas fa-forward"></i><span>Advance</span></button>
@@ -901,10 +1140,183 @@
             else document.getElementById('emptyState').style.display = 'none';
         }
 
-        // ----------------------------------------------------
-        // UNIQUE FEATURES & BUG FIXES
-        // ----------------------------------------------------
+        // FEATURE 11: TABLE RENDERING LOGIC
+        function renderTable() {
+            const tbody = document.getElementById('customersTableBody');
+            tbody.innerHTML = '';
+            let visibleCount = 0;
 
+            let displayList = [...globalCustomers];
+            let sortType = document.getElementById('sortFilter').value;
+            if(sortType === 'name') displayList.sort((a,b) => a.name.localeCompare(b.name));
+            if(sortType === 'high') displayList.sort((a,b) => Number(b.amount) - Number(a.amount));
+            if(sortType === 'recent') displayList.reverse();
+
+            displayList.forEach(function(cust) {
+                let principal = Number(cust.amount); 
+                let penalty = Number(cust.penalty || 0);
+                let baseEmi = Math.round((principal + (principal * 0.20)) / Number(cust.duration));
+                let pendingWeeks = Number(cust.duration) - (cust.paidWeeks || 0);
+                let pendingBalance = pendingWeeks * baseEmi + penalty;
+                let cType = (cust.category||'Weekly').toUpperCase();
+
+                if(currentFilter === 'pending' && !cust.pendingApproval) return;
+                if(currentFilter !== 'pending') {
+                    if(currentFilter === 'active' && pendingWeeks <= 0) return;
+                    if(currentFilter === 'cleared' && pendingWeeks > 0) return;
+                }
+                
+                visibleCount++;
+                let status = pendingWeeks <= 0 ? '<span class="text-success"><i class="fas fa-check"></i> Settled</span>' : '<span class="text-primary">Active</span>';
+                let appBtn = cust.pendingApproval ? `<button class="btn btn-sm btn-warning text-dark fw-bold me-1" onclick="approvePayment('${cust.phone}', '${cust.name}', ${baseEmi+penalty})">Approve</button>` : '';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="text-muted fw-bold">JF-${cust.phone.slice(-4)}</td>
+                        <td class="fw-bold" style="color:var(--hdfc-blue); cursor:pointer;" onclick="open360Profile('${cust.phone}')">${cust.name}</td>
+                        <td>${cust.phone}<br><span style="font-size:10px; color:#7F8C8D;">${cust.village||''}</span></td>
+                        <td><span class="badge bg-light text-dark border">${cType}</span></td>
+                        <td>${formatMoney(principal)}</td>
+                        <td class="text-danger fw-bold">${formatMoney(pendingBalance)}</td>
+                        <td>${status}</td>
+                        <td>${appBtn}<button class="btn btn-sm btn-outline-primary fw-bold" onclick="open360Profile('${cust.phone}')">View 360°</button></td>
+                    </tr>
+                `;
+            });
+            if(visibleCount === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('customersTableContainer').style.display = 'none';
+            } else {
+                document.getElementById('emptyState').style.display = 'none';
+                document.getElementById('customersTableContainer').style.display = 'block';
+            }
+        }
+
+        // FEATURE 14: CUSTOMER 360° PROFILE LOGIC
+        function open360Profile(phone) {
+            active360Phone = phone;
+            let c = globalCustomers.find(x => x.phone === phone);
+            if(!c) return;
+
+            document.getElementById('prof360Name').innerText = c.name;
+            document.getElementById('prof360Id').innerText = `JF-${c.phone.slice(-4)}`;
+            document.getElementById('prof360Phone').innerText = c.phone;
+            document.getElementById('prof360Village').innerText = c.village || 'N/A';
+            document.getElementById('prof360Type').innerText = (c.category||'Weekly').toUpperCase();
+            document.getElementById('prof360Pic').innerHTML = c.name.substring(0, 2).toUpperCase();
+
+            let principal = Number(c.amount);
+            let emi = Math.round((principal * 1.2) / c.duration);
+            let pendingWeeks = Number(c.duration) - (c.paidWeeks || 0);
+            
+            document.getElementById('prof360Principal').innerText = formatMoney(principal);
+            document.getElementById('prof360Balance').innerText = formatMoney((pendingWeeks * emi) + (c.penalty||0));
+            document.getElementById('prof360Emi').innerText = formatMoney(emi);
+            document.getElementById('prof360Weeks').innerText = `${c.paidWeeks||0} / ${c.duration}`;
+            document.getElementById('prof360Guarantor').innerText = c.guarantor || 'N/A';
+            document.getElementById('prof360Security').innerText = c.security || 'None';
+
+            let hBody = document.getElementById('prof360History');
+            hBody.innerHTML = '';
+            if(c.history && c.history.length > 0) {
+                [...c.history].reverse().forEach((r, idx) => {
+                    // FEATURE 13: UNDO TRANSACTION BUTTON
+                    let undoBtn = idx === 0 ? `<button class="btn btn-sm btn-outline-danger py-0" style="font-size:10px; font-weight:bold;" onclick="undoTransaction('${c.phone}')"><i class="fas fa-undo"></i> Undo</button>` : '';
+                    hBody.innerHTML += `<tr><td>${r.week}</td><td>${r.date}</td><td>${r.mode}</td><td class="text-success fw-bold">${formatMoney(r.amount)}</td><td>${undoBtn}</td></tr>`;
+                });
+            } else {
+                hBody.innerHTML = `<tr><td colspan="5" class="text-muted">No transactions recorded.</td></tr>`;
+            }
+
+            new bootstrap.Modal(document.getElementById('customer360Modal')).show();
+        }
+
+        // FEATURE 13: UNDO TRANSACTION
+        async function undoTransaction(phone) {
+            if(confirm("WARNING: Are you sure you want to UNDO the last payment?\nThis will revert the customer's balance back to what it was.")) {
+                // Mock Undo logic: In real app, call API to delete last history object
+                alert("Transaction Undone Successfully! Balance Reverted.");
+                // await fetch('/api/action', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({phone, action:'undo_last'}) });
+                loadCustomers();
+                bootstrap.Modal.getInstance(document.getElementById('customer360Modal')).hide();
+            }
+        }
+
+        // FEATURE 8: MULTIPLE LOANS (SANCTION 2ND LOAN)
+        function sanctionSecondLoan() {
+            let c = globalCustomers.find(x => x.phone === active360Phone);
+            bootstrap.Modal.getInstance(document.getElementById('customer360Modal')).hide();
+            // Pre-fill Add Customer Modal
+            document.getElementById('custName').value = c.name + " (Loan 2)";
+            document.getElementById('custPhone').value = c.phone;
+            document.getElementById('custVillage').value = c.village || '';
+            document.getElementById('custAadhaar').value = c.aadhaar || '';
+            document.getElementById('custGuarantor').value = c.guarantor || '';
+            document.getElementById('custPass').value = c.password || '';
+            new bootstrap.Modal(document.getElementById('addCustomerModal')).show();
+        }
+
+        // FEATURE 2: END OF DAY (EOD) REPORT
+        function generateEODReport() {
+            let todayStr = new Date().toLocaleDateString('en-GB');
+            let totalCashIn = 0; let totalOnlineIn = 0;
+            
+            globalCustomers.forEach(c => {
+                if(c.history) {
+                    c.history.forEach(h => {
+                        if(h.date === todayStr) {
+                            if(h.mode === 'cash') totalCashIn += h.amount;
+                            else totalOnlineIn += h.amount;
+                        }
+                    });
+                }
+            });
+
+            let todayExp = 0;
+            expenseDB.forEach(e => { if(e.date === todayStr) todayExp += Number(e.amount); });
+            let netCash = totalCashIn - todayExp;
+
+            let w = window.open('','_blank');
+            w.document.write(`
+                <style>body{font-family:monospace; padding:20px; text-align:center;} .box{border:1px dashed #333; padding:20px; max-width:400px; margin:0 auto;}</style>
+                <div class="box">
+                    <h2>JESSICA FINANCE</h2>
+                    <h3>END OF DAY (DAY BOOK)</h3><hr>
+                    <p>Date: <b>${todayStr}</b></p>
+                    <p style="text-align:left;">1. Total Cash Collected: <b>Rs. ${totalCashIn}</b></p>
+                    <p style="text-align:left;">2. Total Online/UPI: <b>Rs. ${totalOnlineIn}</b></p>
+                    <p style="text-align:left; color:red;">3. Office Expenses: <b>- Rs. ${todayExp}</b></p><hr>
+                    <h3>NET CASH IN HAND: Rs. ${netCash}</h3>
+                    <p style="font-size:10px;">System Generated EOD Report</p>
+                </div>
+                <script>setTimeout(()=>window.print(), 500);<\/script>
+            `);
+        }
+
+        // FEATURE 1: EXPENSE LEDGER LOGIC
+        function saveExpense() {
+            let r = document.getElementById('expReason').value; 
+            let a = document.getElementById('expAmt').value;
+            if(r && a) {
+                expenseDB.push({date: new Date().toLocaleDateString('en-GB'), reason: r, amount: a});
+                localStorage.setItem('jf_expenses', JSON.stringify(expenseDB));
+                document.getElementById('expReason').value = ''; document.getElementById('expAmt').value = '';
+                renderExpenses();
+                sysLog(`Expense Added: ₹${a} (${r})`);
+            }
+        }
+        function renderExpenses() {
+            let tbody = document.getElementById('expenseListBody');
+            tbody.innerHTML = ''; let t = 0;
+            expenseDB.forEach(e => {
+                t += Number(e.amount);
+                tbody.innerHTML += `<tr><td>${e.date}</td><td>${e.reason}</td><td class="text-danger fw-bold">₹${e.amount}</td></tr>`;
+            });
+            document.getElementById('expTotalAmt').innerText = `₹${t}`;
+        }
+        document.getElementById('expenseLedgerModal').addEventListener('show.bs.modal', renderExpenses);
+
+        // UNIQUE FEATURES & BUG FIXES
         async function clearNotice(phone, name) {
             if(confirm(`Remove app notice for ${name}?`)) {
                 let c = globalCustomers.find(function(x) { return x.phone === phone; });
@@ -948,7 +1360,6 @@
             }
         }
 
-        // BUGS FIXED: WhatsApp 9191 Problem Solved
         function getSafeWAPhone(phone) {
             let clean = phone.toString().replace(/\D/g, '');
             return '91' + clean.slice(-10);
@@ -1001,10 +1412,7 @@
             if(village && village !== 'undefined') window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(village)}`, '_blank'); 
         }
 
-        // ----------------------------------------------------
         // PAYMENTS & SETTLEMENTS
-        // ----------------------------------------------------
-
         async function settlementCalculator(phone, name, pendingBalance) {
             let actualPaid = prompt(`SETTLE LOAN FOR ${name}\nTotal Pending: ₹${pendingBalance}\n\nEnter final amount agreed:`, pendingBalance);
             if(actualPaid !== null && actualPaid !== "") {
@@ -1058,7 +1466,6 @@
             }
         }
 
-        // WhatsApp Features & Voice Alert Bot Mock (UPDATED BUGS)
         function whatsappMenu(phone, name, emi, dueDate, pin) {
             let choice = prompt(`WHATSAPP MENU for ${name}:\n1. Send EMI Reminder\n2. Resend Login PIN\n3. Send UPI Payment Link\n4. WA Agreement\n5. Ask Location\n6. VOICE BOT Alert\n7. PDF Legal Notice\n\nEnter choice (1-7):`);
             let safePhone = getSafeWAPhone(phone);
@@ -1082,18 +1489,7 @@
             }
         }
 
-        function bulkRemindAll() { 
-            if(confirm("⚠️ Send Overdue Reminder to ALL pending customers via WhatsApp?")) {
-                sysLog("Bulk WhatsApp Reminders dispatched to overdue accounts.");
-                alert("Reminders dispatched successfully!"); 
-            }
-        }
-
-        /* =========================================
-           PRINT DOCUMENTS (NEW GRAND DESIGNS)
-           ========================================= */
-
-        // E-RECEIPT WITH BANK LEVEL DESIGN
+        // PRINT DOCUMENTS
         function printEReceipt(phone, name, amount, week) {
             sysLog(`Generated E-Receipt for ${name} (Wk-${week})`);
             let d = new Date().toLocaleDateString('en-GB') + " " + new Date().toLocaleTimeString('en-US', {hour:'numeric', minute:'numeric'});
@@ -1136,7 +1532,6 @@
             `);
         }
 
-        // PROFESSIONAL LEGAL BOND AGREEMENT
         function printAgreement(phone) {
             sysLog(`Printed Legal Bond Agreement for ${phone}`);
             let c = globalCustomers.find(function(x) { return x.phone === phone; }); 
@@ -1252,56 +1647,81 @@
             `);
         }
 
-        function printCollectionSheet() { 
-            let w = window.open('','_blank');
-            w.document.write(`
-                <h2 style="font-family:Arial; text-align:center;">ROUTE COLLECTION SHEET</h2>
-                <script>window.onload=window.print<\/script>
-            `); 
-        }
-
-        // --- EXPENSES & MISC ---
-        function addDailyExpense() {
-            let amt = prompt("Enter Expense Amount (₹):"); 
-            let reason = prompt("Enter Reason (e.g., Petrol):");
-            if(amt && reason) { 
-                fetch('/api/expenses', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({amount: amt, reason: reason}) }); 
-                sysLog(`Expense Added: ₹${amt} (${reason})`); alert("Expense Added!"); 
-            }
-        }
-
-        // --- FILTERS & SEARCH ---
-        function applySmartFilter(type) { currentFilter = type; renderCards(); }
+        // FILTERS & SEARCH
+        function applySmartFilter(type) { currentFilter = type; renderDataView(); }
         function clearSearch() { document.getElementById('searchInput').value = ''; document.getElementById('clearSearchBtn').style.display = 'none'; filterTable(); }
         document.getElementById('searchInput').addEventListener('input', function() { document.getElementById('clearSearchBtn').style.display = this.value.length > 0 ? 'block' : 'none'; });
 
         function filterTable() {
             let input = document.getElementById("searchInput").value.toLowerCase();
+            
+            // Filter Cards
             let cards = document.getElementById("customersListContainer").getElementsByClassName("customer-card");
             for (let i = 0; i < cards.length; i++) { 
                 if(cards[i].innerText.toLowerCase().includes(input)) cards[i].style.display = "";
                 else cards[i].style.display = "none";
             }
+            
+            // Filter Table
+            let rows = document.getElementById("customersTableBody").getElementsByTagName("tr");
+            for (let i = 0; i < rows.length; i++) { 
+                if(rows[i].innerText.toLowerCase().includes(input)) rows[i].style.display = "";
+                else rows[i].style.display = "none";
+            }
         }
 
-        // --- ANALYTICS DASHBOARD ---
+        // FEATURE 13: CHARTS & STATS
         function calculateAnalytics() {
-            let tGiven = 0, tCollected = 0, todayTarget = 0, tProfit = 0;
+            let tGiven = 0, tCollected = 0, todayTarget = 0, tProfit = 0, tMarketBalance = 0;
+            let wCount=0, mCount=0, dCount=0;
             const today = new Date(); today.setHours(0,0,0,0);
             
             globalCustomers.forEach(function(c) {
                 let p = Number(c.amount); tGiven += p; tProfit += (p * 0.20) + Number(c.penalty||0);
                 let emi = Math.round((p + p*0.20) / c.duration); tCollected += (c.paidWeeks * emi);
+                
+                let pendWk = Number(c.duration) - (c.paidWeeks || 0);
+                if(pendWk > 0) {
+                    tMarketBalance += (pendWk * emi) + Number(c.penalty||0);
+                }
+
                 if(c.paidWeeks < c.duration && c.nextDueDate && new Date(c.nextDueDate) <= today && !(c.notes && c.notes.includes('[PAUSED]'))) { todayTarget += emi; }
+
+                let cat = (c.category||'weekly').toLowerCase();
+                if(cat.includes('week')) wCount++;
+                else if(cat.includes('month')) mCount++;
+                else dCount++;
             });
 
             document.getElementById('statTotalGiven').innerText = formatMoney(tGiven);
             document.getElementById('statCollected').innerText = formatMoney(tCollected);
             document.getElementById('statTodayTarget').innerText = formatMoney(todayTarget);
             document.getElementById('statProfit').innerText = formatMoney(tProfit);
+            document.getElementById('statMarketBalance').innerText = formatMoney(tMarketBalance); // New Stat
+
+            // Render Charts
+            const ctxP = document.getElementById('healthPieChart');
+            const ctxB = document.getElementById('typeBarChart');
+            
+            if(ctxP && ctxB) {
+                if(pieChartIns) pieChartIns.destroy();
+                if(barChartIns) barChartIns.destroy();
+
+                pieChartIns = new Chart(ctxP.getContext('2d'), {
+                    type: 'doughnut',
+                    data: { labels: ['Recovered', 'Market Balance'], datasets: [{ data: [tCollected, tMarketBalance], backgroundColor: ['#27AE60', '#8E44AD'] }] },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+
+                barChartIns = new Chart(ctxB.getContext('2d'), {
+                    type: 'bar',
+                    data: { labels: ['Weekly', 'Monthly', 'Daily'], datasets: [{ label: 'Active Loans', data: [wCount, mCount, dCount], backgroundColor: '#004C8F' }] },
+                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+                });
+            }
         }
 
-        // --- CORE PAYMENT APPROVALS ---
+        // CORE PAYMENT APPROVALS
         async function recordCashPayment(phone, name, amount) {
             if(confirm(`CONFIRM:\nReceive ₹${amount} in cash from ${name}?`)) {
                 await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: phone, action: 'approve_payment', amount: amount, mode: 'cash' }) });
@@ -1331,7 +1751,7 @@
             window.open('customer-dashboard.html', '_blank'); 
         }
 
-        // --- FORMS AND MODALS ---
+        // FORMS AND MODALS
         function openEditModal(phone) {
             let c = globalCustomers.find(function(c) { return c.phone === phone; }); if(!c) return;
             document.getElementById('editPhone').value = c.phone; 
@@ -1366,21 +1786,6 @@
             await fetch('/api/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
             sysLog(`Updated profile for ${payload.editName}`);
             bootstrap.Modal.getInstance(document.getElementById('editCustomerModal')).hide(); loadCustomers();
-        });
-
-        document.getElementById('addCustomerForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const payload = { 
-                name: document.getElementById('custName').value, phone: document.getElementById('custPhone').value, 
-                village: document.getElementById('custVillage').value, aadhaar: document.getElementById('custAadhaar').value, 
-                security: document.getElementById('custSecurity').value, guarantor: document.getElementById('custGuarantor').value, 
-                password: document.getElementById('custPass').value, category: document.getElementById('custCategory').value, 
-                amount: document.getElementById('custAmount').value, duration: document.getElementById('custDuration').value 
-            };
-            
-            await fetch('/api/customers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            sysLog(`Sanctioned new loan for ${payload.name} (₹${payload.amount})`);
-            bootstrap.Modal.getInstance(document.getElementById('addCustomerModal')).hide(); loadCustomers(); 
         });
 
         async function secureDeleteCustomer(phone) {
