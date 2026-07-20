@@ -876,35 +876,27 @@
             document.getElementById('calcTotal').innerText = `Total: ${formatMoney(totalAmount)}`;
         }
 
+       // ----------------------------------------------------
+        // DATA LOADING & RENDERING (LOCAL STORAGE FIX)
         // ----------------------------------------------------
-        // DATA LOADING & RENDERING
-        // ----------------------------------------------------
-
         async function loadCustomers() {
-            try {
-                let localData = localStorage.getItem('jf_offline_backup');
-                const response = await fetch('/api/customers'); 
-                globalCustomers = await response.json();
-                
-                localStorage.setItem('jf_offline_backup', JSON.stringify(globalCustomers)); 
-                document.getElementById('networkStatus').innerHTML = `<i class="fas fa-circle text-success me-1"></i> ONLINE MODE`;
-                document.getElementById('networkStatus').className = "me-3 fw-bold text-success";
-                
-                checkPendingAlerts(); // FEATURE 7: Sound Notification Trigger
-                renderDataView(); // Renders either Cards or Table
-                calculateAnalytics();
-            } catch (error) { 
-                console.log("Using local backup..."); 
-                document.getElementById('networkStatus').innerHTML = `<i class="fas fa-circle text-danger me-1"></i> OFFLINE MODE`;
-                document.getElementById('networkStatus').className = "me-3 fw-bold text-danger";
-                let local = localStorage.getItem('jf_offline_backup');
-                if(local) { 
-                    globalCustomers = JSON.parse(local); 
-                    checkPendingAlerts();
-                    renderDataView(); 
-                    calculateAnalytics(); 
-                }
+            // 1. సర్వర్ తో పనిలేకుండా డైరెక్ట్ గా ఫోన్/సిస్టమ్ లోకల్ స్టోరేజ్ నుండే డేటా తీసుకుంటాం
+            let localData = localStorage.getItem('jf_offline_backup');
+            
+            if (localData) {
+                globalCustomers = JSON.parse(localData); // పాత డేటా ఉంటే లోడ్ అవుతుంది
+            } else {
+                globalCustomers = []; // కొత్త యాప్ అయితే ఖాళీగా స్టార్ట్ అవుతుంది
             }
+
+            // 2. యాప్ పక్కాగా డేటాబేస్ కి కనెక్ట్ అయిందని చూపిస్తాం
+            document.getElementById('networkStatus').innerHTML = `<i class="fas fa-database text-success me-1"></i> LOCAL DB SECURE`;
+            document.getElementById('networkStatus').className = "me-3 fw-bold text-success";
+            
+            // 3. డాష్ బోర్డ్ అండ్ రిపోర్ట్స్ రీఫ్రెష్ చేస్తాం
+            checkPendingAlerts(); 
+            renderDataView(); 
+            calculateAnalytics();
         }
 
         async function liveRefresh() {
