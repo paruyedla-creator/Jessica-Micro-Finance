@@ -405,7 +405,7 @@
         let pollInterval = null;
         
         // --- ⚙️ UPI & WHATSAPP SETTINGS ---
-        const adminWhatsApp = "917569532152"; // Removed extra 91 logic below
+        const adminWhatsApp = "917569532152"; 
         const adminUPI_ID = "7569532152@ybl"; 
         const businessName = "Jessica Finance"; 
 
@@ -430,7 +430,9 @@
             }
         };
 
-        // Login Logic
+        // ==========================================
+        // 🚀 NEW LOGIN LOGIC (LOCAL STORAGE CONNECTION)
+        // ==========================================
         async function customerLogin() {
             let phone = document.getElementById('loginPhone').value;
             let pin = document.getElementById('loginPin').value;
@@ -438,55 +440,48 @@
             if(!phone || !pin) { alert("Please enter both Phone & PIN"); return; }
             document.getElementById('loginLoading').style.display = 'block';
             
-            try {
-                let res = await fetch('/api/login', {
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: phone, password: pin })
-                });
+            // చిన్న యానిమేషన్ గ్యాప్ ఇచ్చి లోకల్ స్టోరేజ్ నుండి తీసుకుంటాం
+            setTimeout(() => {
+                document.getElementById('loginLoading').style.display = 'none';
                 
-                let data = await res.json();
-                document.getElementById('loginLoading').style.display = 'none';
-
-                if(data.success && data.role === 'customer') {
-                    currentCustomer = data.customerData;
-                    localStorage.setItem('loggedInCustomer', JSON.stringify({ phone, password: pin })); 
-                    document.getElementById('loginScreen').style.display = 'none';
-                    document.getElementById('dashboardScreen').style.display = 'block';
-                    updateUI();
-                    startLiveRadar();
-                } else { alert("Invalid Details! Please check ID and PIN."); }
-            } catch(e) {
-                document.getElementById('loginLoading').style.display = 'none';
-                let fallback = localStorage.getItem('jf_offline_backup'); 
-                if(fallback) { 
-                    let db = JSON.parse(fallback);
+                // ఇక్కడే మన అడ్మిన్ యాప్ సేవ్ చేసిన డేటాని వెతుకుతున్నాం
+                let localData = localStorage.getItem('jf_offline_backup');
+                
+                if(localData) {
+                    let db = JSON.parse(localData);
                     let cust = db.find(c => c.phone === phone && c.password === pin);
+                    
                     if(cust) { 
                         currentCustomer = cust; 
+                        localStorage.setItem('loggedInCustomer', JSON.stringify({ phone, password: pin })); 
                         document.getElementById('loginScreen').style.display = 'none'; 
                         document.getElementById('dashboardScreen').style.display = 'block'; 
                         updateUI(); 
+                        startLiveRadar();
+                    } else {
+                        alert("Invalid Details! Please check your ID or PIN.");
                     }
-                } else { alert("Server error. Please try again."); }
-            }
+                } else {
+                    alert("No data found! Please add customers in Admin Dashboard first.");
+                }
+            }, 500);
         }
 
+        // సైలెంట్ గా బ్యాక్‌గ్రౌండ్ లో డేటా అప్‌డేట్ చేయడానికి
         async function silentDataFetch(phone, password) {
             try {
-                let res = await fetch('/api/login', {
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: phone, password: password })
-                });
-                let data = await res.json();
-                if(data.success && data.role === 'customer') {
-                    currentCustomer = data.customerData;
-                    updateUI();
-                    
-                    // CHECK FOR SUCCESS FLAG
-                    if(currentCustomer.paymentSuccessFlag === true) {
-                        triggerSuccessAnimation();
+                let localData = localStorage.getItem('jf_offline_backup');
+                if(localData) {
+                    let db = JSON.parse(localData);
+                    let cust = db.find(c => c.phone === phone && c.password === password);
+                    if(cust) {
+                        currentCustomer = cust;
+                        updateUI();
+                        
+                        // CHECK FOR SUCCESS FLAG
+                        if(currentCustomer.paymentSuccessFlag === true) {
+                            triggerSuccessAnimation();
+                        }
                     }
                 }
             } catch(e) { console.error("Silent sync failed"); }
@@ -637,17 +632,21 @@
         }
 
         // ==========================================
-        // 🚀 SECURE PAYMENT LOGIC 
+        // 🚀 SECURE PAYMENT LOGIC (UPDATED FOR LOCAL DB)
         // ==========================================
         async function triggerUPIApp() { 
             let intentUrl = `upi://pay?pa=${adminUPI_ID}&pn=${encodeURIComponent(businessName)}&am=${emiAmount}&cu=INR&tn=JF_Loan_ID_${currentCustomer.phone.slice(-4)}`;
             
-            // Send Signal to Admin Dashboard First
-            await fetch('/api/action', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone: currentCustomer.phone, action: 'request_payment', amount: emiAmount, utr: 'Online Pay' })
-            });
+            // Send Signal to Admin Dashboard First (Local Storage ద్వారా)
+            let localData = localStorage.getItem('jf_offline_backup');
+            if(localData) {
+                let db = JSON.parse(localData);
+                let idx = db.findIndex(c => c.phone === currentCustomer.phone);
+                if(idx !== -1) {
+                    db[idx].pendingApproval = true;
+                    localStorage.setItem('jf_offline_backup', JSON.stringify(db));
+                }
+            }
 
             // Update UI to pending instantly
             document.getElementById('payEmiBtn').style.display = 'none';
@@ -655,13 +654,10 @@
 
             // Open UPI App
             window.location.href = intentUrl;
-            
-            // Silent wait without annoying pop-ups
-            // WA verification popup removed to make it smooth. Admin will see it on their dashboard anyway.
         }
 
         // ==========================================
-        // PHONEPE STYLE SUCCESS ANIMATION
+        // PHONEPE STYLE SUCCESS ANIMATION (UPDATED)
         // ==========================================
         async function triggerSuccessAnimation() {
             // Show Overlay
@@ -682,12 +678,16 @@
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
             }, 250);
 
-            // Clear the flag in the database so it doesn't loop
-            await fetch('/api/action', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone: currentCustomer.phone, action: 'clear_success_flag' })
-            });
+            // Clear the flag in the database so it doesn't loop (Local Storage)
+            let localData = localStorage.getItem('jf_offline_backup');
+            if(localData) {
+                let db = JSON.parse(localData);
+                let idx = db.findIndex(c => c.phone === currentCustomer.phone);
+                if(idx !== -1) {
+                    db[idx].paymentSuccessFlag = false;
+                    localStorage.setItem('jf_offline_backup', JSON.stringify(db));
+                }
+            }
 
             // Hide overlay after 4 seconds
             setTimeout(() => {
@@ -757,6 +757,7 @@
                         <div class="row"><span>Customer Name:</span> <span>${name}</span></div>
                         <div class="row"><span>Account ID:</span> <span>JF-${phone.slice(-4)}</span></div>
                         <div class="row"><span>Installment:</span> <span>Week ${week}</span></div>
+                        <div class="row"><span>Payment Mode:</span> <span>Verified</span></div>
                         <div class="row total"><span>TOTAL PAID:</span> <span>${formatMoney(amount)}</span></div>
                     </div>
                     <div class="qr-box">
