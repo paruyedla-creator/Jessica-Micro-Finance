@@ -46,10 +46,11 @@
         #lockScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,34,68,0.98); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         
         .w-20px { width: 20px; text-align: center; }
-        
-        /* Spin Animation for Refresh */
         .spin-anim { animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        .last-pay-strip { font-size: 10px; background: #E8F8F5; color: #1E8449; padding: 4px 8px; border-radius: 4px; border: 1px dashed #A9DFBF; margin-bottom: 8px; display: inline-block; width: 100%; }
+        .last-pay-strip.no-pay { background: #FDEDEC; color: #C0392B; border-color: #F5B7B1; }
     </style>
 </head>
 <body>
@@ -121,7 +122,7 @@
         <div id="customersListContainer"></div>
         <div id="customersTableContainer" style="display: none;" class="table-responsive bg-white p-2 rounded shadow-sm">
             <table class="table table-bordered table-hover compact-table align-middle mb-0">
-                <thead><tr><th>Acc ID</th><th>Customer Name & Phone</th><th>Principal</th><th>EMI / Pen</th><th>Progress</th><th>Actions</th></tr></thead>
+                <thead><tr><th>Acc ID</th><th>Customer Name & Details</th><th>Principal</th><th>EMI / Pen</th><th>Progress</th><th>Actions</th></tr></thead>
                 <tbody id="tableBody"></tbody>
             </table>
         </div>
@@ -137,7 +138,7 @@
          MODALS SECTION 
          ========================================= -->
     
-    <!-- CASH COUNTER MODAL (NEW) -->
+    <!-- CASH COUNTER MODAL -->
     <div class="modal fade" id="cashCalcModal" tabindex="-1">
         <div class="modal-dialog modal-sm">
             <div class="modal-content border-0">
@@ -250,7 +251,7 @@
         </div>
     </div>
 
-    <!-- 360 PROFILE (LEDGER) -->
+    <!-- 360 PROFILE (LEDGER) WITH DATE & MODE ENHANCEMENTS -->
     <div class="modal fade" id="customer360Modal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content border-0">
@@ -258,13 +259,13 @@
                     <h6 class="modal-title fw-bold"><i class="fas fa-book me-2"></i> Repayment Ledger</h6>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="d-flex justify-content-between mb-2 fw-bold" style="font-size:12px;">
+                <div class="modal-body bg-light">
+                    <div class="d-flex justify-content-between mb-3 fw-bold" style="font-size:14px;">
                         <span class="text-primary" id="prof360Id">JF-0000</span>
                         <span id="prof360Name">Name</span>
                     </div>
-                    <table class="table table-sm table-bordered bg-white text-center" style="font-size: 11px;">
-                        <thead class="table-light"><tr><th>Wk</th><th>Date</th><th>Mode</th><th>Amount</th><th>Action</th></tr></thead>
+                    <table class="table table-bordered bg-white text-center align-middle" style="font-size: 11px;">
+                        <thead class="table-dark"><tr><th>EMI No.</th><th>Date Paid</th><th>Pay Mode</th><th>Amount</th><th>Undo</th></tr></thead>
                         <tbody id="prof360History"></tbody>
                     </table>
                 </div>
@@ -293,9 +294,6 @@
         function lockSystem() { document.getElementById('lockScreen').style.display = 'flex'; document.getElementById('unlockPin').focus(); }
         function checkUnlock(val) { if(val === '7569') { document.getElementById('lockScreen').style.display = 'none'; document.getElementById('unlockPin').value = ''; } }
 
-        // ==========================================
-        // 🚀 CASH COUNTER (NEW)
-        // ==========================================
         function calcCash() {
             let t = (Number(document.getElementById('c500').value||0)*500) + (Number(document.getElementById('c200').value||0)*200) + 
                     (Number(document.getElementById('c100').value||0)*100) + (Number(document.getElementById('c50').value||0)*50) + 
@@ -306,9 +304,6 @@
             ['c500','c200','c100','c50','c20','c10'].forEach(id => document.getElementById(id).value = ''); calcCash();
         }
 
-        // ==========================================
-        // 🚀 CLOUD SYNC & CORE
-        // ==========================================
         async function loadCustomers() {
             if(isSyncing) return; isSyncing = true;
             let statusEl = document.getElementById('networkStatus');
@@ -340,13 +335,10 @@
             } catch (e) { document.getElementById('networkStatus').innerHTML = `<i class="fas fa-save text-warning"></i> SAVED OFFLINE`; }
         }
 
-        // REFRESH BUTTON ACTION
         function liveRefresh() {
             let icon = document.getElementById('refreshIcon');
-            icon.classList.add('spin-anim'); // Start spinning
-            loadCustomers().then(() => {
-                setTimeout(() => icon.classList.remove('spin-anim'), 500); // Stop spinning after sync
-            });
+            icon.classList.add('spin-anim'); 
+            loadCustomers().then(() => { setTimeout(() => icon.classList.remove('spin-anim'), 500); });
         }
 
         function setFilter(filter, el) {
@@ -358,30 +350,21 @@
 
         function toggleView() {
             isTableView = !isTableView;
-            document.getElementById('viewToggleBtn').innerHTML = isTableView ? `<i class="fas fa-th-large"></i> Card` : `<i class="fas fa-table"></i> Table`;
+            document.getElementById('viewToggleBtn').innerHTML = isTableView ? `<i class="fas fa-th-large"></i> Card View` : `<i class="fas fa-table"></i> Table View`;
             document.getElementById('customersListContainer').style.display = isTableView ? 'none' : 'block';
             document.getElementById('customersTableContainer').style.display = isTableView ? 'block' : 'none';
             renderData();
         }
 
-        // ==========================================
-        // 🚀 FORMS & ADD / EDIT LOAN
-        // ==========================================
         document.getElementById('addCustomerForm').addEventListener('submit', function(e) {
             e.preventDefault(); 
             let uniqueId = "JF-" + Math.floor(1000 + Math.random() * 9000);
             const newLoan = { 
-                accId: uniqueId, 
-                name: document.getElementById('custName').value, 
-                phone: document.getElementById('custPhone').value, 
-                password: document.getElementById('custPass').value,
-                village: document.getElementById('custVillage').value,
-                aadhaar: document.getElementById('custAadhaar').value || '',
-                amount: Number(document.getElementById('custAmount').value), 
-                duration: Number(document.getElementById('custDuration').value), 
-                guarantor: document.getElementById('custGuarantor').value || '',
-                security: document.getElementById('custSecurity').value || '',
-                paidWeeks: 0, penalty: 0, history: [], pendingApproval: false, notes: "",
+                accId: uniqueId, name: document.getElementById('custName').value, phone: document.getElementById('custPhone').value, 
+                password: document.getElementById('custPass').value, village: document.getElementById('custVillage').value,
+                aadhaar: document.getElementById('custAadhaar').value || '', amount: Number(document.getElementById('custAmount').value), 
+                duration: Number(document.getElementById('custDuration').value), guarantor: document.getElementById('custGuarantor').value || '',
+                security: document.getElementById('custSecurity').value || '', paidWeeks: 0, penalty: 0, history: [], pendingApproval: false, notes: "",
                 startDate: new Date().toLocaleDateString('en-GB')
             };
             globalCustomers.push(newLoan);
@@ -392,16 +375,11 @@
 
         function openEditModal(accId) {
             let c = globalCustomers.find(x => x.accId === accId); if(!c) return;
-            document.getElementById('editAccId').value = c.accId;
-            document.getElementById('editName').value = c.name;
-            document.getElementById('editPhone').value = c.phone;
-            document.getElementById('editPass').value = c.password;
-            document.getElementById('editAmount').value = c.amount;
-            document.getElementById('editDuration').value = c.duration;
-            document.getElementById('editVillage').value = c.village || '';
-            document.getElementById('editAadhaar').value = c.aadhaar || '';
-            document.getElementById('editGuarantor').value = c.guarantor || '';
-            document.getElementById('editNotes').value = c.notes || '';
+            document.getElementById('editAccId').value = c.accId; document.getElementById('editName').value = c.name;
+            document.getElementById('editPhone').value = c.phone; document.getElementById('editPass').value = c.password;
+            document.getElementById('editAmount').value = c.amount; document.getElementById('editDuration').value = c.duration;
+            document.getElementById('editVillage').value = c.village || ''; document.getElementById('editAadhaar').value = c.aadhaar || '';
+            document.getElementById('editGuarantor').value = c.guarantor || ''; document.getElementById('editNotes').value = c.notes || '';
             new bootstrap.Modal(document.getElementById('editCustomerModal')).show();
         }
 
@@ -410,14 +388,10 @@
             let accId = document.getElementById('editAccId').value;
             let idx = globalCustomers.findIndex(c => c.accId === accId);
             if(idx !== -1) {
-                globalCustomers[idx].name = document.getElementById('editName').value;
-                globalCustomers[idx].phone = document.getElementById('editPhone').value;
-                globalCustomers[idx].password = document.getElementById('editPass').value;
-                globalCustomers[idx].amount = Number(document.getElementById('editAmount').value);
-                globalCustomers[idx].duration = Number(document.getElementById('editDuration').value);
-                globalCustomers[idx].village = document.getElementById('editVillage').value;
-                globalCustomers[idx].aadhaar = document.getElementById('editAadhaar').value;
-                globalCustomers[idx].guarantor = document.getElementById('editGuarantor').value;
+                globalCustomers[idx].name = document.getElementById('editName').value; globalCustomers[idx].phone = document.getElementById('editPhone').value;
+                globalCustomers[idx].password = document.getElementById('editPass').value; globalCustomers[idx].amount = Number(document.getElementById('editAmount').value);
+                globalCustomers[idx].duration = Number(document.getElementById('editDuration').value); globalCustomers[idx].village = document.getElementById('editVillage').value;
+                globalCustomers[idx].aadhaar = document.getElementById('editAadhaar').value; globalCustomers[idx].guarantor = document.getElementById('editGuarantor').value;
                 globalCustomers[idx].notes = document.getElementById('editNotes').value;
                 bootstrap.Modal.getInstance(document.getElementById('editCustomerModal')).hide();
                 saveToDB();
@@ -425,7 +399,7 @@
         });
 
         // ==========================================
-        // 🚀 ACTIONS & MODALS
+        // 🚀 PAYMENT ACTIONS WITH MODE SELECTION
         // ==========================================
         function addHistoryRecord(c, amount, mode) {
             if(!c.history) c.history = [];
@@ -439,29 +413,36 @@
         }
 
         function recordCashPayment(accId, name, amount) {
-            if(confirm(`Receive ₹${amount} cash for ${name} [${accId}]?`)) {
+            let mode = prompt(`Receive ₹${amount} for ${name} [${accId}]\nEnter Mode (Cash / PhonePe / GPay):`, "Cash");
+            if(mode !== null && mode.trim() !== "") {
                 let idx = globalCustomers.findIndex(c => c.accId === accId);
-                if(idx !== -1) { addHistoryRecord(globalCustomers[idx], amount, 'Cash'); saveToDB(); }
+                if(idx !== -1) { addHistoryRecord(globalCustomers[idx], amount, mode); saveToDB(); }
             }
         }
 
         function customPayment(accId, name) {
             let amt = prompt(`PARTIAL PAY for ${name} [${accId}]\nEnter amount:`);
             if(amt && !isNaN(amt) && Number(amt)>0) {
-                let idx = globalCustomers.findIndex(c => c.accId === accId);
-                if(idx !== -1) { addHistoryRecord(globalCustomers[idx], Number(amt), 'Part Pay'); saveToDB(); }
+                let mode = prompt(`Enter Mode (Cash / PhonePe / GPay):`, "Cash");
+                if(mode !== null) {
+                    let idx = globalCustomers.findIndex(c => c.accId === accId);
+                    if(idx !== -1) { addHistoryRecord(globalCustomers[idx], Number(amt), mode + ' (Part)'); saveToDB(); }
+                }
             }
         }
 
         function advancePayment(accId, name, baseEmi) {
             let weeks = prompt(`ADVANCE PAY for ${name}\nHow many weeks?`);
             if(weeks && !isNaN(weeks) && Number(weeks)>1) {
-                let amt = Number(weeks) * baseEmi;
-                if(confirm(`Confirm advance payment of ₹${amt}?`)) {
-                    let idx = globalCustomers.findIndex(c => c.accId === accId);
-                    if(idx !== -1) {
-                        for(let i=0; i<Number(weeks); i++) addHistoryRecord(globalCustomers[idx], baseEmi, 'Advance');
-                        saveToDB();
+                let mode = prompt(`Enter Mode for Advance (Cash / PhonePe / GPay):`, "Cash");
+                if(mode !== null) {
+                    let amt = Number(weeks) * baseEmi;
+                    if(confirm(`Confirm advance payment of ₹${amt}?`)) {
+                        let idx = globalCustomers.findIndex(c => c.accId === accId);
+                        if(idx !== -1) {
+                            for(let i=0; i<Number(weeks); i++) addHistoryRecord(globalCustomers[idx], baseEmi, mode + ' (Adv)');
+                            saveToDB();
+                        }
                     }
                 }
             }
@@ -473,7 +454,7 @@
                 let idx = globalCustomers.findIndex(c => c.accId === accId);
                 if(idx !== -1) {
                     globalCustomers[idx].paidWeeks = globalCustomers[idx].duration; 
-                    globalCustomers[idx].history.push({ date: new Date().toLocaleDateString('en-GB'), week: 'Settle', amount: Number(actualPaid), mode: 'Settle' });
+                    globalCustomers[idx].history.push({ date: new Date().toLocaleDateString('en-GB'), week: 'Settle', amount: Number(actualPaid), mode: 'Settlement' });
                     globalCustomers[idx].amount = 0; globalCustomers[idx].penalty = 0;
                     saveToDB();
                 }
@@ -486,8 +467,7 @@
                 if(idx !== -1) {
                     globalCustomers[idx].paidWeeks = globalCustomers[idx].duration;
                     globalCustomers[idx].amount = 0; saveToDB();
-                    document.getElementById('custName').value = name; 
-                    document.getElementById('custPhone').value = phone;
+                    document.getElementById('custName').value = name; document.getElementById('custPhone').value = phone;
                     new bootstrap.Modal(document.getElementById('addCustomerModal')).show();
                 }
             }
@@ -511,14 +491,10 @@
         function viewFullProfile(accId) {
             let c = globalCustomers.find(x => x.accId === accId);
             if(c) {
-                document.getElementById('fpName').innerText = c.name;
-                document.getElementById('fpAccId').innerText = c.accId;
-                document.getElementById('fpPhone').innerText = c.phone;
-                document.getElementById('fpPin').innerText = c.password;
-                document.getElementById('fpAadhaar').innerText = c.aadhaar || 'Not Provided';
-                document.getElementById('fpVillage').innerText = c.village || 'N/A';
-                document.getElementById('fpGuarantor').innerText = c.guarantor || 'N/A';
-                document.getElementById('fpSecurity').innerText = c.security || 'N/A';
+                document.getElementById('fpName').innerText = c.name; document.getElementById('fpAccId').innerText = c.accId;
+                document.getElementById('fpPhone').innerText = c.phone; document.getElementById('fpPin').innerText = c.password;
+                document.getElementById('fpAadhaar').innerText = c.aadhaar || 'Not Provided'; document.getElementById('fpVillage').innerText = c.village || 'N/A';
+                document.getElementById('fpGuarantor').innerText = c.guarantor || 'N/A'; document.getElementById('fpSecurity').innerText = c.security || 'N/A';
                 document.getElementById('fpNotes').innerText = c.notes || 'None';
                 new bootstrap.Modal(document.getElementById('fullProfileModal')).show();
             }
@@ -526,13 +502,10 @@
 
         function openCustomerApp(accId) {
             let c = globalCustomers.find(x => x.accId === accId);
-            if(c) {
-                localStorage.setItem('loggedInCustomer', JSON.stringify({ phone: c.phone, password: c.password }));
-                window.open('customer-dashboard.html', '_blank');
-            }
+            if(c) { localStorage.setItem('loggedInCustomer', JSON.stringify({ phone: c.phone, password: c.password })); window.open('customer-dashboard.html', '_blank'); }
         }
 
-        function approvePayment(accId) { let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1) { let p = globalCustomers[idx]; let emi = Math.round((p.amount*1.2)/p.duration)+p.penalty; addHistoryRecord(p, emi, 'App Pay'); p.paymentSuccessFlag = true; saveToDB(); } }
+        function approvePayment(accId) { let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1) { let p = globalCustomers[idx]; let emi = Math.round((p.amount*1.2)/p.duration)+p.penalty; addHistoryRecord(p, emi, 'App Pay (Online)'); p.paymentSuccessFlag = true; saveToDB(); } }
         function rejectFakePayment(accId) { let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1) { globalCustomers[idx].pendingApproval = false; saveToDB(); } }
         function secureDeleteLoan(accId) { if(prompt("Enter PIN (7569) to delete:") === "7569") { globalCustomers = globalCustomers.filter(c => c.accId !== accId); saveToDB(); } }
 
@@ -543,7 +516,8 @@
             if(c.history && c.history.length > 0) {
                 [...c.history].reverse().forEach((r, idx) => {
                     let undoBtn = idx === 0 ? `<button class="btn btn-sm btn-outline-danger py-0" style="font-size:9px;" onclick="undoTransaction('${c.accId}')"><i class="fas fa-undo"></i></button>` : '';
-                    hBody.innerHTML += `<tr><td>${r.week}</td><td>${r.date}</td><td>${r.mode}</td><td class="text-success fw-bold">${formatMoney(r.amount)}</td><td>${undoBtn}</td></tr>`;
+                    let modeIcon = r.mode.toLowerCase().includes('cash') ? '<i class="fas fa-money-bill-wave text-success"></i>' : '<i class="fas fa-mobile-alt text-primary"></i>';
+                    hBody.innerHTML += `<tr><td class="fw-bold text-dark">Wk-${r.week}</td><td class="fw-bold">${r.date}</td><td>${modeIcon} ${r.mode}</td><td class="text-success fw-bold">${formatMoney(r.amount)}</td><td>${undoBtn}</td></tr>`;
                 });
             } else { hBody.innerHTML = `<tr><td colspan="5" class="text-muted">No history.</td></tr>`; }
             new bootstrap.Modal(document.getElementById('customer360Modal')).show();
@@ -609,7 +583,7 @@
         }
 
         // ==========================================
-        // 🚀 RENDERING & SEARCH (NEW)
+        // 🚀 RENDERING & SEARCH
         // ==========================================
         function renderData() {
             const cardContainer = document.getElementById('customersListContainer');
@@ -617,14 +591,8 @@
             cardContainer.innerHTML = ''; tableBody.innerHTML = '';
             let visibleCount = 0; const today = new Date(); today.setHours(0,0,0,0);
 
-            // SEARCH FILTER LOGIC
             let searchQuery = document.getElementById('searchInput').value.toLowerCase();
-            let displayList = globalCustomers.filter(c => 
-                c.name.toLowerCase().includes(searchQuery) || 
-                c.phone.includes(searchQuery) || 
-                c.accId.toLowerCase().includes(searchQuery)
-            );
-
+            let displayList = globalCustomers.filter(c => c.name.toLowerCase().includes(searchQuery) || c.phone.includes(searchQuery) || c.accId.toLowerCase().includes(searchQuery));
             let sortType = document.getElementById('sortFilter').value;
             if(sortType === 'name') displayList.sort((a,b) => a.name.localeCompare(b.name));
             if(sortType === 'recent') displayList.reverse(); 
@@ -648,6 +616,16 @@
                     if(currentFilter === 'overdue' && !isOverdue) return;
                 }
                 visibleCount++;
+
+                // LAST PAY STRIP LOGIC
+                let lastPayHTML = '';
+                if(cust.history && cust.history.length > 0) {
+                    let last = cust.history[cust.history.length - 1];
+                    let icon = last.mode.toLowerCase().includes('cash') ? '<i class="fas fa-money-bill-wave"></i>' : '<i class="fas fa-mobile-alt"></i>';
+                    lastPayHTML = `<div class="last-pay-strip"><i class="fas fa-check-circle"></i> Paid Week ${last.week} on <b>${last.date}</b> via ${icon} ${last.mode}</div>`;
+                } else {
+                    lastPayHTML = `<div class="last-pay-strip no-pay"><i class="fas fa-times-circle"></i> No EMI Paid Yet</div>`;
+                }
 
                 let actionMenu = `
                     <div class="d-flex gap-1">
@@ -680,7 +658,7 @@
                     tableBody.innerHTML += `
                         <tr class="${isOverdue ? 'table-warning' : (pendingWeeks <= 0 ? 'table-success' : '')}">
                             <td class="text-primary fw-bold">${cust.accId}</td>
-                            <td>${cust.name}<br><small class="text-muted"><i class="fas fa-mobile-alt"></i> ${cust.phone}</small></td>
+                            <td>${cust.name}<br><small class="text-muted"><i class="fas fa-mobile-alt"></i> ${cust.phone}</small><br>${lastPayHTML}</td>
                             <td>${formatMoney(principal)}</td>
                             <td class="text-danger">${formatMoney(nextEmiToPay)} ${penalty>0?`<small>(+${penalty})</small>`:''}</td>
                             <td>
@@ -701,6 +679,9 @@
                                 <div><div style="font-size:14px; font-weight:800;">${cust.name}</div><div style="font-size:10px; color:#777;"><i class="fas fa-mobile-alt"></i> ${cust.phone} | <span class="text-primary">${cust.accId}</span></div></div>
                                 <div class="text-end">${pendingWeeks <= 0 ? `<span class="badge bg-success">Settled</span>` : `<span class="badge bg-primary">Active</span>`}</div>
                             </div>
+                            
+                            ${lastPayHTML}
+
                             <div class="d-flex gap-1 mb-2">
                                 <div class="data-block"><span class="data-label">Prncpl</span><br><span class="data-val">${formatMoney(principal)}</span></div>
                                 <div class="data-block" style="border-color:var(--primary);"><span class="data-label text-primary">EMI</span><br><span class="data-val-big">${formatMoney(nextEmiToPay)}</span></div>
