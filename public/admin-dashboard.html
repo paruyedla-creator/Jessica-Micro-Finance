@@ -44,14 +44,10 @@
         <input type="password" id="unlockPin" class="form-control text-center fw-bold fs-4 mt-3" style="width: 200px; letter-spacing: 10px; border-radius: 8px;" placeholder="****" oninput="checkUnlock(this.value)">
     </div>
 
-    <!-- NAVBAR -->
     <div class="top-navbar d-flex justify-content-between align-items-center">
-        <div>
-            <h5 class="m-0 fw-bold">JESSICA FINANCE</h5>
-            <div style="font-size: 10px; color: #BDC3C7;" id="liveClockDisplay">Loading...</div>
-        </div>
+        <div><h5 class="m-0 fw-bold">JESSICA FINANCE</h5><div style="font-size: 10px; color: #BDC3C7;" id="liveClockDisplay">Loading...</div></div>
         <div class="d-flex align-items-center gap-2">
-            <span id="networkStatus" class="fw-bold bg-white text-dark px-2 py-1 rounded" style="font-size: 10px;"><i class="fas fa-sync fa-spin"></i> SYNCING...</span>
+            <span id="networkStatus" class="fw-bold bg-white text-dark px-2 py-1 rounded" style="font-size: 10px;"><i class="fas fa-sync fa-spin"></i> CONNECTING...</span>
             <button class="btn btn-sm btn-light fw-bold text-dark" onclick="lockSystem()"><i class="fas fa-lock"></i></button>
         </div>
     </div>
@@ -63,17 +59,12 @@
                 <button class="btn btn-sm btn-dark fw-bold" onclick="toggleView()" id="viewToggleBtn"><i class="fas fa-table"></i> Table</button>
                 <button class="btn btn-sm btn-info fw-bold text-dark" onclick="openModalSafe('cashCalcModal')"><i class="fas fa-calculator"></i> Cash Counter</button>
             </div>
-            
             <div class="d-flex gap-2 align-items-center">
-                <div class="input-group input-group-sm" style="width: 200px;">
-                    <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                    <input type="text" id="searchInput" class="form-control border-start-0 fw-bold" placeholder="Search..." onkeyup="renderData()">
-                </div>
+                <div class="input-group input-group-sm" style="width: 200px;"><span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span><input type="text" id="searchInput" class="form-control border-start-0 fw-bold" placeholder="Search..." onkeyup="renderData()"></div>
                 <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="liveRefresh()"><i class="fas fa-sync-alt" id="refreshIcon"></i> Sync</button>
             </div>
         </div>
 
-        <!-- STATS -->
         <div class="row g-2 mb-3">
             <div class="col-md-3 col-6"><div class="stat-card"><div style="font-size: 9px; color: #7F8C8D; font-weight: 800;">TOTAL DISBURSED</div><h4 class="fw-bold text-dark m-0" id="statTotalGiven">₹0</h4></div></div>
             <div class="col-md-3 col-6"><div class="stat-card"><div style="font-size: 9px; color: #7F8C8D; font-weight: 800;">COLLECTED</div><h4 class="fw-bold text-success m-0" id="statCollected">₹0</h4></div></div>
@@ -82,7 +73,7 @@
         </div>
 
         <ul class="nav nav-pills mb-3 fw-bold" style="background: white; padding: 5px; border-radius: 6px; font-size: 12px; box-shadow: 0 1px 5px rgba(0,0,0,0.05);">
-            <li class="nav-item"><a class="nav-link active py-1 px-3" href="javascript:void(0)" onclick="setFilter('all', this)">All Loans</a></li>
+            <li class="nav-item"><a class="nav-link active py-1 px-3" href="javascript:void(0)" onclick="setFilter('all', this)">All</a></li>
             <li class="nav-item"><a class="nav-link text-warning py-1 px-3" href="javascript:void(0)" onclick="setFilter('pending', this)"><i class="fas fa-bell"></i> App Pay Req</a></li>
             <li class="nav-item"><a class="nav-link text-success py-1 px-3" href="javascript:void(0)" onclick="setFilter('active', this)">Active</a></li>
             <li class="nav-item"><a class="nav-link text-danger py-1 px-3" href="javascript:void(0)" onclick="setFilter('overdue', this)">Overdue</a></li>
@@ -91,10 +82,7 @@
 
         <div id="customersListContainer"></div>
         <div id="customersTableContainer" style="display: none;" class="table-responsive bg-white p-2 rounded shadow-sm">
-            <table class="table table-bordered table-hover compact-table align-middle mb-0">
-                <thead><tr><th>Acc ID</th><th>Customer Details</th><th>Principal</th><th>EMI / Pen</th><th>Progress</th><th>Actions</th></tr></thead>
-                <tbody id="tableBody"></tbody>
-            </table>
+            <table class="table table-bordered table-hover compact-table align-middle mb-0"><thead><tr><th>Acc ID</th><th>Customer Details</th><th>Principal</th><th>EMI / Pen</th><th>Progress</th><th>Actions</th></tr></thead><tbody id="tableBody"></tbody></table>
         </div>
         <div id="emptyState" class="text-center py-5" style="display: none;"><i class="fas fa-search text-muted" style="font-size: 40px; opacity: 0.3;"></i><h6 class="mt-3 text-muted fw-bold">No Records Found</h6></div>
     </div>
@@ -103,152 +91,74 @@
     
     <!-- PAYMENT CONFIRMATION MODAL -->
     <div class="modal fade" id="paymentModal" tabindex="-1">
-        <div class="modal-dialog modal-sm modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-success text-white py-2">
-                    <h6 class="modal-title fw-bold"><i class="fas fa-rupee-sign me-1"></i> Collect Payment</h6>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body bg-light">
-                    <div class="text-center mb-3">
-                        <h6 class="fw-bold m-0 text-dark" id="payCustName">Name</h6>
-                        <small class="fw-bold text-primary" id="payAccId">JF-0000</small>
-                    </div>
-                    <label class="small fw-bold text-muted">Amount Received (₹)</label>
-                    <input type="number" id="payAmount" class="form-control fw-bold mb-3 border-success text-success fs-5">
-                    <label class="small fw-bold text-muted">Payment Mode</label>
-                    <select id="payMode" class="form-select fw-bold border-dark mb-4">
-                        <option value="Cash">💵 Cash</option><option value="PhonePe">📱 PhonePe</option>
-                        <option value="GPay">📱 Google Pay (GPay)</option><option value="Bank Transfer">🏦 Bank Transfer</option>
-                    </select>
-                    <input type="hidden" id="payType"> <input type="hidden" id="payBaseEmi">
-                    <button class="btn btn-success w-100 fw-bold py-2 fs-6" onclick="processPayment()"><i class="fas fa-check-circle me-1"></i> Confirm & Save</button>
-                </div>
-            </div>
-        </div>
+        <div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-success text-white py-2"><h6 class="modal-title fw-bold"><i class="fas fa-rupee-sign me-1"></i> Collect Payment</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light"><div class="text-center mb-3"><h6 class="fw-bold m-0 text-dark" id="payCustName">Name</h6><small class="fw-bold text-primary" id="payAccId">JF-0000</small></div><label class="small fw-bold text-muted">Amount Received (₹)</label><input type="number" id="payAmount" class="form-control fw-bold mb-3 border-success text-success fs-5"><label class="small fw-bold text-muted">Payment Mode</label><select id="payMode" class="form-select fw-bold border-dark mb-4"><option value="Cash">💵 Cash</option><option value="PhonePe">📱 PhonePe</option><option value="GPay">📱 Google Pay (GPay)</option><option value="Bank Transfer">🏦 Bank Transfer</option></select><input type="hidden" id="payType"> <input type="hidden" id="payBaseEmi"><button class="btn btn-success w-100 fw-bold py-2 fs-6" onclick="processPayment()"><i class="fas fa-check-circle me-1"></i> Confirm & Save</button></div></div></div>
     </div>
 
     <!-- CASH COUNTER MODAL -->
-    <div class="modal fade" id="cashCalcModal" tabindex="-1">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content border-0">
-                <div class="modal-header bg-info text-dark py-2"><h6 class="modal-title fw-bold"><i class="fas fa-money-bill-wave me-2"></i> Cash Counter</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body bg-light">
-                    <div class="row g-2 text-end fw-bold align-items-center">
-                        <div class="col-4">₹ 500 x</div><div class="col-8"><input type="number" id="c500" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div>
-                        <div class="col-4">₹ 200 x</div><div class="col-8"><input type="number" id="c200" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div>
-                        <div class="col-4">₹ 100 x</div><div class="col-8"><input type="number" id="c100" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div>
-                    </div>
-                    <div class="mt-3 p-2 bg-dark text-white text-center rounded"><div style="font-size: 10px;">TOTAL CASH</div><h4 class="m-0 fw-bold text-success" id="cashTotalResult">₹0</h4></div>
-                    <button class="btn btn-sm btn-secondary w-100 mt-2 fw-bold" onclick="resetCash()">Reset</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="modal fade" id="cashCalcModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content border-0"><div class="modal-header bg-info text-dark py-2"><h6 class="modal-title fw-bold"><i class="fas fa-money-bill-wave me-2"></i> Cash Counter</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light"><div class="row g-2 text-end fw-bold align-items-center"><div class="col-4">₹ 500 x</div><div class="col-8"><input type="number" id="c500" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div><div class="col-4">₹ 200 x</div><div class="col-8"><input type="number" id="c200" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div><div class="col-4">₹ 100 x</div><div class="col-8"><input type="number" id="c100" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div></div><div class="mt-3 p-2 bg-dark text-white text-center rounded"><div style="font-size: 10px;">TOTAL CASH</div><h4 class="m-0 fw-bold text-success" id="cashTotalResult">₹0</h4></div><button class="btn btn-sm btn-secondary w-100 mt-2 fw-bold" onclick="resetCash()">Reset</button></div></div></div></div>
 
     <!-- ADD LOAN MODAL -->
-    <div class="modal fade" id="addCustomerModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content border-0">
-                <div class="modal-header bg-primary text-white py-2">
-                    <h6 class="modal-title fw-bold">Sanction New Loan</h6>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body bg-light">
-                    <form id="addCustomerForm">
-                        <div class="row g-2">
-                            <div class="col-md-4"><label class="small fw-bold">Name *</label><input type="text" id="custName" class="form-control form-control-sm fw-bold" required></div>
-                            <div class="col-md-4"><label class="small fw-bold">Mobile *</label><input type="tel" id="custPhone" class="form-control form-control-sm fw-bold" maxlength="10" required></div>
-                            <div class="col-md-4"><label class="small fw-bold">Login PIN *</label><input type="password" id="custPass" class="form-control form-control-sm fw-bold text-danger" required></div>
-                            <div class="col-md-4"><label class="small fw-bold text-primary">Principal (₹) *</label><input type="number" id="custAmount" class="form-control form-control-sm fw-bold border-primary" required></div>
-                            <div class="col-md-4"><label class="small fw-bold text-primary">Tenure (Weeks) *</label><input type="number" id="custDuration" class="form-control form-control-sm fw-bold border-primary" value="10" required></div>
-                            <div class="col-md-4"><label class="small fw-bold">Village/Loc</label><input type="text" id="custVillage" class="form-control form-control-sm fw-bold"></div>
-                            <div class="col-md-6"><label class="small fw-bold">Aadhaar/KYC</label><input type="text" id="custAadhaar" class="form-control form-control-sm fw-bold"></div>
-                            <div class="col-md-6"><label class="small fw-bold">Guarantor</label><input type="text" id="custGuarantor" class="form-control form-control-sm fw-bold"></div>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100 fw-bold mt-3"><i class="fas fa-check me-2"></i> Save Loan</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="modal fade" id="addCustomerModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content border-0"><div class="modal-header bg-primary text-white py-2"><h6 class="modal-title fw-bold">Sanction New Loan</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light"><form id="addCustomerForm"><div class="row g-2"><div class="col-md-4"><label class="small fw-bold">Name *</label><input type="text" id="custName" class="form-control form-control-sm fw-bold" required></div><div class="col-md-4"><label class="small fw-bold">Mobile *</label><input type="tel" id="custPhone" class="form-control form-control-sm fw-bold" maxlength="10" required></div><div class="col-md-4"><label class="small fw-bold">Login PIN *</label><input type="password" id="custPass" class="form-control form-control-sm fw-bold text-danger" required></div><div class="col-md-4"><label class="small fw-bold text-primary">Principal (₹) *</label><input type="number" id="custAmount" class="form-control form-control-sm fw-bold border-primary" required></div><div class="col-md-4"><label class="small fw-bold text-primary">Tenure (Weeks) *</label><input type="number" id="custDuration" class="form-control form-control-sm fw-bold border-primary" value="10" required></div><div class="col-md-4"><label class="small fw-bold">Village/Loc</label><input type="text" id="custVillage" class="form-control form-control-sm fw-bold"></div><div class="col-md-6"><label class="small fw-bold">Aadhaar/KYC</label><input type="text" id="custAadhaar" class="form-control form-control-sm fw-bold"></div><div class="col-md-6"><label class="small fw-bold">Guarantor</label><input type="text" id="custGuarantor" class="form-control form-control-sm fw-bold"></div><div class="col-md-12"><label class="small fw-bold">Security / Items</label><input type="text" id="custSecurity" class="form-control form-control-sm fw-bold" placeholder="E.g. Blank Cheque"></div></div><button type="submit" class="btn btn-primary w-100 fw-bold mt-3"><i class="fas fa-check me-2"></i> Save Loan</button></form></div></div></div></div>
 
     <!-- EDIT LOAN MODAL (WITH DATES) -->
-    <div class="modal fade" id="editCustomerModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content border-0">
-                <div class="modal-header bg-dark text-white py-2">
-                    <h6 class="modal-title fw-bold">Edit Customer & Loan Dates</h6>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body bg-light">
-                    <form id="editCustomerForm">
-                        <input type="hidden" id="editAccId">
-                        <div class="row g-2">
-                            <div class="col-md-4"><label class="small fw-bold">Name</label><input type="text" id="editName" class="form-control form-control-sm fw-bold" required></div>
-                            <div class="col-md-4"><label class="small fw-bold">Mobile</label><input type="tel" id="editPhone" class="form-control form-control-sm fw-bold" required></div>
-                            <div class="col-md-4"><label class="small fw-bold">Login PIN</label><input type="text" id="editPass" class="form-control form-control-sm fw-bold text-danger"></div>
-                            <div class="col-md-4"><label class="small fw-bold">Principal (₹)</label><input type="number" id="editAmount" class="form-control form-control-sm fw-bold"></div>
-                            <div class="col-md-4"><label class="small fw-bold">Tenure (Weeks)</label><input type="number" id="editDuration" class="form-control form-control-sm fw-bold"></div>
-                            <div class="col-md-4"><label class="small fw-bold">Village/Loc</label><input type="text" id="editVillage" class="form-control form-control-sm fw-bold"></div>
-                            <div class="col-md-4"><label class="small fw-bold text-primary">Start Date</label><input type="text" id="editStartDate" class="form-control form-control-sm fw-bold border-primary" placeholder="DD/MM/YYYY"></div>
-                            <div class="col-md-4"><label class="small fw-bold text-primary">Last Paid Date</label><input type="text" id="editLastPaid" class="form-control form-control-sm fw-bold border-primary" placeholder="DD/MM/YYYY"></div>
-                            <div class="col-md-4"><label class="small fw-bold">Aadhaar/KYC</label><input type="text" id="editAadhaar" class="form-control form-control-sm fw-bold"></div>
-                            <div class="col-md-12"><label class="small fw-bold">Admin Notes</label><input type="text" id="editNotes" class="form-control form-control-sm fw-bold"></div>
-                        </div>
-                        <button type="submit" class="btn btn-dark w-100 fw-bold mt-3"><i class="fas fa-save me-2"></i> Update Complete Details</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="modal fade" id="editCustomerModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content border-0"><div class="modal-header bg-dark text-white py-2"><h6 class="modal-title fw-bold">Edit Customer & Loan Dates</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light"><form id="editCustomerForm"><input type="hidden" id="editAccId"><div class="row g-2"><div class="col-md-4"><label class="small fw-bold">Name</label><input type="text" id="editName" class="form-control form-control-sm fw-bold" required></div><div class="col-md-4"><label class="small fw-bold">Mobile</label><input type="tel" id="editPhone" class="form-control form-control-sm fw-bold" required></div><div class="col-md-4"><label class="small fw-bold">Login PIN</label><input type="text" id="editPass" class="form-control form-control-sm fw-bold text-danger"></div><div class="col-md-4"><label class="small fw-bold">Principal (₹)</label><input type="number" id="editAmount" class="form-control form-control-sm fw-bold"></div><div class="col-md-4"><label class="small fw-bold">Tenure (Weeks)</label><input type="number" id="editDuration" class="form-control form-control-sm fw-bold"></div><div class="col-md-4"><label class="small fw-bold">Village/Loc</label><input type="text" id="editVillage" class="form-control form-control-sm fw-bold"></div><div class="col-md-4"><label class="small fw-bold text-primary">Start Date</label><input type="text" id="editStartDate" class="form-control form-control-sm fw-bold border-primary" placeholder="DD/MM/YYYY"></div><div class="col-md-4"><label class="small fw-bold text-primary">Last Paid Date</label><input type="text" id="editLastPaid" class="form-control form-control-sm fw-bold border-primary" placeholder="DD/MM/YYYY"></div><div class="col-md-4"><label class="small fw-bold">Aadhaar/KYC</label><input type="text" id="editAadhaar" class="form-control form-control-sm fw-bold"></div><div class="col-md-12"><label class="small fw-bold">Admin Notes</label><input type="text" id="editNotes" class="form-control form-control-sm fw-bold"></div></div><button type="submit" class="btn btn-dark w-100 fw-bold mt-3"><i class="fas fa-save me-2"></i> Update Complete Details</button></form></div></div></div></div>
 
     <!-- FULL PROFILE MODAL -->
     <div class="modal fade" id="fullProfileModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content border-0"><div class="modal-header bg-dark text-white py-2"><h6 class="modal-title fw-bold"><i class="fas fa-address-card me-2"></i> Profile Info</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light"><div class="text-center mb-3"><h5 class="fw-bold text-primary m-0" id="fpName"></h5><div class="text-muted small fw-bold" id="fpAccId"></div></div><table class="table table-sm table-bordered bg-white" style="font-size: 12px;"><tbody><tr><th class="bg-light">Mobile No</th><td id="fpPhone" class="fw-bold"></td></tr><tr><th class="bg-light">App PIN</th><td id="fpPin" class="fw-bold text-danger"></td></tr><tr><th class="bg-light">Start Date</th><td id="fpStart" class="fw-bold"></td></tr><tr><th class="bg-light">Village / Loc</th><td id="fpVillage" class="fw-bold"></td></tr><tr><th class="bg-light">Aadhaar/KYC</th><td id="fpAadhaar" class="fw-bold"></td></tr><tr><th class="bg-light">Admin Notes</th><td id="fpNotes" class="fw-bold text-warning"></td></tr></tbody></table></div></div></div></div>
     
-    <!-- 360 PROFILE -->
+    <!-- 360 PROFILE (LEDGER) -->
     <div class="modal fade" id="customer360Modal" tabindex="-1"><div class="modal-dialog"><div class="modal-content border-0"><div class="modal-header bg-primary text-white py-2"><h6 class="modal-title fw-bold"><i class="fas fa-book me-2"></i> Repayment Ledger</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light"><div class="d-flex justify-content-between mb-3 fw-bold" style="font-size:14px;"><span class="text-primary" id="prof360Id"></span><span id="prof360Name"></span></div><table class="table table-bordered bg-white text-center align-middle" style="font-size: 11px;"><thead class="table-dark"><tr><th>EMI No.</th><th>Date</th><th>Mode</th><th>Amount</th><th>Undo</th></tr></thead><tbody id="prof360History"></tbody></table></div></div></div></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // ☁️ CLOUD DB SETTINGS
-        const BIN_ID = "6a680db5da38895dfe99644c";
-        const API_KEY = "$2a$10$hMjC2hJpy4MR4jrFYBGrMeX.3m5olpdY3LgNetbTgdcex3JgQItg6";
+        // 🟢 FIXED KEYS: మీ ఒరిజినల్ కీస్ ఇవే!
+        const BIN_ID = "6a53982ada38895dfe52ba5a";
+        const API_KEY = "$2a$10$e2nyXRn87ZTYmmx1xTnlyO4GhxNGkZC0SCAAVKhV2vWVFQv36TgV6";
+        
         let globalCustomers = []; let currentFilter = 'all'; let isSyncing = false; let isTableView = false; let currentPayAccId = null;
         const formatMoney = (amount) => '₹' + Number(amount).toLocaleString('en-IN');
         
         setInterval(() => { const now = new Date(); document.getElementById('liveClockDisplay').innerText = now.toLocaleDateString('en-GB') + " " + now.toLocaleTimeString(); }, 1000);
         function lockSystem() { document.getElementById('lockScreen').style.display = 'flex'; document.getElementById('unlockPin').focus(); }
         function checkUnlock(val) { if(val === '7569') { document.getElementById('lockScreen').style.display = 'none'; document.getElementById('unlockPin').value = ''; } }
+        function calcCash() { let t = (Number(document.getElementById('c500').value||0)*500) + (Number(document.getElementById('c200').value||0)*200) + (Number(document.getElementById('c100').value||0)*100); document.getElementById('cashTotalResult').innerText = formatMoney(t); }
+        function resetCash() { ['c500','c200','c100'].forEach(id => document.getElementById(id).value = ''); calcCash(); }
 
-        // ✅ SAFE MODAL OPENER (FIXED BUG)
-        function openModalSafe(id) { 
-            let el = document.getElementById(id); 
-            let m = bootstrap.Modal.getOrCreateInstance(el); 
-            m.show(); 
-        }
-        function closeModalSafe(id) { 
-            let el = document.getElementById(id); 
-            let m = bootstrap.Modal.getInstance(el); 
-            if(m) m.hide(); 
-        }
+        function openModalSafe(id) { let el = document.getElementById(id); let m = bootstrap.Modal.getOrCreateInstance(el); m.show(); }
+        function closeModalSafe(id) { let el = document.getElementById(id); let m = bootstrap.Modal.getInstance(el); if(m) m.hide(); }
 
+        // 🟢 FIXED FORMAT LOAD: పాత డేటా ఫార్మాట్ ని సేఫ్ గా లాగడానికి
         async function loadCustomers() {
             if(isSyncing) return; isSyncing = true;
             document.getElementById('networkStatus').innerHTML = `<i class="fas fa-sync fa-spin text-warning"></i> SYNCING...`;
             try {
                 let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers: { 'X-Master-Key': API_KEY } });
-                let data = await res.json(); globalCustomers = data.record || []; 
+                if(!res.ok) throw new Error("Key/Network Error");
+                let data = await res.json(); 
+                
+                let rawData = data.record;
+                if (rawData && !Array.isArray(rawData)) {
+                    globalCustomers = rawData.customers || []; // పాత ఫార్మాట్ ని ఆటోమేటిక్ గా ఫిక్స్ చేస్తుంది!
+                } else {
+                    globalCustomers = rawData || [];
+                }
+                
                 document.getElementById('networkStatus').innerHTML = `<i class="fas fa-cloud text-success"></i> ONLINE`;
                 localStorage.setItem('jf_offline_backup', JSON.stringify(globalCustomers)); renderData(); calculateAnalytics();
-            } catch (e) { document.getElementById('networkStatus').innerHTML = `<i class="fas fa-exclamation-triangle text-danger"></i> OFFLINE`; let l = localStorage.getItem('jf_offline_backup'); if(l) { globalCustomers = JSON.parse(l); renderData(); calculateAnalytics(); } }
+            } catch (e) { 
+                document.getElementById('networkStatus').innerHTML = `<i class="fas fa-exclamation-triangle text-danger"></i> OFFLINE`; 
+                let l = localStorage.getItem('jf_offline_backup'); if(l) { globalCustomers = JSON.parse(l); renderData(); calculateAnalytics(); } 
+            }
             isSyncing = false;
         }
 
         async function saveToDB() {
             document.getElementById('networkStatus').innerHTML = `<i class="fas fa-spinner fa-spin text-primary"></i> SAVING...`;
             localStorage.setItem('jf_offline_backup', JSON.stringify(globalCustomers)); renderData(); calculateAnalytics();
-            try { await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY }, body: JSON.stringify(globalCustomers) }); document.getElementById('networkStatus').innerHTML = `<i class="fas fa-cloud text-success"></i> SAVED`;
+            try { 
+                let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY }, body: JSON.stringify(globalCustomers) }); 
+                if(!res.ok) throw new Error("Save Failed");
+                document.getElementById('networkStatus').innerHTML = `<i class="fas fa-cloud text-success"></i> SAVED`;
             } catch (e) { document.getElementById('networkStatus').innerHTML = `<i class="fas fa-save text-warning"></i> OFFLINE`; }
         }
 
@@ -258,30 +168,16 @@
 
         document.getElementById('addCustomerForm').addEventListener('submit', function(e) {
             e.preventDefault(); let uniqueId = "JF-" + Math.floor(1000 + Math.random() * 9000);
+            if(!Array.isArray(globalCustomers)) globalCustomers = []; // Safety check
             globalCustomers.push({ accId: uniqueId, name: document.getElementById('custName').value.trim(), phone: document.getElementById('custPhone').value.trim(), password: document.getElementById('custPass').value.trim(), village: document.getElementById('custVillage').value, aadhaar: document.getElementById('custAadhaar').value, amount: Number(document.getElementById('custAmount').value), duration: Number(document.getElementById('custDuration').value), guarantor: document.getElementById('custGuarantor').value, paidWeeks: 0, penalty: 0, history: [], pendingApproval: false, notes: "", startDate: new Date().toLocaleDateString('en-GB') });
             closeModalSafe('addCustomerModal'); document.getElementById('addCustomerForm').reset(); saveToDB();
         });
 
         // 🚀 PAYMENT ACTIONS & MODALS
-        function recordCashPayment(accId, name, amount) {
-            currentPayAccId = accId; document.getElementById('payCustName').innerText = name + " (Full EMI)"; document.getElementById('payAccId').innerText = accId; document.getElementById('payAmount').value = amount; document.getElementById('payAmount').readOnly = true; document.getElementById('payType').value = 'full'; openModalSafe('paymentModal');
-        }
-        function customPayment(accId, name) {
-            currentPayAccId = accId; document.getElementById('payCustName').innerText = name + " (Part Pay)"; document.getElementById('payAccId').innerText = accId; document.getElementById('payAmount').value = ""; document.getElementById('payAmount').readOnly = false; document.getElementById('payType').value = 'part'; openModalSafe('paymentModal');
-        }
-        function advancePayment(accId, name, baseEmi) {
-            let weeks = prompt(`ADVANCE PAY for ${name}\nHow many weeks?`);
-            if(weeks && !isNaN(weeks) && Number(weeks)>1) {
-                currentPayAccId = accId; document.getElementById('payCustName').innerText = name + ` (${weeks} Wks Advance)`; document.getElementById('payAccId').innerText = accId; document.getElementById('payAmount').value = Number(weeks) * baseEmi; document.getElementById('payAmount').readOnly = true; document.getElementById('payType').value = 'adv'; document.getElementById('payBaseEmi').value = baseEmi; openModalSafe('paymentModal');
-            }
-        }
-        function openApproveModal(accId) {
-            let idx = globalCustomers.findIndex(c => c.accId === accId);
-            if(idx !== -1) {
-                let p = globalCustomers[idx]; let emi = Math.round((p.amount * 1.2) / p.duration) + (p.penalty || 0);
-                currentPayAccId = accId; document.getElementById('payCustName').innerText = p.name + " (Verify App Pay)"; document.getElementById('payAccId').innerText = accId; document.getElementById('payAmount').value = emi; document.getElementById('payAmount').readOnly = true; document.getElementById('payMode').value = "PhonePe"; document.getElementById('payType').value = 'approve'; openModalSafe('paymentModal');
-            }
-        }
+        function recordCashPayment(accId, name, amount) { currentPayAccId = accId; document.getElementById('payCustName').innerText = name + " (Full EMI)"; document.getElementById('payAccId').innerText = accId; document.getElementById('payAmount').value = amount; document.getElementById('payAmount').readOnly = true; document.getElementById('payType').value = 'full'; openModalSafe('paymentModal'); }
+        function customPayment(accId, name) { currentPayAccId = accId; document.getElementById('payCustName').innerText = name + " (Part Pay)"; document.getElementById('payAccId').innerText = accId; document.getElementById('payAmount').value = ""; document.getElementById('payAmount').readOnly = false; document.getElementById('payType').value = 'part'; openModalSafe('paymentModal'); }
+        function advancePayment(accId, name, baseEmi) { let weeks = prompt(`ADVANCE PAY for ${name}\nHow many weeks?`); if(weeks && !isNaN(weeks) && Number(weeks)>1) { currentPayAccId = accId; document.getElementById('payCustName').innerText = name + ` (${weeks} Wks Advance)`; document.getElementById('payAccId').innerText = accId; document.getElementById('payAmount').value = Number(weeks) * baseEmi; document.getElementById('payAmount').readOnly = true; document.getElementById('payType').value = 'adv'; document.getElementById('payBaseEmi').value = baseEmi; openModalSafe('paymentModal'); } }
+        function openApproveModal(accId) { let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1) { let p = globalCustomers[idx]; let emi = Math.round((p.amount * 1.2) / p.duration) + (p.penalty || 0); currentPayAccId = accId; document.getElementById('payCustName').innerText = p.name + " (Verify App Pay)"; document.getElementById('payAccId').innerText = accId; document.getElementById('payAmount').value = emi; document.getElementById('payAmount').readOnly = true; document.getElementById('payMode').value = "PhonePe"; document.getElementById('payType').value = 'approve'; openModalSafe('paymentModal'); } }
 
         function processPayment() {
             let amount = Number(document.getElementById('payAmount').value); let mode = document.getElementById('payMode').value; let pType = document.getElementById('payType').value;
@@ -296,28 +192,10 @@
             }
         }
 
-        function addHistoryRecord(c, amount, mode) {
-            if(!c.history) c.history = []; c.paidWeeks = (c.paidWeeks || 0) + 1; let today = new Date().toLocaleDateString('en-GB');
-            c.history.push({ date: today, week: c.paidWeeks, amount: amount, mode: mode });
-            c.lastPaidDate = today; let d = new Date(); d.setDate(d.getDate() + 7); c.nextDueDate = d.toLocaleDateString('en-GB'); c.pendingApproval = false;
-        }
+        function addHistoryRecord(c, amount, mode) { if(!c.history) c.history = []; c.paidWeeks = (c.paidWeeks || 0) + 1; let today = new Date().toLocaleDateString('en-GB'); c.history.push({ date: today, week: c.paidWeeks, amount: amount, mode: mode }); c.lastPaidDate = today; let d = new Date(); d.setDate(d.getDate() + 7); c.nextDueDate = d.toLocaleDateString('en-GB'); c.pendingApproval = false; }
 
-        // 🚀 EDIT PROFILE WITH DATES
-        function openEditModal(accId) {
-            let c = globalCustomers.find(x => x.accId === accId); if(!c) return;
-            document.getElementById('editAccId').value = c.accId; document.getElementById('editName').value = c.name; document.getElementById('editPhone').value = c.phone; document.getElementById('editPass').value = c.password; document.getElementById('editAmount').value = c.amount; document.getElementById('editDuration').value = c.duration; document.getElementById('editVillage').value = c.village || ''; document.getElementById('editAadhaar').value = c.aadhaar || ''; document.getElementById('editNotes').value = c.notes || '';
-            document.getElementById('editStartDate').value = c.startDate || ''; document.getElementById('editLastPaid').value = c.lastPaidDate || '';
-            openModalSafe('editCustomerModal');
-        }
-
-        document.getElementById('editCustomerForm').addEventListener('submit', function(e) {
-            e.preventDefault(); let accId = document.getElementById('editAccId').value; let idx = globalCustomers.findIndex(c => c.accId === accId);
-            if(idx !== -1) {
-                globalCustomers[idx].name = document.getElementById('editName').value; globalCustomers[idx].phone = document.getElementById('editPhone').value; globalCustomers[idx].password = document.getElementById('editPass').value; globalCustomers[idx].amount = Number(document.getElementById('editAmount').value); globalCustomers[idx].duration = Number(document.getElementById('editDuration').value); globalCustomers[idx].village = document.getElementById('editVillage').value; globalCustomers[idx].aadhaar = document.getElementById('editAadhaar').value; globalCustomers[idx].notes = document.getElementById('editNotes').value;
-                globalCustomers[idx].startDate = document.getElementById('editStartDate').value; globalCustomers[idx].lastPaidDate = document.getElementById('editLastPaid').value;
-                closeModalSafe('editCustomerModal'); saveToDB(); alert("Loan Details Updated!");
-            }
-        });
+        function openEditModal(accId) { let c = globalCustomers.find(x => x.accId === accId); if(!c) return; document.getElementById('editAccId').value = c.accId; document.getElementById('editName').value = c.name; document.getElementById('editPhone').value = c.phone; document.getElementById('editPass').value = c.password; document.getElementById('editAmount').value = c.amount; document.getElementById('editDuration').value = c.duration; document.getElementById('editVillage').value = c.village || ''; document.getElementById('editAadhaar').value = c.aadhaar || ''; document.getElementById('editNotes').value = c.notes || ''; document.getElementById('editStartDate').value = c.startDate || ''; document.getElementById('editLastPaid').value = c.lastPaidDate || ''; openModalSafe('editCustomerModal'); }
+        document.getElementById('editCustomerForm').addEventListener('submit', function(e) { e.preventDefault(); let accId = document.getElementById('editAccId').value; let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1) { globalCustomers[idx].name = document.getElementById('editName').value; globalCustomers[idx].phone = document.getElementById('editPhone').value; globalCustomers[idx].password = document.getElementById('editPass').value; globalCustomers[idx].amount = Number(document.getElementById('editAmount').value); globalCustomers[idx].duration = Number(document.getElementById('editDuration').value); globalCustomers[idx].village = document.getElementById('editVillage').value; globalCustomers[idx].aadhaar = document.getElementById('editAadhaar').value; globalCustomers[idx].notes = document.getElementById('editNotes').value; globalCustomers[idx].startDate = document.getElementById('editStartDate').value; globalCustomers[idx].lastPaidDate = document.getElementById('editLastPaid').value; closeModalSafe('editCustomerModal'); saveToDB(); alert("Details Updated!"); } });
 
         function addPenalty(accId, name) { let amount = prompt(`Add Penalty (₹) for ${name}:`); if (amount && !isNaN(amount) && Number(amount) > 0) { let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1) { globalCustomers[idx].penalty = (Number(globalCustomers[idx].penalty) || 0) + Number(amount); saveToDB(); } } }
         function waivePenalty(accId, name) { if(confirm(`Remove all penalties for ${name} [${accId}]?`)) { let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1) { globalCustomers[idx].penalty = 0; saveToDB(); } } }
@@ -327,45 +205,18 @@
         function topUpLoan(accId, name, phone) { if(confirm(`TOP-UP: Mark ${accId} SETTLED & Open New Loan?`)) { let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1) { globalCustomers[idx].paidWeeks = globalCustomers[idx].duration; globalCustomers[idx].amount = 0; saveToDB(); document.getElementById('custName').value = name; document.getElementById('custPhone').value = phone; openModalSafe('addCustomerModal'); } } }
         function settlementCalculator(accId, name, pendingBalance) { let actualPaid = prompt(`SETTLE LOAN: ${name}\nPending: ₹${pendingBalance}\nEnter final amount paid:`, pendingBalance); if(actualPaid) { let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1) { globalCustomers[idx].paidWeeks = globalCustomers[idx].duration; globalCustomers[idx].history.push({ date: new Date().toLocaleDateString('en-GB'), week: 'Settle', amount: Number(actualPaid), mode: 'Settlement' }); globalCustomers[idx].amount = 0; globalCustomers[idx].penalty = 0; saveToDB(); } } }
 
-        function open360Profile(accId) {
-            let c = globalCustomers.find(x => x.accId === accId); if(!c) return;
-            document.getElementById('prof360Name').innerText = c.name; document.getElementById('prof360Id').innerText = c.accId;
-            let hBody = document.getElementById('prof360History'); hBody.innerHTML = '';
-            if(c.history && c.history.length > 0) {
-                [...c.history].reverse().forEach((r, idx) => {
-                    let undoBtn = idx === 0 ? `<button class="btn btn-sm btn-outline-danger py-0" style="font-size:9px;" onclick="undoTransaction('${c.accId}')"><i class="fas fa-undo"></i></button>` : '';
-                    let modeIcon = r.mode.toLowerCase().includes('cash') ? '<i class="fas fa-money-bill-wave text-success"></i>' : '<i class="fas fa-mobile-alt text-primary"></i>';
-                    hBody.innerHTML += `<tr><td class="fw-bold text-dark">Wk-${r.week}</td><td class="fw-bold">${r.date}</td><td>${modeIcon} ${r.mode}</td><td class="text-success fw-bold">${formatMoney(r.amount)}</td><td>${undoBtn}</td></tr>`;
-                });
-            } else { hBody.innerHTML = `<tr><td colspan="5" class="text-muted">No history.</td></tr>`; }
-            openModalSafe('customer360Modal');
-        }
+        function open360Profile(accId) { let c = globalCustomers.find(x => x.accId === accId); if(!c) return; document.getElementById('prof360Name').innerText = c.name; document.getElementById('prof360Id').innerText = c.accId; let hBody = document.getElementById('prof360History'); hBody.innerHTML = ''; if(c.history && c.history.length > 0) { [...c.history].reverse().forEach((r, idx) => { let undoBtn = idx === 0 ? `<button class="btn btn-sm btn-outline-danger py-0" style="font-size:9px;" onclick="undoTransaction('${c.accId}')"><i class="fas fa-undo"></i></button>` : ''; let modeIcon = r.mode.toLowerCase().includes('cash') ? '<i class="fas fa-money-bill-wave text-success"></i>' : '<i class="fas fa-mobile-alt text-primary"></i>'; hBody.innerHTML += `<tr><td class="fw-bold text-dark">Wk-${r.week}</td><td class="fw-bold">${r.date}</td><td>${modeIcon} ${r.mode}</td><td class="text-success fw-bold">${formatMoney(r.amount)}</td><td>${undoBtn}</td></tr>`; }); } else { hBody.innerHTML = `<tr><td colspan="5" class="text-muted">No history.</td></tr>`; } openModalSafe('customer360Modal'); }
+        function viewFullProfile(accId) { let c = globalCustomers.find(x => x.accId === accId); if(c) { document.getElementById('fpName').innerText = c.name; document.getElementById('fpAccId').innerText = c.accId; document.getElementById('fpPhone').innerText = c.phone; document.getElementById('fpPin').innerText = c.password; document.getElementById('fpAadhaar').innerText = c.aadhaar || 'N/A'; document.getElementById('fpVillage').innerText = c.village || 'N/A'; document.getElementById('fpNotes').innerText = c.notes || 'None'; document.getElementById('fpStart').innerText = c.startDate || 'N/A'; openModalSafe('fullProfileModal'); } }
+        function undoTransaction(accId) { if(confirm("UNDO last payment?")) { let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1 && globalCustomers[idx].history.length > 0) { globalCustomers[idx].history.pop(); globalCustomers[idx].paidWeeks -= 1; saveToDB(); closeModalSafe('customer360Modal'); } } }
 
-        function viewFullProfile(accId) {
-            let c = globalCustomers.find(x => x.accId === accId); if(c) {
-                document.getElementById('fpName').innerText = c.name; document.getElementById('fpAccId').innerText = c.accId; document.getElementById('fpPhone').innerText = c.phone; document.getElementById('fpPin').innerText = c.password; document.getElementById('fpAadhaar').innerText = c.aadhaar || 'N/A'; document.getElementById('fpVillage').innerText = c.village || 'N/A'; document.getElementById('fpNotes').innerText = c.notes || 'None'; document.getElementById('fpStart').innerText = c.startDate || 'N/A';
-                openModalSafe('fullProfileModal');
-            }
-        }
-
-        function undoTransaction(accId) {
-            if(confirm("UNDO last payment?")) { let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1 && globalCustomers[idx].history.length > 0) { globalCustomers[idx].history.pop(); globalCustomers[idx].paidWeeks -= 1; saveToDB(); closeModalSafe('customer360Modal'); } }
-        }
-
-        // 🚀 RENDERING (FIXED LINKS)
         function renderData() {
             const cardContainer = document.getElementById('customersListContainer'); const tableBody = document.getElementById('tableBody');
             cardContainer.innerHTML = ''; tableBody.innerHTML = ''; let visibleCount = 0; const today = new Date(); today.setHours(0,0,0,0);
-            let sq = document.getElementById('searchInput').value.toLowerCase();
-            let dList = globalCustomers.filter(c => c.name.toLowerCase().includes(sq) || c.phone.includes(sq) || c.accId.toLowerCase().includes(sq));
+            let sq = document.getElementById('searchInput').value.toLowerCase(); let dList = globalCustomers.filter(c => c.name.toLowerCase().includes(sq) || c.phone.includes(sq) || c.accId.toLowerCase().includes(sq));
             let sType = document.getElementById('sortFilter').value; if(sType === 'name') dList.sort((a,b) => a.name.localeCompare(b.name)); if(sType === 'recent') dList.reverse(); 
 
             dList.forEach(function(cust) {
-                let principal = Number(cust.amount); let penalty = Number(cust.penalty || 0); let baseEmi = Math.round((principal + (principal * 0.20)) / Number(cust.duration));
-                let nextEmiToPay = baseEmi + penalty; let paidWeeks = cust.paidWeeks || 0; let pendingWeeks = Number(cust.duration) - paidWeeks;
-                let progressPercent = Math.min(100, Math.round((paidWeeks / Number(cust.duration)) * 100)); let pendingBalance = pendingWeeks * baseEmi + penalty;
-                let isOverdue = false; let dueDate = cust.nextDueDate ? new Date(cust.nextDueDate.split('/').reverse().join('-')) : new Date();
-                if(dueDate < today && pendingWeeks > 0) isOverdue = true;
+                let principal = Number(cust.amount); let penalty = Number(cust.penalty || 0); let baseEmi = Math.round((principal + (principal * 0.20)) / Number(cust.duration)); let nextEmiToPay = baseEmi + penalty; let paidWeeks = cust.paidWeeks || 0; let pendingWeeks = Number(cust.duration) - paidWeeks; let progressPercent = Math.min(100, Math.round((paidWeeks / Number(cust.duration)) * 100)); let pendingBalance = pendingWeeks * baseEmi + penalty; let isOverdue = false; let dueDate = cust.nextDueDate ? new Date(cust.nextDueDate.split('/').reverse().join('-')) : new Date(); if(dueDate < today && pendingWeeks > 0) isOverdue = true;
 
                 if(currentFilter === 'pending' && !cust.pendingApproval) return;
                 if(currentFilter !== 'pending') { if(currentFilter === 'active' && pendingWeeks <= 0) return; if(currentFilter === 'cleared' && pendingWeeks > 0) return; if(currentFilter === 'overdue' && !isOverdue) return; }
@@ -403,7 +254,6 @@
                 } else {
                     let rClass = 'customer-card'; if(isOverdue) rClass += ' row-overdue'; 
                     let appHTML = cust.pendingApproval ? `<div class="bg-warning text-dark p-2 rounded mb-2 d-flex justify-content-between align-items-center" style="font-size:11px;"><b>App Pay Req!</b> <div><button class="btn btn-sm btn-success py-0 px-2 fw-bold" onclick="openApproveModal('${cust.accId}'); return false;"><i class="fas fa-check"></i> Verify</button> <button class="btn btn-sm btn-danger py-0 px-2 fw-bold" onclick="rejectFakePayment('${cust.accId}'); return false;"><i class="fas fa-times"></i></button></div></div>` : ``;
-                    
                     cardContainer.innerHTML += `<div class="${rClass}">${appHTML}<div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2"><div><div style="font-size:14px; font-weight:800;">${cust.name}</div><div style="font-size:10px; color:#777;"><i class="fas fa-mobile-alt"></i> ${cust.phone} | <span class="text-primary">${cust.accId}</span></div></div><div class="text-end">${pendingWeeks <= 0 ? `<span class="badge bg-success">Settled</span>` : `<span class="badge bg-primary">Active</span>`}</div></div>${lastPayHTML}<div class="d-flex gap-1 mb-2"><div class="data-block"><span class="data-label">Prncpl</span><br><span class="data-val">${formatMoney(principal)}</span></div><div class="data-block" style="border-color:var(--primary);"><span class="data-label text-primary">EMI</span><br><span class="data-val-big">${formatMoney(nextEmiToPay)}</span></div><div class="data-block"><span class="data-label">Bal</span><br><span class="data-val text-danger">${formatMoney(pendingBalance)}</span></div><div class="data-block" style="width:80px;"><span class="data-label">Paid</span><br><span class="data-val text-success">${paidWeeks}/${cust.duration}</span></div></div><div class="action-toolbar">${actionMenu}</div></div>`;
                 }
             });
