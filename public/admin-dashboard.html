@@ -136,7 +136,7 @@
          MODALS SECTION 
          ========================================= -->
     
-    <!-- 🟢 NEW: PAYMENT CONFIRMATION MODAL -->
+    <!-- PAYMENT CONFIRMATION MODAL -->
     <div class="modal fade" id="paymentModal" tabindex="-1">
         <div class="modal-dialog modal-sm modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg">
@@ -408,14 +408,14 @@
         });
 
         // ==========================================
-        // 🚀 NEW: MODAL BASED PAYMENT SYSTEM
+        // 🚀 PAYMENT SYSTEM & APPROVAL MODAL (UPDATED)
         // ==========================================
         function recordCashPayment(accId, name, amount) {
             currentPayAccId = accId;
             document.getElementById('payCustName').innerText = name + " (Full EMI)";
             document.getElementById('payAccId').innerText = accId;
             document.getElementById('payAmount').value = amount;
-            document.getElementById('payAmount').readOnly = true; // Block editing
+            document.getElementById('payAmount').readOnly = true; 
             document.getElementById('payType').value = 'full';
             new bootstrap.Modal(document.getElementById('paymentModal')).show();
         }
@@ -425,7 +425,7 @@
             document.getElementById('payCustName').innerText = name + " (Part Pay)";
             document.getElementById('payAccId').innerText = accId;
             document.getElementById('payAmount').value = "";
-            document.getElementById('payAmount').readOnly = false; // Allow typing amount
+            document.getElementById('payAmount').readOnly = false; 
             document.getElementById('payType').value = 'part';
             new bootstrap.Modal(document.getElementById('paymentModal')).show();
         }
@@ -440,12 +440,30 @@
                 document.getElementById('payAmount').value = amt;
                 document.getElementById('payAmount').readOnly = true;
                 document.getElementById('payType').value = 'adv';
-                document.getElementById('payBaseEmi').value = baseEmi; // Save base EMI to calc weeks later
+                document.getElementById('payBaseEmi').value = baseEmi; 
                 new bootstrap.Modal(document.getElementById('paymentModal')).show();
             }
         }
 
-        // Processing the modal form
+        // NEW: Open Modal for App Pay Approval
+        function openApproveModal(accId) {
+            let idx = globalCustomers.findIndex(c => c.accId === accId);
+            if(idx !== -1) {
+                let p = globalCustomers[idx];
+                let emi = Math.round((p.amount * 1.2) / p.duration) + (p.penalty || 0);
+                
+                currentPayAccId = accId;
+                document.getElementById('payCustName').innerText = p.name + " (Verify App Pay)";
+                document.getElementById('payAccId').innerText = accId;
+                document.getElementById('payAmount').value = emi;
+                document.getElementById('payAmount').readOnly = true; // Block edit for verification
+                document.getElementById('payMode').value = "PhonePe"; // Default to PhonePe
+                document.getElementById('payType').value = 'approve';
+                
+                new bootstrap.Modal(document.getElementById('paymentModal')).show();
+            }
+        }
+
         function processPayment() {
             let amount = Number(document.getElementById('payAmount').value);
             let mode = document.getElementById('payMode').value;
@@ -463,6 +481,10 @@
                     let baseEmi = Number(document.getElementById('payBaseEmi').value);
                     let weeks = Math.floor(amount / baseEmi);
                     for(let i=0; i<weeks; i++) addHistoryRecord(globalCustomers[idx], baseEmi, mode + ' (Adv)');
+                } else if(pType === 'approve') {
+                    // This handles the Customer App Payment Approval
+                    addHistoryRecord(globalCustomers[idx], amount, mode + ' (App)');
+                    globalCustomers[idx].paymentSuccessFlag = true;
                 }
                 
                 saveToDB();
@@ -479,6 +501,14 @@
             let d = new Date(); d.setDate(d.getDate() + 7);
             c.nextDueDate = d.toLocaleDateString('en-GB');
             c.pendingApproval = false;
+        }
+
+        // ==========================================
+        // 🚀 OTHERS / UTILS
+        // ==========================================
+        function rejectFakePayment(accId) { 
+            let idx = globalCustomers.findIndex(c => c.accId === accId); 
+            if(idx !== -1) { globalCustomers[idx].pendingApproval = false; saveToDB(); } 
         }
 
         function settlementCalculator(accId, name, pendingBalance) {
@@ -521,9 +551,6 @@
             }
         }
 
-        // ==========================================
-        // 🚀 OTHERS / UTILS
-        // ==========================================
         function viewFullProfile(accId) {
             let c = globalCustomers.find(x => x.accId === accId);
             if(c) {
@@ -566,8 +593,6 @@
             if(c) { localStorage.setItem('loggedInCustomer', JSON.stringify({ phone: c.phone, password: c.password })); window.open('customer-dashboard.html', '_blank'); }
         }
 
-        function approvePayment(accId) { let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1) { let p = globalCustomers[idx]; let emi = Math.round((p.amount*1.2)/p.duration)+p.penalty; addHistoryRecord(p, emi, 'App Pay (Online)'); p.paymentSuccessFlag = true; saveToDB(); } }
-        function rejectFakePayment(accId) { let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1) { globalCustomers[idx].pendingApproval = false; saveToDB(); } }
         function secureDeleteLoan(accId) { if(prompt("Enter PIN (7569) to delete:") === "7569") { globalCustomers = globalCustomers.filter(c => c.accId !== accId); saveToDB(); } }
 
         function open360Profile(accId) {
@@ -644,7 +669,7 @@
         }
 
         // ==========================================
-        // 🚀 RENDERING 
+        // 🚀 RENDERING & SEARCH
         // ==========================================
         function renderData() {
             const cardContainer = document.getElementById('customersListContainer');
@@ -730,7 +755,8 @@
                     `;
                 } else {
                     let rowClass = 'customer-card'; if(isOverdue) rowClass += ' row-overdue'; 
-                    let approvalHTML = cust.pendingApproval ? `<div class="bg-warning text-dark p-2 rounded mb-2 d-flex justify-content-between align-items-center" style="font-size:11px;"><b>App Pay!</b> <div><button class="btn btn-sm btn-success py-0" onclick="approvePayment('${cust.accId}')">Ok</button> <button class="btn btn-sm btn-danger py-0" onclick="rejectFakePayment('${cust.accId}')">No</button></div></div>` : ``;
+                    // 🟢 NEW: CHANGED "Ok" BUTTON TO "Verify" WHICH OPENS PAYMENT MODAL
+                    let approvalHTML = cust.pendingApproval ? `<div class="bg-warning text-dark p-2 rounded mb-2 d-flex justify-content-between align-items-center" style="font-size:11px;"><b>App Pay Req!</b> <div><button class="btn btn-sm btn-success py-0 px-2 fw-bold" onclick="openApproveModal('${cust.accId}')"><i class="fas fa-check"></i> Verify</button> <button class="btn btn-sm btn-danger py-0 px-2 fw-bold" onclick="rejectFakePayment('${cust.accId}')"><i class="fas fa-times"></i></button></div></div>` : ``;
                     
                     cardContainer.innerHTML += `
                         <div class="${rowClass}">
