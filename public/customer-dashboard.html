@@ -25,11 +25,11 @@
         .history-btn { background: #F1F2F4; color: var(--text-dark); border: 1px solid #BDC3C7; padding: 8px; width: 100%; border-radius: 6px; font-weight: 700; font-size: 12px; margin-top: 10px; transition: 0.2s;}
         .passbook-table th { background: var(--primary); color: white; font-size: 11px; }
         .passbook-table td { font-size: 12px; font-weight: 600; }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <!-- SUCCESS OVERLAY -->
     <div id="successScreen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:9999; display:none; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
         <div style="width:80px; height:80px; background:var(--success); border-radius:50%; display:flex; justify-content:center; align-items:center; color:white; font-size:40px; animation: popIn 0.5s;"><i class="fas fa-check"></i></div>
         <h3 class="mt-3 fw-bold text-success">Payment Approved!</h3>
@@ -39,17 +39,13 @@
     <!-- LOGIN SCREEN -->
     <div id="loginScreen" style="height: 100vh; display: flex; align-items: center; justify-content: center; background: white; padding: 20px;">
         <div style="width: 100%; max-width: 350px; text-align: center;">
-            <div style="background: #EAF2F8; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; color: var(--primary);">
-                <i class="fas fa-university fs-1"></i>
-            </div>
+            <div style="background: #EAF2F8; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; color: var(--primary);"><i class="fas fa-university fs-1"></i></div>
             <h3 class="fw-bold mb-1" style="color: var(--primary); font-weight: 900;">JESSICA FINANCE</h3>
             <p class="text-muted small mb-4 fw-bold">Customer Secure Login</p>
-            
-            <input type="tel" id="loginPhone" class="form-control mb-3 p-3 bg-light text-center fw-bold" placeholder="Mobile Number (e.g. 9999999999)" style="border-radius:8px;">
+            <input type="tel" id="loginPhone" class="form-control mb-3 p-3 bg-light text-center fw-bold" placeholder="Mobile Number" style="border-radius:8px;">
             <input type="password" id="loginPin" class="form-control mb-4 p-3 bg-light text-center fw-bold text-danger" placeholder="4-Digit PIN" style="border-radius:8px; letter-spacing: 5px;">
-            
             <button class="btn w-100 p-3 fw-bold text-white" style="border-radius:8px; background: var(--primary);" onclick="customerLogin()">SECURE LOGIN <i class="fas fa-lock ms-2"></i></button>
-            <div id="loginLoading" style="display: none;" class="mt-3 fw-bold text-primary"><i class="fas fa-circle-notch fa-spin"></i> Connecting to Admin Server...</div>
+            <div id="loginLoading" style="display: none;" class="mt-3 fw-bold text-primary"><i class="fas fa-circle-notch fa-spin"></i> Connecting to Secure Server...</div>
         </div>
     </div>
 
@@ -87,9 +83,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // 🟢 FIXED KEYS
-        const BIN_ID = "6a53982ada38895dfe52ba5a";
-        const API_KEY = "$2a$10$e2nyXRn87ZTYmmx1xTnlyO4GhxNGkZC0SCAAVKhV2vWVFQv36TgV6";
+        const BIN_ID = "6a680db5da38895dfe99644c"; 
+        const API_KEY = "$2a$10$hMjC2hJpy4MR4jrFYBGrMeX.3m5olpdY3LgNetbTgdcex3JgQItg6";
         
         const formatMoney = (amount) => '₹' + Number(amount).toLocaleString('en-IN'); let myAllLoans = []; let pollInterval = null;
 
@@ -99,9 +94,10 @@
             if(session) { let creds = JSON.parse(session); document.getElementById('loginPhone').value = creds.phone; document.getElementById('loginPin').value = creds.password; customerLogin(); }
         };
 
-        // 🟢 FIXED FORMAT LOAD
+        // 🔥 BULLETPROOF LOAD 🔥
         async function fetchCloudData() { 
             let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers: { 'X-Master-Key': API_KEY } }); 
+            if(!res.ok) throw new Error("Network Error");
             let data = await res.json(); 
             let rawData = data.record;
             if (rawData && !Array.isArray(rawData)) { return rawData.customers || []; }
@@ -110,7 +106,6 @@
 
         async function updateCloudData(newData) { await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY }, body: JSON.stringify(newData) }); }
 
-        // 🟢 STRICT LOGIN (Bug Fixed)
         async function customerLogin() {
             let phone = String(document.getElementById('loginPhone').value).trim();
             let pin = String(document.getElementById('loginPin').value).trim();
@@ -150,7 +145,6 @@
             if(myAllLoans.length === 0) container.innerHTML = `<div class="text-center text-muted py-5"><i class="fas fa-box-open fs-1 mb-2"></i><br>No Loans Found</div>`;
         }
 
-        // 🟢 PASSBOOK MODAL BUG FIXED
         function openPassbook(accId) {
             let loan = myAllLoans.find(c => c.accId === accId); if(!loan) return;
             document.getElementById('pbAccId').innerText = `Account: ${loan.accId}`; let tbody = document.getElementById('pbHistoryBody'); tbody.innerHTML = '';

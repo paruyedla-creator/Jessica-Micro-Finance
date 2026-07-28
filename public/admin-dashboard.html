@@ -33,6 +33,7 @@
         .last-pay-strip { font-size: 10px; background: #E8F8F5; color: #1E8449; padding: 4px 8px; border-radius: 4px; border: 1px dashed #A9DFBF; margin-bottom: 8px; display: inline-block; width: 100%; }
         .last-pay-strip.no-pay { background: #FDEDEC; color: #C0392B; border-color: #F5B7B1; }
         .w-20px { width: 20px; text-align: center; }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -44,6 +45,39 @@
         <input type="password" id="unlockPin" class="form-control text-center fw-bold fs-4 mt-3" style="width: 200px; letter-spacing: 10px; border-radius: 8px;" placeholder="****" oninput="checkUnlock(this.value)">
     </div>
 
+    <!-- 🔥 100% గ్యారెంటీ సూపర్ పేమెంట్ పాప్-అప్ -->
+    <div id="superPayModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,34,68,0.8); z-index:99999; justify-content:center; align-items:center; backdrop-filter:blur(3px);">
+        <div style="background:white; width:90%; max-width:350px; border-radius:12px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.5); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            <div style="background:var(--success); color:white; padding:15px; text-align:center; font-size:18px; font-weight:800; position:relative;">
+                <i class="fas fa-rupee-sign"></i> Collect Payment
+                <i class="fas fa-times" style="position:absolute; right:15px; top:18px; cursor:pointer;" onclick="closeSuperPay()"></i>
+            </div>
+            <div style="padding:20px;">
+                <div class="text-center mb-4">
+                    <h5 class="fw-bold text-dark m-0" id="spName">Customer Name</h5>
+                    <span class="badge bg-primary mt-2 fs-6" id="spAcc">JF-0000</span>
+                </div>
+                
+                <label class="small fw-bold text-muted mb-1">Amount Received (₹)</label>
+                <input type="number" id="spAmount" class="form-control fw-bold mb-3 border-success text-success fs-4 text-center" style="background:#f8fff9;">
+                
+                <label class="small fw-bold text-muted mb-1">Select Payment Mode</label>
+                <select id="spMode" class="form-select fw-bold border-dark mb-4 fs-5">
+                    <option value="PhonePe">📱 PhonePe</option>
+                    <option value="GPay">📱 Google Pay</option>
+                    <option value="Cash">💵 Cash</option>
+                    <option value="Bank Transfer">🏦 Bank Transfer</option>
+                </select>
+                
+                <input type="hidden" id="spType">
+                <input type="hidden" id="spBaseEmi">
+                
+                <button class="btn btn-success w-100 fw-bold py-3 fs-5" onclick="processSuperPay()"><i class="fas fa-check-circle me-1"></i> Confirm & Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
     <div class="top-navbar d-flex justify-content-between align-items-center">
         <div><h5 class="m-0 fw-bold">JESSICA FINANCE</h5><div style="font-size: 10px; color: #BDC3C7;" id="liveClockDisplay">Loading...</div></div>
         <div class="d-flex align-items-center gap-2">
@@ -57,7 +91,7 @@
             <div class="d-flex gap-2">
                 <button class="btn btn-sm btn-primary fw-bold" onclick="openModalSafe('addCustomerModal')"><i class="fas fa-plus"></i> New Loan</button>
                 <button class="btn btn-sm btn-dark fw-bold" onclick="toggleView()" id="viewToggleBtn"><i class="fas fa-table"></i> Table</button>
-                <button class="btn btn-sm btn-info fw-bold text-dark" onclick="openModalSafe('cashCalcModal')"><i class="fas fa-calculator"></i> Cash Counter</button>
+                <button class="btn btn-sm btn-info fw-bold text-dark" onclick="openModalSafe('cashCalcModal')"><i class="fas fa-calculator"></i> Counter</button>
             </div>
             <div class="d-flex gap-2 align-items-center">
                 <div class="input-group input-group-sm" style="width: 200px;"><span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span><input type="text" id="searchInput" class="form-control border-start-0 fw-bold" placeholder="Search..." onkeyup="renderData()"></div>
@@ -88,11 +122,6 @@
     </div>
 
     <!-- MODALS SECTION -->
-    
-    <!-- PAYMENT CONFIRMATION MODAL -->
-    <div class="modal fade" id="paymentModal" tabindex="-1">
-        <div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-success text-white py-2"><h6 class="modal-title fw-bold"><i class="fas fa-rupee-sign me-1"></i> Collect Payment</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light"><div class="text-center mb-3"><h6 class="fw-bold m-0 text-dark" id="payCustName">Name</h6><small class="fw-bold text-primary" id="payAccId">JF-0000</small></div><label class="small fw-bold text-muted">Amount Received (₹)</label><input type="number" id="payAmount" class="form-control fw-bold mb-3 border-success text-success fs-5"><label class="small fw-bold text-muted">Payment Mode</label><select id="payMode" class="form-select fw-bold border-dark mb-4"><option value="Cash">💵 Cash</option><option value="PhonePe">📱 PhonePe</option><option value="GPay">📱 Google Pay (GPay)</option><option value="Bank Transfer">🏦 Bank Transfer</option></select><input type="hidden" id="payType"> <input type="hidden" id="payBaseEmi"><button class="btn btn-success w-100 fw-bold py-2 fs-6" onclick="processPayment()"><i class="fas fa-check-circle me-1"></i> Confirm & Save</button></div></div></div>
-    </div>
 
     <!-- CASH COUNTER MODAL -->
     <div class="modal fade" id="cashCalcModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content border-0"><div class="modal-header bg-info text-dark py-2"><h6 class="modal-title fw-bold"><i class="fas fa-money-bill-wave me-2"></i> Cash Counter</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light"><div class="row g-2 text-end fw-bold align-items-center"><div class="col-4">₹ 500 x</div><div class="col-8"><input type="number" id="c500" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div><div class="col-4">₹ 200 x</div><div class="col-8"><input type="number" id="c200" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div><div class="col-4">₹ 100 x</div><div class="col-8"><input type="number" id="c100" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div></div><div class="mt-3 p-2 bg-dark text-white text-center rounded"><div style="font-size: 10px;">TOTAL CASH</div><h4 class="m-0 fw-bold text-success" id="cashTotalResult">₹0</h4></div><button class="btn btn-sm btn-secondary w-100 mt-2 fw-bold" onclick="resetCash()">Reset</button></div></div></div></div>
@@ -111,9 +140,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // 🟢 FIXED KEYS: మీ ఒరిజినల్ కీస్ ఇవే!
-        const BIN_ID = "6a53982ada38895dfe52ba5a";
-        const API_KEY = "$2a$10$e2nyXRn87ZTYmmx1xTnlyO4GhxNGkZC0SCAAVKhV2vWVFQv36TgV6";
+        // 🔥 కొత్త, అసలైన డేటాబేస్ కీస్ (ఇవి వాడితేనే వర్క్ అవుతుంది!)
+        const BIN_ID = "6a680db5da38895dfe99644c";
+        const API_KEY = "$2a$10$hMjC2hJpy4MR4jrFYBGrMeX.3m5olpdY3LgNetbTgdcex3JgQItg6";
         
         let globalCustomers = []; let currentFilter = 'all'; let isSyncing = false; let isTableView = false; let currentPayAccId = null;
         const formatMoney = (amount) => '₹' + Number(amount).toLocaleString('en-IN');
@@ -127,39 +156,81 @@
         function openModalSafe(id) { let el = document.getElementById(id); let m = bootstrap.Modal.getOrCreateInstance(el); m.show(); }
         function closeModalSafe(id) { let el = document.getElementById(id); let m = bootstrap.Modal.getInstance(el); if(m) m.hide(); }
 
-        // 🟢 FIXED FORMAT LOAD: పాత డేటా ఫార్మాట్ ని సేఫ్ గా లాగడానికి
+        // 🔥 THE SUPER MODAL LOGIC 🔥
+        function openSuperPay(accId, name, amount, type, baseEmi = 0) {
+            currentPayAccId = accId;
+            document.getElementById('spName').innerText = name + (type === 'approve' ? ' (App Verify)' : '');
+            document.getElementById('spAcc').innerText = accId;
+            document.getElementById('spAmount').value = amount;
+            document.getElementById('spAmount').readOnly = (type === 'full' || type === 'adv' || type === 'approve');
+            document.getElementById('spType').value = type;
+            document.getElementById('spBaseEmi').value = baseEmi;
+            document.getElementById('spMode').value = (type === 'approve') ? "PhonePe" : "Cash";
+            document.getElementById('superPayModal').style.display = 'flex';
+        }
+
+        function closeSuperPay() { document.getElementById('superPayModal').style.display = 'none'; }
+
+        function processSuperPay() {
+            let amount = Number(document.getElementById('spAmount').value); 
+            let mode = document.getElementById('spMode').value; 
+            let pType = document.getElementById('spType').value;
+            
+            if(!amount || amount <= 0) return alert("Enter valid amount!");
+            let idx = globalCustomers.findIndex(c => c.accId === currentPayAccId);
+            if(idx !== -1) {
+                if(pType === 'full') addHistoryRecord(globalCustomers[idx], amount, mode);
+                else if(pType === 'part') addHistoryRecord(globalCustomers[idx], amount, mode + ' (Part)');
+                else if(pType === 'adv') { let baseEmi = Number(document.getElementById('spBaseEmi').value); let weeks = Math.floor(amount/baseEmi); for(let i=0; i<weeks; i++) addHistoryRecord(globalCustomers[idx], baseEmi, mode + ' (Adv)'); }
+                else if(pType === 'approve') { addHistoryRecord(globalCustomers[idx], amount, mode + ' (App)'); globalCustomers[idx].paymentSuccessFlag = true; }
+                
+                saveToDB(); 
+                closeSuperPay();
+            }
+        }
+
+        // 🔥 BULLETPROOF LOAD DATA 🔥
         async function loadCustomers() {
             if(isSyncing) return; isSyncing = true;
-            document.getElementById('networkStatus').innerHTML = `<i class="fas fa-sync fa-spin text-warning"></i> SYNCING...`;
+            let ns = document.getElementById('networkStatus');
+            ns.innerHTML = `<i class="fas fa-sync fa-spin text-warning"></i> SYNCING...`;
             try {
                 let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers: { 'X-Master-Key': API_KEY } });
                 if(!res.ok) throw new Error("Key/Network Error");
                 let data = await res.json(); 
-                
                 let rawData = data.record;
-                if (rawData && !Array.isArray(rawData)) {
-                    globalCustomers = rawData.customers || []; // పాత ఫార్మాట్ ని ఆటోమేటిక్ గా ఫిక్స్ చేస్తుంది!
-                } else {
-                    globalCustomers = rawData || [];
-                }
-                
-                document.getElementById('networkStatus').innerHTML = `<i class="fas fa-cloud text-success"></i> ONLINE`;
-                localStorage.setItem('jf_offline_backup', JSON.stringify(globalCustomers)); renderData(); calculateAnalytics();
+                if (rawData && !Array.isArray(rawData)) { globalCustomers = rawData.customers || []; } else { globalCustomers = rawData || []; }
+                ns.innerHTML = `<i class="fas fa-cloud text-success"></i> ONLINE`;
+                try { localStorage.setItem('jf_offline_backup', JSON.stringify(globalCustomers)); } catch(e) {}
+                renderData(); calculateAnalytics();
             } catch (e) { 
-                document.getElementById('networkStatus').innerHTML = `<i class="fas fa-exclamation-triangle text-danger"></i> OFFLINE`; 
-                let l = localStorage.getItem('jf_offline_backup'); if(l) { globalCustomers = JSON.parse(l); renderData(); calculateAnalytics(); } 
+                ns.innerHTML = `<i class="fas fa-exclamation-triangle text-danger"></i> OFFLINE`; 
+                try {
+                    let l = localStorage.getItem('jf_offline_backup'); 
+                    if(l) { 
+                        let parsed = JSON.parse(l); 
+                        globalCustomers = Array.isArray(parsed) ? parsed : (parsed.customers || []);
+                        renderData(); calculateAnalytics(); 
+                    }
+                } catch(err) {}
             }
             isSyncing = false;
         }
 
+        // 🔥 BULLETPROOF SAVE DATA 🔥
         async function saveToDB() {
-            document.getElementById('networkStatus').innerHTML = `<i class="fas fa-spinner fa-spin text-primary"></i> SAVING...`;
-            localStorage.setItem('jf_offline_backup', JSON.stringify(globalCustomers)); renderData(); calculateAnalytics();
+            let ns = document.getElementById('networkStatus');
+            ns.innerHTML = `<i class="fas fa-spinner fa-spin text-primary"></i> SAVING...`;
+            try { localStorage.setItem('jf_offline_backup', JSON.stringify(globalCustomers)); } catch(e) {}
+            try { renderData(); calculateAnalytics(); } catch(e) { console.error(e); }
+            
             try { 
                 let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY }, body: JSON.stringify(globalCustomers) }); 
                 if(!res.ok) throw new Error("Save Failed");
-                document.getElementById('networkStatus').innerHTML = `<i class="fas fa-cloud text-success"></i> SAVED`;
-            } catch (e) { document.getElementById('networkStatus').innerHTML = `<i class="fas fa-save text-warning"></i> OFFLINE`; }
+                ns.innerHTML = `<i class="fas fa-cloud text-success"></i> SAVED`;
+            } catch (e) { 
+                ns.innerHTML = `<i class="fas fa-save text-warning"></i> OFFLINE (SAVED LOCALLY)`; 
+            }
         }
 
         function liveRefresh() { loadCustomers(); }
@@ -168,29 +239,10 @@
 
         document.getElementById('addCustomerForm').addEventListener('submit', function(e) {
             e.preventDefault(); let uniqueId = "JF-" + Math.floor(1000 + Math.random() * 9000);
-            if(!Array.isArray(globalCustomers)) globalCustomers = []; // Safety check
+            if(!Array.isArray(globalCustomers)) globalCustomers = [];
             globalCustomers.push({ accId: uniqueId, name: document.getElementById('custName').value.trim(), phone: document.getElementById('custPhone').value.trim(), password: document.getElementById('custPass').value.trim(), village: document.getElementById('custVillage').value, aadhaar: document.getElementById('custAadhaar').value, amount: Number(document.getElementById('custAmount').value), duration: Number(document.getElementById('custDuration').value), guarantor: document.getElementById('custGuarantor').value, paidWeeks: 0, penalty: 0, history: [], pendingApproval: false, notes: "", startDate: new Date().toLocaleDateString('en-GB') });
             closeModalSafe('addCustomerModal'); document.getElementById('addCustomerForm').reset(); saveToDB();
         });
-
-        // 🚀 PAYMENT ACTIONS & MODALS
-        function recordCashPayment(accId, name, amount) { currentPayAccId = accId; document.getElementById('payCustName').innerText = name + " (Full EMI)"; document.getElementById('payAccId').innerText = accId; document.getElementById('payAmount').value = amount; document.getElementById('payAmount').readOnly = true; document.getElementById('payType').value = 'full'; openModalSafe('paymentModal'); }
-        function customPayment(accId, name) { currentPayAccId = accId; document.getElementById('payCustName').innerText = name + " (Part Pay)"; document.getElementById('payAccId').innerText = accId; document.getElementById('payAmount').value = ""; document.getElementById('payAmount').readOnly = false; document.getElementById('payType').value = 'part'; openModalSafe('paymentModal'); }
-        function advancePayment(accId, name, baseEmi) { let weeks = prompt(`ADVANCE PAY for ${name}\nHow many weeks?`); if(weeks && !isNaN(weeks) && Number(weeks)>1) { currentPayAccId = accId; document.getElementById('payCustName').innerText = name + ` (${weeks} Wks Advance)`; document.getElementById('payAccId').innerText = accId; document.getElementById('payAmount').value = Number(weeks) * baseEmi; document.getElementById('payAmount').readOnly = true; document.getElementById('payType').value = 'adv'; document.getElementById('payBaseEmi').value = baseEmi; openModalSafe('paymentModal'); } }
-        function openApproveModal(accId) { let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1) { let p = globalCustomers[idx]; let emi = Math.round((p.amount * 1.2) / p.duration) + (p.penalty || 0); currentPayAccId = accId; document.getElementById('payCustName').innerText = p.name + " (Verify App Pay)"; document.getElementById('payAccId').innerText = accId; document.getElementById('payAmount').value = emi; document.getElementById('payAmount').readOnly = true; document.getElementById('payMode').value = "PhonePe"; document.getElementById('payType').value = 'approve'; openModalSafe('paymentModal'); } }
-
-        function processPayment() {
-            let amount = Number(document.getElementById('payAmount').value); let mode = document.getElementById('payMode').value; let pType = document.getElementById('payType').value;
-            if(!amount || amount <= 0) return alert("Enter amount!");
-            let idx = globalCustomers.findIndex(c => c.accId === currentPayAccId);
-            if(idx !== -1) {
-                if(pType === 'full') addHistoryRecord(globalCustomers[idx], amount, mode);
-                else if(pType === 'part') addHistoryRecord(globalCustomers[idx], amount, mode + ' (Part)');
-                else if(pType === 'adv') { let baseEmi = Number(document.getElementById('payBaseEmi').value); let weeks = Math.floor(amount/baseEmi); for(let i=0; i<weeks; i++) addHistoryRecord(globalCustomers[idx], baseEmi, mode + ' (Adv)'); }
-                else if(pType === 'approve') { addHistoryRecord(globalCustomers[idx], amount, mode + ' (App)'); globalCustomers[idx].paymentSuccessFlag = true; }
-                saveToDB(); closeModalSafe('paymentModal');
-            }
-        }
 
         function addHistoryRecord(c, amount, mode) { if(!c.history) c.history = []; c.paidWeeks = (c.paidWeeks || 0) + 1; let today = new Date().toLocaleDateString('en-GB'); c.history.push({ date: today, week: c.paidWeeks, amount: amount, mode: mode }); c.lastPaidDate = today; let d = new Date(); d.setDate(d.getDate() + 7); c.nextDueDate = d.toLocaleDateString('en-GB'); c.pendingApproval = false; }
 
@@ -226,7 +278,7 @@
 
                 let actionMenu = `
                     <div class="d-flex gap-1">
-                        <button class="icon-btn btn-pay" title="Pay EMI" onclick="recordCashPayment('${cust.accId}', '${cust.name}', ${nextEmiToPay}); return false;"><i class="fas fa-rupee-sign"></i> Pay</button>
+                        <button class="icon-btn btn-pay" title="Pay EMI" onclick="openSuperPay('${cust.accId}', '${cust.name}', ${nextEmiToPay}, 'full'); return false;"><i class="fas fa-rupee-sign"></i> Pay</button>
                         <button class="icon-btn btn-pen" title="Add Penalty" onclick="addPenalty('${cust.accId}', '${cust.name}'); return false;"><i class="fas fa-gavel"></i> Pen</button>
                         <button class="icon-btn" title="Waive Penalty" onclick="waivePenalty('${cust.accId}', '${cust.name}'); return false;"><i class="fas fa-magic text-success"></i></button>
                     </div>
@@ -237,8 +289,8 @@
                         <div class="dropdown">
                             <button class="icon-btn" data-bs-toggle="dropdown"><i class="fas fa-ellipsis-v px-1"></i></button>
                             <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="font-size:12px;">
-                                <li><a class="dropdown-item fw-bold" href="javascript:void(0)" onclick="customPayment('${cust.accId}', '${cust.name}')"><i class="fas fa-adjust text-primary w-20px"></i> Part Payment</a></li>
-                                <li><a class="dropdown-item fw-bold" href="javascript:void(0)" onclick="advancePayment('${cust.accId}', '${cust.name}', ${baseEmi})"><i class="fas fa-forward text-info w-20px"></i> Advance Pay</a></li>
+                                <li><a class="dropdown-item fw-bold" href="javascript:void(0)" onclick="openSuperPay('${cust.accId}', '${cust.name}', '', 'part')"><i class="fas fa-adjust text-primary w-20px"></i> Part Payment</a></li>
+                                <li><a class="dropdown-item fw-bold" href="javascript:void(0)" onclick="let w=prompt('How many weeks?'); if(w>0) openSuperPay('${cust.accId}', '${cust.name}', w*${baseEmi}, 'adv', ${baseEmi})"><i class="fas fa-forward text-info w-20px"></i> Advance Pay</a></li>
                                 <li><a class="dropdown-item fw-bold" href="javascript:void(0)" onclick="topUpLoan('${cust.accId}', '${cust.name}', '${cust.phone}')"><i class="fas fa-sync text-success w-20px"></i> Top-Up / Renew</a></li>
                                 <li><a class="dropdown-item fw-bold" href="javascript:void(0)" onclick="settlementCalculator('${cust.accId}', '${cust.name}', ${pendingBalance})"><i class="fas fa-handshake text-secondary w-20px"></i> Settlement</a></li>
                                 <li><hr class="dropdown-divider"></li>
@@ -253,7 +305,7 @@
                     tableBody.innerHTML += `<tr class="${isOverdue ? 'table-warning' : (pendingWeeks <= 0 ? 'table-success' : '')}"><td class="text-primary fw-bold">${cust.accId}</td><td>${cust.name}<br><small class="text-muted"><i class="fas fa-mobile-alt"></i> ${cust.phone}</small><br>${lastPayHTML}</td><td>${formatMoney(principal)}</td><td class="text-danger">${formatMoney(nextEmiToPay)} ${penalty>0?`<small>(+${penalty})</small>`:''}</td><td><div style="font-size:9px;">${paidWeeks}/${cust.duration} Wks</div><div class="progress" style="height: 5px;"><div class="progress-bar bg-success" style="width: ${progressPercent}%"></div></div></td><td><div class="d-flex gap-1 flex-wrap">${actionMenu}</div></td></tr>`;
                 } else {
                     let rClass = 'customer-card'; if(isOverdue) rClass += ' row-overdue'; 
-                    let appHTML = cust.pendingApproval ? `<div class="bg-warning text-dark p-2 rounded mb-2 d-flex justify-content-between align-items-center" style="font-size:11px;"><b>App Pay Req!</b> <div><button class="btn btn-sm btn-success py-0 px-2 fw-bold" onclick="openApproveModal('${cust.accId}'); return false;"><i class="fas fa-check"></i> Verify</button> <button class="btn btn-sm btn-danger py-0 px-2 fw-bold" onclick="rejectFakePayment('${cust.accId}'); return false;"><i class="fas fa-times"></i></button></div></div>` : ``;
+                    let appHTML = cust.pendingApproval ? `<div class="bg-warning text-dark p-2 rounded mb-2 d-flex justify-content-between align-items-center" style="font-size:11px;"><b>App Pay Req!</b> <div><button class="btn btn-sm btn-success py-0 px-2 fw-bold" onclick="openSuperPay('${cust.accId}', '${cust.name}', ${nextEmiToPay}, 'approve'); return false;"><i class="fas fa-check"></i> Verify</button> <button class="btn btn-sm btn-danger py-0 px-2 fw-bold" onclick="rejectFakePayment('${cust.accId}'); return false;"><i class="fas fa-times"></i></button></div></div>` : ``;
                     cardContainer.innerHTML += `<div class="${rClass}">${appHTML}<div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2"><div><div style="font-size:14px; font-weight:800;">${cust.name}</div><div style="font-size:10px; color:#777;"><i class="fas fa-mobile-alt"></i> ${cust.phone} | <span class="text-primary">${cust.accId}</span></div></div><div class="text-end">${pendingWeeks <= 0 ? `<span class="badge bg-success">Settled</span>` : `<span class="badge bg-primary">Active</span>`}</div></div>${lastPayHTML}<div class="d-flex gap-1 mb-2"><div class="data-block"><span class="data-label">Prncpl</span><br><span class="data-val">${formatMoney(principal)}</span></div><div class="data-block" style="border-color:var(--primary);"><span class="data-label text-primary">EMI</span><br><span class="data-val-big">${formatMoney(nextEmiToPay)}</span></div><div class="data-block"><span class="data-label">Bal</span><br><span class="data-val text-danger">${formatMoney(pendingBalance)}</span></div><div class="data-block" style="width:80px;"><span class="data-label">Paid</span><br><span class="data-val text-success">${paidWeeks}/${cust.duration}</span></div></div><div class="action-toolbar">${actionMenu}</div></div>`;
                 }
             });
