@@ -13,132 +13,51 @@
     <style>
         /* CORPORATE BANKING THEME (HDFC STYLE) */
         :root { 
-            --primary: #004C8F; /* HDFC Blue */
-            --secondary: #ED232A; /* HDFC Red */
-            --success: #27AE60; 
-            --warning: #F39C12;
-            --bg: #F4F5F7; 
-            --card-border: #E0E4E9;
-            --text-dark: #2C3E50;
+            --primary: #004C8F; --secondary: #ED232A; --success: #27AE60; --warning: #F39C12;
+            --bg: #F4F5F7; --card-border: #E0E4E9; --text-dark: #2C3E50;
         }
 
-        body { 
-            background-color: var(--bg); 
-            font-family: 'Open Sans', sans-serif; 
-            padding-bottom: 80px; 
-            transition: background 0.3s, color 0.3s; 
-            color: var(--text-dark);
-        }
+        body { background-color: var(--bg); font-family: 'Open Sans', sans-serif; padding-bottom: 80px; color: var(--text-dark); transition: 0.3s; }
         
-        /* Dark Mode Configuration */
         body.dark-mode { background-color: #121212; color: #E0E4E9; }
-        body.dark-mode .app-card, body.dark-mode .info-box, body.dark-mode .history-table { background: #1E1E1E; border-color: #333; color: white; }
-        body.dark-mode .grid-item span { color: #ccc; }
-        body.dark-mode .text-dark { color: #f8fafc !important; }
+        body.dark-mode .app-card, body.dark-mode .info-box { background: #1E1E1E; border-color: #333; color: white; }
         body.dark-mode .bg-light { background-color: #2A2A2A !important; }
 
-        /* Header UI */
         .app-header { 
-            background: linear-gradient(135deg, var(--primary), #003666); 
-            color: white; 
-            padding: 25px 20px 65px 20px; 
-            border-bottom: 5px solid var(--secondary);
-            border-radius: 0 0 20px 20px; 
-            box-shadow: 0 4px 15px rgba(0, 76, 143, 0.3); 
+            background: linear-gradient(135deg, var(--primary), #003666); color: white; 
+            padding: 25px 20px 65px 20px; border-bottom: 5px solid var(--secondary);
+            border-radius: 0 0 20px 20px; box-shadow: 0 4px 15px rgba(0, 76, 143, 0.3); 
         }
 
         .profile-pic { 
-            width: 55px; height: 55px; 
-            background: white; color: var(--primary); 
-            border-radius: 50%; 
-            display: flex; justify-content: center; align-items: center; 
-            font-size: 24px; font-weight: 800; 
-            border: 3px solid #BDC3C7; 
-            position: relative;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            width: 55px; height: 55px; background: white; color: var(--primary); 
+            border-radius: 50%; display: flex; justify-content: center; align-items: center; 
+            font-size: 24px; font-weight: 800; border: 3px solid #BDC3C7; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
         
-        /* Main Cards */
         .app-card { 
-            background: white; 
-            border-radius: 8px; 
-            padding: 20px; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
-            margin-top: -40px; 
-            position: relative; 
-            z-index: 10; 
-            margin-bottom: 15px; 
-            border: 1px solid var(--card-border); 
-            transition: 0.3s;
+            background: white; border-radius: 8px; padding: 20px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 15px; 
+            border: 1px solid var(--card-border); position: relative;
         }
+        .card-overlap { margin-top: -40px; z-index: 10; }
 
-        .card-normal { margin-top: 0; box-shadow: 0 1px 5px rgba(0,0,0,0.03); }
+        .info-box { background: #FAFBFC; border: 1px solid var(--card-border); border-radius: 6px; padding: 12px; text-align: center; }
         
-        .info-box { 
-            background: #FAFBFC; 
-            border: 1px solid var(--card-border); 
-            border-radius: 6px; 
-            padding: 12px; 
-            text-align: center; 
-            transition: 0.3s; 
-        }
-        
-        .tier-badge { 
-            font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; 
-            background: #EAF2F8; color: var(--primary); border: 1px solid #D4E6F1; display: inline-block;
-        }
-        .tier-gold { background: #FEF9E7; color: #D35400; border-color: #FAD7A1; }
-        .tier-danger { background: #FDEDEC; color: #C0392B; border-color: #F5B7B1; }
-
         .trust-meter { height: 6px; background: #EAEDED; border-radius: 3px; width: 100px; margin-top: 5px; overflow: hidden; }
         .trust-fill { height: 100%; width: 100%; background: var(--success); transition: 1s;}
 
-        /* Grid Icons for Services */
-        .app-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px 10px; margin-top: 15px; }
-        .grid-item { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; cursor: pointer; transition: 0.2s; }
-        .grid-item:hover { transform: translateY(-2px); }
-        
-        .icon-circle { 
-            width: 45px; height: 45px; border-radius: 8px; 
-            display: flex; justify-content: center; align-items: center; 
-            font-size: 20px; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
-        }
-        .grid-item span { font-size: 11px; font-weight: 700; color: #34495E; line-height: 1.1; }
-        
-        /* Corporate Icon Colors */
-        .ic-1 { background: #EAF2F8; color: #2980B9; } 
-        .ic-2 { background: #FEF9E7; color: #D35400; }
-        .ic-3 { background: #E8F8F5; color: #27AE60; } 
-        .ic-4 { background: #FDEDEC; color: #C0392B; }
-        .ic-5 { background: #F4ECF7; color: #8E44AD; } 
-        .ic-6 { background: #EAECEE; color: #2C3E50; }
-        .ic-7 { background: #EBF5FB; color: #2471A3; } 
-        .ic-8 { background: #FBEEEE; color: #E74C3C; }
-
-        /* Pay Buttons */
         .pay-btn-main { 
             background: var(--primary); color: white; border: none; padding: 15px; 
             border-radius: 6px; font-weight: 800; font-size: 15px; width: 100%; 
             display: flex; align-items: center; justify-content: center; gap: 10px; 
-            transition: 0.2s; box-shadow: 0 4px 10px rgba(0, 76, 143, 0.2);
-            text-transform: uppercase; letter-spacing: 0.5px;
+            box-shadow: 0 4px 10px rgba(0, 76, 143, 0.2); text-transform: uppercase;
         }
         .pay-btn-main:active { transform: scale(0.98); }
 
-        .btn-noc {
-            background: #1E8449; color: white; border: none; padding: 10px; 
-            border-radius: 6px; font-weight: 800; font-size: 13px; width: 100%; 
-            margin-top: 10px; transition: 0.2s; text-transform: uppercase;
-        }
-
-        .ticker { background: #FFF9C4; color: #B7950B; font-size: 12px; font-weight: 800; padding: 8px; text-align: center; border-bottom: 2px solid #F1C40F;}
-        .promo-banner { background: linear-gradient(135deg, #27AE60, #1E8449); color: white; padding: 15px; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; cursor: pointer; box-shadow: 0 2px 8px rgba(39, 174, 96, 0.2);}
-        .notice-banner { background: #EBF5FB; border-left: 4px solid var(--primary); color: var(--primary); padding: 12px; border-radius: 4px; font-size: 12px; font-weight: 700; margin-bottom: 15px;}
-        
         .progress-bar-custom { height: 6px; border-radius: 3px; background: #EAEDED; margin-top: 10px; overflow: hidden;}
         .progress-fill { height: 100%; background: var(--secondary); transition: 1s; }
 
-        /* Floating WhatsApp Button */
         .float-support {
             position: fixed; bottom: 20px; right: 20px; z-index: 1000;
             background: #25D366; color: white; width: 60px; height: 60px; 
@@ -146,40 +65,22 @@
             display: flex; justify-content: center; align-items: center; 
             font-size: 30px; cursor: pointer; transition: 0.3s;
         }
-        .float-support:hover { transform: scale(1.1); }
 
-        /* SUCCESS ANIMATION SCREEN */
         #successScreen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.95); z-index: 9999;
-            display: none; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); z-index: 9999;
+            display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center;
         }
-        .tick-circle {
-            width: 100px; height: 100px; background: var(--success);
-            border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            color: white; font-size: 50px; box-shadow: 0 10px 30px rgba(39, 174, 96, 0.4);
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+        .tick-circle { width: 100px; height: 100px; background: var(--success); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 50px; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-        
-        .success-text { font-size: 24px; font-weight: 800; color: var(--success); margin-top: 20px; }
-        .success-sub { font-size: 14px; color: #7F8C8D; font-weight: 600; margin-top: 5px; }
-
-        @media print { body * { visibility: hidden; } .print-area, .print-area * { visibility: visible; } .print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 10px; } .app-grid, .pay-btn-main, .ticker, .float-support { display: none !important; } }
     </style>
 </head>
 <body>
 
-    <!-- SUCCESS OVERLAY (Hidden by default) -->
+    <!-- SUCCESS OVERLAY -->
     <div id="successScreen">
         <div class="tick-circle"><i class="fas fa-check"></i></div>
-        <div class="success-text">Payment Successful!</div>
-        <div class="success-sub">Your EMI has been approved by Admin.</div>
-    </div>
-
-    <div class="ticker" id="tickerMsg">
-        <marquee behavior="scroll" direction="left" scrollamount="5">⚠️ NOTIFICATION: Pay your weekly EMI strictly on time to maintain a Good Trust Score. Avoid late payment penalties.</marquee>
+        <div class="mt-3" style="font-size: 24px; font-weight: 800; color: var(--success);">Payment Approved!</div>
+        <div style="font-size: 14px; color: #7F8C8D; font-weight: 600;">Your EMI has been securely updated.</div>
     </div>
 
     <!-- LOGIN SCREEN -->
@@ -189,13 +90,13 @@
                 <i class="fas fa-university fs-1"></i>
             </div>
             <h3 class="fw-bold mb-1" style="color: var(--primary); font-weight: 900;">JESSICA FINANCE</h3>
-            <p class="text-muted small mb-4 fw-bold">Corporate Customer Portal</p>
+            <p class="text-muted small mb-4 fw-bold">Customer Secure Login</p>
             
-            <input type="tel" id="loginPhone" class="form-control mb-3 p-3 bg-light text-center fw-bold" placeholder="Registered Mobile Number" style="border-radius:6px; font-size: 14px; border: 1px solid #BDC3C7;">
-            <input type="password" id="loginPin" class="form-control mb-4 p-3 bg-light text-center fw-bold" placeholder="4-Digit Secure PIN" style="border-radius:6px; font-size: 14px; border: 1px solid #BDC3C7;">
+            <input type="tel" id="loginPhone" class="form-control mb-3 p-3 bg-light text-center fw-bold" placeholder="Mobile Number" style="border-radius:6px;">
+            <input type="password" id="loginPin" class="form-control mb-4 p-3 bg-light text-center fw-bold" placeholder="4-Digit PIN" style="border-radius:6px;">
             
-            <button class="btn w-100 p-3 fw-bold shadow-sm text-white" style="border-radius:6px; background: var(--primary); font-size: 15px;" onclick="customerLogin()">SECURE LOGIN <i class="fas fa-lock ms-2"></i></button>
-            <div id="loginLoading" style="display: none;" class="mt-3 text-primary"><i class="fas fa-circle-notch fa-spin fs-4"></i></div>
+            <button class="btn w-100 p-3 fw-bold text-white" style="border-radius:6px; background: var(--primary);" onclick="customerLogin()">SECURE LOGIN <i class="fas fa-lock ms-2"></i></button>
+            <div id="loginLoading" style="display: none;" class="mt-3 fw-bold text-primary"><i class="fas fa-circle-notch fa-spin"></i> Connecting to Secure Server...</div>
         </div>
     </div>
 
@@ -204,713 +105,240 @@
         
         <div class="app-header d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center gap-3">
-                <div class="profile-pic">
-                    <i class="fas fa-user"></i>
-                    <i class="fas fa-shield-alt text-success" id="goldStar" style="position: absolute; bottom: -5px; right: -5px; font-size: 14px; display: none; background: white; border-radius: 50%;"></i>
-                </div>
+                <div class="profile-pic"><i class="fas fa-user"></i></div>
                 <div>
-                    <div style="font-size: 10px; color: #BDC3C7; font-weight: 700; letter-spacing: 1px;" id="greetingText">WELCOME</div>
-                    <h5 class="fw-bold mb-0" id="cName" style="font-size: 18px; text-transform: uppercase;">Customer Name</h5>
-                    <div class="d-flex gap-2 align-items-center mt-1">
-                        <span style="font-size: 11px; font-weight: 700;">ACC ID: <span id="cId">JF-XXXX</span></span>
-                        <span class="tier-badge" id="cTier">Standard</span>
-                    </div>
+                    <div style="font-size: 10px; color: #BDC3C7; font-weight: 700;" id="greetingText">WELCOME</div>
+                    <h5 class="fw-bold mb-0" id="cName" style="text-transform: uppercase;">Name</h5>
+                    <div class="mt-1" style="font-size: 11px; font-weight: 700;"><i class="fas fa-shield-alt text-success"></i> Account Verified</div>
                 </div>
             </div>
-            <div class="d-flex gap-3 align-items-center">
-                <i class="fas fa-moon fs-5" id="darkModeIcon" onclick="toggleCustomerDarkMode()" style="cursor: pointer; color: #BDC3C7;"></i>
-                <i class="fas fa-sign-out-alt fs-5 text-white" onclick="logoutCustomer()" style="cursor: pointer; background: var(--secondary); padding: 8px; border-radius: 4px;"></i>
+            <div class="d-flex gap-3">
+                <i class="fas fa-moon fs-5" onclick="toggleCustomerDarkMode()" style="cursor: pointer; color: #BDC3C7;"></i>
+                <i class="fas fa-sign-out-alt fs-5 text-white" onclick="logoutCustomer()" style="cursor: pointer;"></i>
             </div>
         </div>
 
-        <div class="container print-area">
+        <div class="container" style="margin-top: -40px; position: relative; z-index: 10;">
             
-            <!-- OVERVIEW CARD -->
-            <div class="app-card">
-                
-                <div id="adminNoticeBanner" class="notice-banner" style="display: none;">
-                    <i class="fas fa-info-circle me-2"></i> <span id="adminNoticeText"></span>
-                </div>
+            <div id="noticeArea"></div> <!-- Admin Notices will appear here -->
 
-                <div class="d-flex justify-content-between align-items-start mb-3 border-bottom pb-3">
-                    <div>
-                        <div style="font-size: 10px; color: #7F8C8D; font-weight: 800; text-transform: uppercase;">Outstanding Balance</div>
-                        <h2 class="fw-bold mb-0 mt-1" style="color: var(--primary);" id="cPendingBal">₹0</h2>
-                        <div style="font-size: 11px; font-weight: 700; color: #34495E; margin-top: 2px;">Sanctioned: <span id="dispPrincipal">₹0</span></div>
-                    </div>
-                    <div class="text-end">
-                        <div style="font-size: 10px; font-weight: 800; color: #7F8C8D; text-transform: uppercase;">CIBIL / Trust</div>
-                        <div class="trust-meter"><div class="trust-fill" id="trustScoreBar"></div></div>
-                        <div style="font-size: 11px; font-weight: 800; color: var(--success); margin-top: 2px;" id="trustScoreText">Good</div>
-                    </div>
-                </div>
-
-                <!-- Offers (TopUp / PreClose) -->
-                <div class="promo-banner" id="topUpBanner" style="display: none;" onclick="sendWhatsAppIntent('Hi Admin, I want to apply for my Top-Up Loan.')">
-                    <div class="d-flex align-items-center gap-3">
-                        <i class="fas fa-gift fs-3"></i>
-                        <div><div style="font-size:10px;">Eligible for Renewal</div><b style="font-size:14px;">Top-Up Available</b></div>
-                    </div>
-                    <button class="btn btn-sm bg-white fw-bold text-success" style="border-radius: 4px;">Apply</button>
-                </div>
-                <div class="promo-banner" id="preCloseBanner" style="display: none; background: linear-gradient(135deg, #D35400, #E67E22);" onclick="sendWhatsAppIntent('Hi Admin, I want to Pre-Close my entire loan today for a discount.')">
-                    <div class="d-flex align-items-center gap-3">
-                        <i class="fas fa-tags fs-3"></i>
-                        <div><div style="font-size:10px;">Special Discount</div><b style="font-size:14px;">Pre-Close Offer</b></div>
-                    </div>
-                    <i class="fas fa-chevron-right text-white"></i>
-                </div>
-
-                <!-- Progress Details -->
-                <div class="row g-2 mb-3">
-                    <div class="col-4"><div class="info-box"><div style="font-size: 9px; color: #7F8C8D; font-weight: 800;">TOTAL WKS</div><div class="fw-bold fs-5 text-dark" id="cTotalWeeks">0</div></div></div>
-                    <div class="col-4"><div class="info-box"><div style="font-size: 9px; color: var(--success); font-weight: 800;">PAID WKS</div><div class="fw-bold fs-5 text-success" id="cPaidWeeks">0</div></div></div>
-                    <div class="col-4"><div class="info-box"><div style="font-size: 9px; color: var(--secondary); font-weight: 800;">PENDING</div><div class="fw-bold fs-5 text-danger" id="cPendingWeeks">0</div></div></div>
-                </div>
-
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between" style="font-size: 11px; font-weight: 800; color: #7F8C8D;">
-                        <span>Recovery Progress</span> <span id="progressText" style="color: var(--primary);">0%</span>
-                    </div>
-                    <div class="progress-bar-custom"><div class="progress-fill" id="loanProgress"></div></div>
-                </div>
-
-                <!-- PAYMENT ACTION SECTION -->
-                <div id="loanClearedBanner" style="display: none; background: #E8F8F5; color: #1E8449; padding: 15px; border-radius: 6px; text-align: center; border: 1px solid #A9DFBF;">
-                    <i class="fas fa-check-circle fs-2 mb-2"></i><br>
-                    <b style="font-size: 14px;">Account Settled & Closed</b><br>
-                    <span style="font-size:11px;">Thank you for banking with us.</span>
-                    <button class="btn-noc" onclick="generateNOC()"><i class="fas fa-certificate me-2"></i> Download NOC</button>
-                </div>
-
-                <div id="paymentSection">
-                    <div class="d-flex justify-content-between align-items-center p-3 rounded-2 mb-3" style="background: #F8F9FA; border: 1px solid #EAEDED;">
-                        <div>
-                            <div style="font-size: 10px; color: #7F8C8D; font-weight: 800;">WEEKLY EMI DUE</div>
-                            <div class="fw-bold fs-3 text-dark" id="cEmi">₹0</div>
-                            <div style="font-size: 10px; color: var(--secondary); font-weight: 800; display: none;" id="cPenaltyBox">+ <span id="cPenalty">₹0</span> Late Penalty</div>
-                        </div>
-                        <div class="text-end">
-                            <div style="font-size: 10px; color: #7F8C8D; font-weight: 800;">PAYMENT DUE DATE</div>
-                            <div class="fw-bold fs-5 text-dark" id="nextDueDate">Loading...</div>
-                            <div style="font-size: 11px; font-weight: 800;" id="countdownText">...</div>
-                        </div>
-                    </div>
-
-                    <!-- Direct Pay Buttons -->
-                    <button class="pay-btn-main" onclick="triggerUPIApp()" id="payEmiBtn"><i class="fas fa-rupee-sign"></i> PAY EMI SECURELY</button>
-                    
-                    <div id="pendingAlert" class="mt-3 text-warning fw-bold text-center" style="display:none; font-size: 14px;">
-                        <i class="fas fa-spinner fa-spin"></i> Waiting for Admin Approval...
-                    </div>
-                </div>
-            </div>
-
-            <!-- QUICK SERVICES GRID -->
-            <div class="app-card card-normal">
-                <h6 class="fw-bold mb-3" style="font-size: 13px; color: #34495E; text-transform: uppercase;">Service Requests</h6>
-                <div class="app-grid">
-                    <div class="grid-item" onclick="printStatement()"><div class="icon-circle ic-1"><i class="fas fa-file-invoice"></i></div><span>Ledger</span></div>
-                    <div class="grid-item" onclick="viewIdCard()"><div class="icon-circle ic-7"><i class="fas fa-id-card-alt"></i></div><span>ID Card</span></div>
-                    <div class="grid-item" data-bs-toggle="modal" data-bs-target="#calculatorModal"><div class="icon-circle ic-3"><i class="fas fa-calculator"></i></div><span>EMI Calc</span></div>
-                    <div class="grid-item" onclick="viewAgreement()"><div class="icon-circle ic-6"><i class="fas fa-file-signature"></i></div><span>Agreement</span></div>
-                    
-                    <div class="grid-item" onclick="sendWhatsAppIntent('Hi Admin, I need a 1-day Grace Period for my payment.')"><div class="icon-circle ic-2"><i class="fas fa-hourglass-half"></i></div><span>Grace Time</span></div>
-                    <div class="grid-item" data-bs-toggle="modal" data-bs-target="#autopayModal"><div class="icon-circle ic-5"><i class="fas fa-sync-alt"></i></div><span>Auto-Pay</span></div>
-                    <div class="grid-item" onclick="sendWhatsAppIntent('Hi Admin, I want to change my PIN / Update Address.')"><div class="icon-circle ic-8"><i class="fas fa-user-cog"></i></div><span>Settings</span></div>
-                    <div class="grid-item" onclick="sendWhatsAppIntent('URGENT: I need support regarding my loan account.')"><div class="icon-circle ic-4"><i class="fas fa-headset"></i></div><span>Support</span></div>
-                </div>
-            </div>
-
-            <!-- PAYMENT HISTORY -->
-            <div class="app-card card-normal">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold mb-0" style="font-size: 13px; color: #34495E; text-transform: uppercase;">Recent Transactions</h6>
-                </div>
-                <div class="table-responsive">
-                    <table class="table history-table table-borderless align-middle">
-                        <tbody id="historyBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- REWARD COINS -->
-            <div class="app-card card-normal text-center" style="background: #FFF9F9; border: 1px dashed #F5B7B1;" onclick="copyReferral()">
-                <div style="font-size: 12px; font-weight: 800; color: var(--secondary); margin-bottom: 5px;"><i class="fas fa-gift me-1"></i> Reward Coins: <span id="cCoins" class="text-dark fs-5">0</span></div>
-                <div style="font-size: 10px; color: #7F8C8D; font-weight: 700;">Share Referral Code: <b id="cReferral" style="color: var(--primary);">REF-0000</b> (Tap to copy)</div>
-            </div>
-
-            <!-- FOOTER INFO -->
-            <div class="text-center mt-4 mb-2" style="font-size: 10px; font-weight: 700; color: #95A5A6;">
-                <div id="cVillage" style="text-transform: uppercase;">Location</div>
-                Guarantor: <span id="cGuarantor">None</span><br>
-                <span style="font-size: 8px;">© Jessica Finance Management. All rights reserved.</span>
-            </div>
+            <!-- LOANS CONTAINER (Will loop and show all active loans) -->
+            <div id="myLoansContainer"></div>
 
         </div>
     </div>
 
-    <!-- FEATURE: FLOATING WHATSAPP SUPPORT BUTTON -->
-    <div class="float-support" onclick="sendWhatsAppIntent('Hi Admin, I need help with my loan account.')">
+    <!-- FLOATING WHATSAPP -->
+    <div class="float-support" onclick="window.open('https://wa.me/917569532152?text=Hi%20Admin,%20I%20need%20help%20with%20my%20loan%20account.', '_blank')">
         <i class="fab fa-whatsapp"></i>
     </div>
 
-    <!-- MODALS SECTION -->
-    
-    <!-- EMI Calculator Modal -->
-    <div class="modal fade" id="calculatorModal" tabindex="-1">
-        <div class="modal-dialog modal-sm modal-dialog-centered">
-            <div class="modal-content border-0" style="border-radius: 8px;">
-                <div class="modal-header" style="background: var(--primary); color: white; border-radius: 8px 8px 0 0; padding: 12px 15px;">
-                    <h6 class="modal-title fw-bold m-0"><i class="fas fa-calculator me-2"></i> Future Loan Plan</h6>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" style="font-size: 10px;"></button>
-                </div>
-                <div class="modal-body p-4 text-center bg-light">
-                    <input type="number" id="calcPrincipal" class="form-control text-center mb-3 fw-bold" placeholder="Principal (₹)" oninput="runCalculator()" style="border-radius: 4px;">
-                    <div class="d-flex gap-2 mb-3">
-                        <input type="number" id="calcInterest" class="form-control text-center fw-bold" value="20" placeholder="Int %" readonly style="border-radius: 4px; background:#EAEDED;">
-                        <input type="number" id="calcWeeks" class="form-control text-center fw-bold" value="10" placeholder="Weeks" oninput="runCalculator()" style="border-radius: 4px;">
-                    </div>
-                    <div class="p-3 bg-white rounded border border-primary text-center">
-                        <div style="font-size: 10px; font-weight: 800; color: #7F8C8D;">WEEKLY EMI</div>
-                        <h3 class="fw-bold m-0" style="color: var(--primary);" id="calcResult">₹0</h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Auto-Pay Modal -->
-    <div class="modal fade" id="autopayModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0" style="border-radius: 8px;">
-                <div class="modal-body p-4 text-center">
-                    <div style="background: #EBF5FB; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #2980B9; font-size: 24px; margin: 0 auto 15px auto;">
-                        <i class="fas fa-sync-alt"></i>
-                    </div>
-                    <h5 class="fw-bold" style="color: var(--primary);">Secure Auto-Pay</h5>
-                    <p class="small text-muted mb-4 fw-bold">Avoid late fees! Request Admin to send a secure UPI Mandate link to setup automatic weekly deductions.</p>
-                    <button class="btn text-white w-100 fw-bold py-2" style="background: var(--primary); border-radius: 4px;" onclick="sendWhatsAppIntent('Hi Admin, I want to set up UPI Auto-Pay. Please send the PhonePe Mandate link.')">Request Mandate Link</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT ENGINE -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const formatMoney = (amount) => '₹' + Number(amount).toLocaleString('en-IN');
-        let currentCustomer = null;
-        let emiAmount = 0;
-        let pollInterval = null;
+        // ☁️ CLOUD DATABASE SETTINGS (SAME AS ADMIN)
+        const BIN_ID = "6a680db5da38895dfe99644c";
+        const API_KEY = "$2a$10$hMjC2hJpy4MR4jrFYBGrMeX.3m5olpdY3LgNetbTgdcex3JgQItg6";
         
-        // --- ⚙️ UPI & WHATSAPP SETTINGS ---
-        const adminWhatsApp = "917569532152"; 
-        const adminUPI_ID = "7569532152@ybl"; 
-        const businessName = "Jessica Finance"; 
+        const formatMoney = (amount) => '₹' + Number(amount).toLocaleString('en-IN');
+        let myActiveLoans = []; 
+        let pollInterval = null;
 
-        // Set Smart Time Greeting
-        function setGreeting() {
-            let hour = new Date().getHours();
-            let greeting = hour < 12 ? "GOOD MORNING," : (hour < 17 ? "GOOD AFTERNOON," : "GOOD EVENING,");
-            document.getElementById('greetingText').innerText = greeting;
-        }
-
-        // Auto Login Check
+        // Auto Login
         window.onload = function() {
-            setGreeting();
+            let hour = new Date().getHours();
+            document.getElementById('greetingText').innerText = hour < 12 ? "GOOD MORNING," : (hour < 17 ? "GOOD AFTERNOON," : "GOOD EVENING,");
             let session = localStorage.getItem('loggedInCustomer');
             if(session) {
                 let creds = JSON.parse(session);
-                if(creds.phone) {
-                    document.getElementById('loginPhone').value = creds.phone;
-                    document.getElementById('loginPin').value = creds.password || '';
-                    customerLogin();
-                }
+                document.getElementById('loginPhone').value = creds.phone;
+                document.getElementById('loginPin').value = creds.password;
+                customerLogin();
             }
         };
 
-        // ==========================================
-        // 🚀 NEW LOGIN LOGIC (LOCAL STORAGE CONNECTION)
-        // ==========================================
+        async function fetchCloudData() {
+            let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers: { 'X-Master-Key': API_KEY } });
+            let data = await res.json();
+            return data.record || [];
+        }
+
+        async function updateCloudData(newData) {
+            await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+                body: JSON.stringify(newData)
+            });
+        }
+
         async function customerLogin() {
             let phone = document.getElementById('loginPhone').value;
             let pin = document.getElementById('loginPin').value;
+            if(!phone || !pin) return alert("Enter Mobile and PIN!");
             
-            if(!phone || !pin) { alert("Please enter both Phone & PIN"); return; }
             document.getElementById('loginLoading').style.display = 'block';
             
-            // చిన్న యానిమేషన్ గ్యాప్ ఇచ్చి లోకల్ స్టోరేజ్ నుండి తీసుకుంటాం
-            setTimeout(() => {
-                document.getElementById('loginLoading').style.display = 'none';
-                
-                // ఇక్కడే మన అడ్మిన్ యాప్ సేవ్ చేసిన డేటాని వెతుకుతున్నాం
-                let localData = localStorage.getItem('jf_offline_backup');
-                
-                if(localData) {
-                    let db = JSON.parse(localData);
-                    let cust = db.find(c => c.phone === phone && c.password === pin);
-                    
-                    if(cust) { 
-                        currentCustomer = cust; 
-                        localStorage.setItem('loggedInCustomer', JSON.stringify({ phone, password: pin })); 
-                        document.getElementById('loginScreen').style.display = 'none'; 
-                        document.getElementById('dashboardScreen').style.display = 'block'; 
-                        updateUI(); 
-                        startLiveRadar();
-                    } else {
-                        alert("Invalid Details! Please check your ID or PIN.");
-                    }
-                } else {
-                    alert("No data found! Please add customers in Admin Dashboard first.");
-                }
-            }, 500);
-        }
-
-        // సైలెంట్ గా బ్యాక్‌గ్రౌండ్ లో డేటా అప్‌డేట్ చేయడానికి
-        async function silentDataFetch(phone, password) {
             try {
-                let localData = localStorage.getItem('jf_offline_backup');
-                if(localData) {
-                    let db = JSON.parse(localData);
-                    let cust = db.find(c => c.phone === phone && c.password === password);
-                    if(cust) {
-                        currentCustomer = cust;
-                        updateUI();
-                        
-                        // CHECK FOR SUCCESS FLAG
-                        if(currentCustomer.paymentSuccessFlag === true) {
-                            triggerSuccessAnimation();
-                        }
-                    }
+                let db = await fetchCloudData();
+                myActiveLoans = db.filter(c => c.phone === phone && c.password === pin);
+                
+                document.getElementById('loginLoading').style.display = 'none';
+
+                if(myActiveLoans.length > 0) {
+                    localStorage.setItem('loggedInCustomer', JSON.stringify({ phone, password: pin }));
+                    document.getElementById('cName').innerText = myActiveLoans[0].name;
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('dashboardScreen').style.display = 'block';
+                    
+                    renderMyLoans();
+                    startLiveRadar();
+                } else {
+                    alert("Invalid Details! Check Phone Number and PIN.");
                 }
-            } catch(e) { console.error("Silent sync failed"); }
+            } catch (error) {
+                document.getElementById('loginLoading').style.display = 'none';
+                alert("Server Connection Failed. Please try again.");
+            }
         }
 
+        function renderMyLoans() {
+            let container = document.getElementById('myLoansContainer');
+            let noticeArea = document.getElementById('noticeArea');
+            container.innerHTML = ''; noticeArea.innerHTML = '';
+            
+            myActiveLoans.forEach((loan, index) => {
+                let principal = Number(loan.amount);
+                let penalty = Number(loan.penalty || 0);
+                let duration = Number(loan.duration);
+                let paidWeeks = loan.paidWeeks || 0;
+                let pendingWeeks = duration - paidWeeks;
+                
+                let baseEmi = Math.round((principal + (principal * 0.20)) / duration);
+                let totalEmiDue = baseEmi + penalty;
+                let pendingBalance = (pendingWeeks * baseEmi) + penalty;
+                let progressPercent = Math.min(100, Math.round((paidWeeks / duration) * 100));
+
+                // Notices Check
+                if(loan.notes && loan.notes.includes("Notice:")) {
+                    let msg = loan.notes.split("Notice:")[1].trim();
+                    noticeArea.innerHTML += `<div class="app-card" style="background:#EBF5FB; border-left:4px solid var(--primary); padding:12px; margin-bottom:15px; z-index:11;"><i class="fas fa-bullhorn text-primary me-2"></i> <b>Admin Notice:</b> ${msg}</div>`;
+                }
+
+                // Check for Success Flag (Admin Approved Payment)
+                if(loan.paymentSuccessFlag) {
+                    clearSuccessFlag(loan.accId);
+                    showSuccessAnimation();
+                }
+
+                let dueDate = loan.nextDueDate || 'Pending';
+                
+                let isSettled = pendingWeeks <= 0;
+
+                let cardHTML = `
+                <div class="app-card ${index === 0 ? 'card-overlap' : ''}">
+                    <div class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-3">
+                        <div>
+                            <div style="font-size: 10px; color: #7F8C8D; font-weight: 800;">LOAN ACCOUNT ID</div>
+                            <h5 class="fw-bold text-primary m-0">${loan.accId}</h5>
+                        </div>
+                        <div class="text-end">
+                            ${isSettled ? `<span class="badge bg-success">Settled & Closed</span>` : `<span class="badge bg-primary">Active Loan</span>`}
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-4"><div class="info-box"><div style="font-size: 9px; color: #7F8C8D; font-weight: 800;">TENURE</div><div class="fw-bold fs-5">${duration}W</div></div></div>
+                        <div class="col-4"><div class="info-box"><div style="font-size: 9px; color: var(--success); font-weight: 800;">PAID</div><div class="fw-bold fs-5 text-success">${paidWeeks}W</div></div></div>
+                        <div class="col-4"><div class="info-box"><div style="font-size: 9px; color: var(--secondary); font-weight: 800;">PENDING</div><div class="fw-bold fs-5 text-danger">${pendingWeeks}W</div></div></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between" style="font-size: 11px; font-weight: 800; color: #7F8C8D;"><span>Recovery Progress</span> <span style="color: var(--primary);">${progressPercent}%</span></div>
+                        <div class="progress-bar-custom"><div class="progress-fill" style="width:${progressPercent}%"></div></div>
+                    </div>
+
+                    ${isSettled ? `
+                        <div class="text-center p-3" style="background:#E8F8F5; border:1px solid #A9DFBF; border-radius:6px; color:#1E8449;">
+                            <i class="fas fa-check-circle fs-2 mb-2"></i><br><b>Account Settled in Full</b>
+                        </div>
+                    ` : `
+                        <div class="d-flex justify-content-between align-items-center p-3 rounded-2 mb-3" style="background: #F8F9FA; border: 1px solid #EAEDED;">
+                            <div>
+                                <div style="font-size: 10px; color: #7F8C8D; font-weight: 800;">WEEKLY EMI DUE</div>
+                                <div class="fw-bold fs-3 text-dark">${formatMoney(totalEmiDue)}</div>
+                                ${penalty > 0 ? `<div style="font-size: 10px; color: var(--secondary); font-weight: 800;">+ ${formatMoney(penalty)} Late Penalty</div>` : ''}
+                            </div>
+                            <div class="text-end">
+                                <div style="font-size: 10px; color: #7F8C8D; font-weight: 800;">DUE DATE</div>
+                                <div class="fw-bold fs-5 text-dark">${dueDate}</div>
+                            </div>
+                        </div>
+
+                        ${loan.pendingApproval ? `
+                            <div class="text-center fw-bold text-warning p-3" style="background:#FFF9E6; border-radius:6px;"><i class="fas fa-spinner fa-spin"></i> Payment Verification Pending with Admin...</div>
+                        ` : `
+                            <button class="pay-btn-main" onclick="triggerUPIApp('${loan.accId}', ${totalEmiDue})"><i class="fas fa-rupee-sign"></i> PAY EMI SECURELY</button>
+                        `}
+                    `}
+                </div>
+                `;
+                container.innerHTML += cardHTML;
+            });
+        }
+
+        // Send payment request to JSONBin
+        async function triggerUPIApp(accId, emiAmount) {
+            let intentUrl = `upi://pay?pa=7569532152@ybl&pn=Jessica%20Finance&am=${emiAmount}&cu=INR&tn=Repay_${accId}`;
+            
+            let db = await fetchCloudData();
+            let idx = db.findIndex(c => c.accId === accId);
+            if(idx !== -1) {
+                db[idx].pendingApproval = true;
+                await updateCloudData(db); // Save to cloud
+                myActiveLoans = db.filter(c => c.phone === myActiveLoans[0].phone); // refresh local
+                renderMyLoans(); // refresh UI
+                window.location.href = intentUrl; // Open PhonePe/GPay
+            }
+        }
+
+        // Silent refresh every 5 seconds to check if Admin approved
         function startLiveRadar() {
             if(pollInterval) clearInterval(pollInterval);
-            pollInterval = setInterval(() => {
+            pollInterval = setInterval(async () => {
                 let session = localStorage.getItem('loggedInCustomer');
                 if(session) {
                     let creds = JSON.parse(session);
-                    silentDataFetch(creds.phone, creds.password);
+                    let db = await fetchCloudData();
+                    myActiveLoans = db.filter(c => c.phone === creds.phone && c.password === creds.password);
+                    renderMyLoans(); // Will trigger success animation if approved
                 }
             }, 5000);
         }
 
-        function updateUI() {
-            const cust = currentCustomer;
-            if(!cust) return;
-            
-            let principal = Number(cust.amount) || 0;
-            let duration = Number(cust.duration) || 1;
-            let baseEmi = Math.round((principal + (principal * 0.20)) / duration);
-            let penalty = Number(cust.penalty || 0);
-            emiAmount = baseEmi + penalty;
-            
-            let paidWeeks = cust.paidWeeks || 0;
-            let pendingWeeks = duration - paidWeeks;
-            let pendBal = (pendingWeeks * baseEmi) + penalty;
-
-            document.getElementById('cName').innerText = cust.name;
-            document.getElementById('cId').innerText = cust.customerId || ('JF-' + cust.phone.slice(-4)); 
-            document.getElementById('cVillage').innerText = cust.village || 'Location N/A';
-            document.getElementById('cGuarantor').innerText = cust.guarantor || 'None';
-            
-            document.getElementById('cTotalWeeks').innerText = duration;
-            document.getElementById('cPaidWeeks').innerText = paidWeeks;
-            document.getElementById('cPendingWeeks').innerText = pendingWeeks;
-            document.getElementById('cEmi').innerText = formatMoney(emiAmount);
-            document.getElementById('cPendingBal').innerText = formatMoney(pendBal);
-            document.getElementById('dispPrincipal').innerText = formatMoney(principal);
-            document.getElementById('cReferral').innerText = cust.referralCode || ('REF-' + cust.phone.slice(-5));
-            document.getElementById('cCoins').innerText = paidWeeks * 50;
-
-            // Pending Approval State
-            if(cust.pendingApproval) {
-                document.getElementById('payEmiBtn').style.display = 'none';
-                document.getElementById('pendingAlert').style.display = 'block';
-            } else {
-                document.getElementById('payEmiBtn').style.display = 'flex';
-                document.getElementById('pendingAlert').style.display = 'none';
+        async function clearSuccessFlag(accId) {
+            let db = await fetchCloudData();
+            let idx = db.findIndex(c => c.accId === accId);
+            if(idx !== -1) {
+                db[idx].paymentSuccessFlag = false;
+                await updateCloudData(db);
             }
-
-            let tierEl = document.getElementById('cTier');
-            document.getElementById('goldStar').style.display = 'none';
-            if(cust.notes && cust.notes.includes('🚫')) { tierEl.innerText = "Defaulter"; tierEl.className = "tier-badge tier-danger"; }
-            else if(paidWeeks >= 10 && principal >= 50000) { tierEl.innerText = "Corporate VIP"; tierEl.className = "tier-badge tier-gold"; document.getElementById('goldStar').style.display = 'block'; }
-            else if(paidWeeks >= 5) { tierEl.innerText = "Gold Member"; tierEl.className = "tier-badge tier-gold"; document.getElementById('goldStar').style.display = 'block';}
-            else if(paidWeeks >= 2) { tierEl.innerText = "Silver Member"; tierEl.className = "tier-badge"; }
-            else { tierEl.innerText = "Standard"; tierEl.className = "tier-badge"; }
-
-            if (penalty > 0) {
-                document.getElementById('cPenaltyBox').style.display = 'block';
-                document.getElementById('cPenalty').innerText = formatMoney(penalty);
-            } else { document.getElementById('cPenaltyBox').style.display = 'none'; }
-
-            let score = 500 + Math.floor((paidWeeks/duration)*300) - (penalty > 0 ? 100 : 0);
-            score = Math.max(300, Math.min(900, score));
-            let tBar = document.getElementById('trustScoreBar');
-            let tText = document.getElementById('trustScoreText');
-            
-            if (penalty > 0 || (cust.notes && cust.notes.includes('🚫'))) { 
-                tBar.style.width = '30%'; tBar.style.background = 'var(--secondary)'; tText.innerText = score+' (Poor)'; tText.style.color = 'var(--secondary)'; 
-            } else if (paidWeeks > 0) { 
-                tBar.style.width = Math.max(50, Math.min(100, (score-300)/6)) + '%'; tBar.style.background = 'var(--success)'; tText.innerText = score+' (Good)'; tText.style.color = 'var(--success)'; 
-            }
-
-            let prog = Math.round((paidWeeks / duration) * 100);
-            setTimeout(() => { document.getElementById('loanProgress').style.width = prog + '%'; }, 300);
-            document.getElementById('progressText').innerText = prog + '%';
-            
-            document.getElementById('topUpBanner').style.display = (prog >= 60 && penalty === 0 && pendingWeeks > 0) ? 'flex' : 'none';
-            document.getElementById('preCloseBanner').style.display = (prog > 0 && pendingWeeks > 0 && pendingWeeks <= 3) ? 'flex' : 'none';
-
-            let dueDate = null;
-            if (cust.nextDueDate) {
-                if(cust.nextDueDate.includes('-')) { dueDate = new Date(cust.nextDueDate); } 
-                else { let parts = cust.nextDueDate.split('/'); if(parts.length === 3) dueDate = new Date(parts[2], parts[1] - 1, parts[0]); else dueDate = new Date(cust.nextDueDate); }
-            } else if (cust.lastPaidDate) {
-                let parts = cust.lastPaidDate.split('/'); if(parts.length === 3) { dueDate = new Date(parts[2], parts[1] - 1, parts[0]); dueDate.setDate(dueDate.getDate() + 7); }
-            } else if (cust.startDate) {
-                let parts = cust.startDate.split('/'); if(parts.length === 3) { dueDate = new Date(parts[2], parts[1] - 1, parts[0]); dueDate.setDate(dueDate.getDate() + 7); }
-            } else { dueDate = new Date(); dueDate.setDate(dueDate.getDate() + 7); }
-
-            if (dueDate && !isNaN(dueDate)) {
-                document.getElementById('nextDueDate').innerText = dueDate.toLocaleDateString('en-GB');
-                let today = new Date(); today.setHours(0,0,0,0);
-                let diffTime = dueDate.getTime() - today.getTime();
-                let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                
-                if (diffDays < 0) document.getElementById('countdownText').innerText = `(Overdue!)`;
-                else if (diffDays === 0) document.getElementById('countdownText').innerText = `(Today!)`;
-                else document.getElementById('countdownText').innerText = `(${diffDays} days left)`;
-                document.getElementById('countdownText').className = diffDays <= 1 ? "text-danger" : "text-warning";
-            } else {
-                document.getElementById('nextDueDate').innerText = 'Not Set';
-                document.getElementById('countdownText').innerText = '';
-            }
-
-            let nBanner = document.getElementById('adminNoticeBanner');
-            if(cust.notes && cust.notes.includes("Notice:")) { nBanner.style.display = 'block'; document.getElementById('adminNoticeText').innerText = cust.notes.split("Notice:")[1].trim(); } 
-            else { nBanner.style.display = 'none'; }
-
-            if(pendingWeeks <= 0) {
-                document.getElementById('loanClearedBanner').style.display = 'block';
-                document.getElementById('paymentSection').style.display = 'none';
-                document.getElementById('preCloseBanner').style.display = 'none';
-                if(!localStorage.getItem('confetti_' + cust.phone)) { fireSuccessConfetti(); localStorage.setItem('confetti_' + cust.phone, '1'); }
-            } else {
-                document.getElementById('loanClearedBanner').style.display = 'none';
-                document.getElementById('paymentSection').style.display = 'block';
-            }
-
-            const tbody = document.getElementById('historyBody');
-            tbody.innerHTML = '';
-            if(cust.history && cust.history.length > 0) {
-                [...cust.history].reverse().forEach((r) => {
-                    let ic = r.mode === 'cash' 
-                        ? `<div style="background:#E8F8F5; color:#27AE60; padding:8px; border-radius:6px; font-size:14px;"><i class="fas fa-money-bill"></i></div>` 
-                        : `<div style="background:#EBF5FB; color:#2980B9; padding:8px; border-radius:6px; font-size:14px;"><i class="fas fa-mobile-alt"></i></div>`;
-                    let share = encodeURIComponent(`Receipt: Paid ${formatMoney(r.amount)} on ${r.date} for Wk-${r.week}. - Jessica Finance`);
-                    
-                    tbody.innerHTML += `
-                    <tr style="border-bottom: 1px dashed #EAEDED;">
-                        <td style="padding: 10px 5px;">${ic}</td>
-                        <td style="padding: 10px 5px;">
-                            <div class="fw-bold text-dark" style="font-size:13px;">Wk-${r.week}</div>
-                            <div style="font-size:10px; color:#7F8C8D; font-weight:700;">${r.date}</div>
-                        </td>
-                        <td class="text-success fw-bold text-end align-middle" style="font-size:14px;">${formatMoney(r.amount)}</td>
-                        <td class="text-end align-middle">
-                            <a href="#" onclick="printEReceipt('${cust.phone}', '${cust.name}', ${r.amount}, ${r.week}, '${r.date}')" style="color:#2980B9; font-size:14px; margin-right:8px;" title="View Receipt"><i class="fas fa-receipt"></i></a>
-                            <a href="https://wa.me/?text=${share}" target="_blank" style="color:#BDC3C7; font-size:14px;" title="Share"><i class="fas fa-share-alt"></i></a>
-                        </td>
-                    </tr>`;
-                });
-            } else { tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3" style="font-size:12px; font-weight:bold;">No transactions yet.</td></tr>'; }
         }
 
-        // ==========================================
-        // 🚀 SECURE PAYMENT LOGIC (UPDATED FOR LOCAL DB)
-        // ==========================================
-        async function triggerUPIApp() { 
-            let intentUrl = `upi://pay?pa=${adminUPI_ID}&pn=${encodeURIComponent(businessName)}&am=${emiAmount}&cu=INR&tn=JF_Loan_ID_${currentCustomer.phone.slice(-4)}`;
-            
-            // Send Signal to Admin Dashboard First (Local Storage ద్వారా)
-            let localData = localStorage.getItem('jf_offline_backup');
-            if(localData) {
-                let db = JSON.parse(localData);
-                let idx = db.findIndex(c => c.phone === currentCustomer.phone);
-                if(idx !== -1) {
-                    db[idx].pendingApproval = true;
-                    localStorage.setItem('jf_offline_backup', JSON.stringify(db));
-                }
-            }
-
-            // Update UI to pending instantly
-            document.getElementById('payEmiBtn').style.display = 'none';
-            document.getElementById('pendingAlert').style.display = 'block';
-
-            // Open UPI App
-            window.location.href = intentUrl;
-        }
-
-        // ==========================================
-        // PHONEPE STYLE SUCCESS ANIMATION (UPDATED)
-        // ==========================================
-        async function triggerSuccessAnimation() {
-            // Show Overlay
+        function showSuccessAnimation() {
             const screen = document.getElementById('successScreen');
             screen.style.display = 'flex';
             
-            // Fire Confetti
-            var duration = 3 * 1000;
-            var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10000 };
-            
-            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
-            var interval = setInterval(function() {
-                var timeLeft = animationEnd - Date.now();
-                if (timeLeft <= 0) { return clearInterval(interval); }
-                var particleCount = 50 * (timeLeft / duration);
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-            }, 250);
-
-            // Clear the flag in the database so it doesn't loop (Local Storage)
-            let localData = localStorage.getItem('jf_offline_backup');
-            if(localData) {
-                let db = JSON.parse(localData);
-                let idx = db.findIndex(c => c.phone === currentCustomer.phone);
-                if(idx !== -1) {
-                    db[idx].paymentSuccessFlag = false;
-                    localStorage.setItem('jf_offline_backup', JSON.stringify(db));
-                }
-            }
-
-            // Hide overlay after 4 seconds
-            setTimeout(() => {
-                screen.style.display = 'none';
-            }, 4000);
-        }
-
-        // ==========================================
-        // UTILITY & FIXES
-        // ==========================================
-        function sendWhatsAppIntent(msg) { window.open(`https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(msg)}`, '_blank'); }
-        
-        function copyReferral() { navigator.clipboard.writeText(document.getElementById('cReferral').innerText); alert("Referral Code Copied! Share to earn coins."); }
-
-        function toggleCustomerDarkMode() { 
-            document.body.classList.toggle('dark-mode'); 
-            document.getElementById('darkModeIcon').className = document.body.classList.contains('dark-mode') ? 'fas fa-sun fs-5 text-warning' : 'fas fa-moon fs-5 text-secondary'; 
-        }
-        
-        function runCalculator() {
-            let p = Number(document.getElementById('calcPrincipal').value) || 0;
-            let w = Number(document.getElementById('calcWeeks').value) || 10;
-            document.getElementById('calcResult').innerText = formatMoney(Math.round((p + (p * 0.20)) / w));
-        }
-
-        function logoutCustomer() { 
-            localStorage.removeItem('loggedInCustomer'); 
-            if(pollInterval) clearInterval(pollInterval);
-            window.location.reload(); 
-        }
-        
-        function fireSuccessConfetti() {
-            let duration = 2000; let end = Date.now() + duration;
-            (function frame() { 
-                confetti({ particleCount: 4, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#10b981', '#3b82f6', '#fbbf24'] }); 
-                confetti({ particleCount: 4, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#10b981', '#3b82f6', '#fbbf24'] }); 
-                if (Date.now() < end) requestAnimationFrame(frame); 
+            var duration = 3000; var end = Date.now() + duration;
+            (function frame() {
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 } });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 } });
+                if (Date.now() < end) requestAnimationFrame(frame);
             }());
+
+            setTimeout(() => { screen.style.display = 'none'; }, 4000);
         }
 
-        // --- NEW PRINT & DOCUMENT FEATURES (HDFC LEVEL) ---
-        function printEReceipt(phone, name, amount, week, customDate) {
-            let d = customDate ? customDate : new Date().toLocaleDateString('en-GB') + " " + new Date().toLocaleTimeString('en-US', {hour:'numeric', minute:'numeric'});
-            let txnId = "TXN" + Math.floor(10000000 + Math.random() * 90000000);
-            let w = window.open('','_blank');
-            w.document.write(`
-                <style>
-                    body { display: flex; justify-content: center; align-items: center; background: #EAECEE; font-family: 'Courier New', Courier, monospace; margin: 0; padding: 20px;}
-                    .receipt-card { width: 380px; background: white; padding: 20px; border: 1px solid #BDC3C7; box-shadow: 0 10px 20px rgba(0,0,0,0.1); position: relative;}
-                    .header { text-align: center; border-bottom: 2px dashed #7F8C8D; padding-bottom: 15px; margin-bottom: 15px; }
-                    .header h2 { margin: 0; color: #2C3E50; font-size: 24px; font-weight: 800; letter-spacing: 1px; }
-                    .header p { margin: 5px 0 0 0; font-size: 12px; color: #34495E; font-weight: bold; }
-                    .details { font-size: 14px; color: #2C3E50; line-height: 1.8; }
-                    .row { display: flex; justify-content: space-between; border-bottom: 1px solid #F2F3F4; padding: 5px 0; }
-                    .row.total { font-weight: bold; font-size: 18px; border-bottom: 2px solid #2C3E50; border-top: 2px solid #2C3E50; margin-top: 10px; padding: 10px 0; }
-                    .qr-box { text-align: center; margin: 20px 0; }
-                    .footer { text-align: center; font-size: 11px; color: #7F8C8D; margin-top: 20px; border-top: 1px dashed #BDC3C7; padding-top: 10px; }
-                </style>
-                <div class="receipt-card">
-                    <div class="header">
-                        <h2>JESSICA FINANCE</h2>
-                        <p>DIGITAL PAYMENT RECEIPT</p>
-                    </div>
-                    <div class="details">
-                        <div class="row"><span>Date & Time:</span> <span>${d}</span></div>
-                        <div class="row"><span>Txn ID:</span> <span>${txnId}</span></div>
-                        <div class="row"><span>Customer Name:</span> <span>${name}</span></div>
-                        <div class="row"><span>Account ID:</span> <span>JF-${phone.slice(-4)}</span></div>
-                        <div class="row"><span>Installment:</span> <span>Week ${week}</span></div>
-                        <div class="row"><span>Payment Mode:</span> <span>Verified</span></div>
-                        <div class="row total"><span>TOTAL PAID:</span> <span>${formatMoney(amount)}</span></div>
-                    </div>
-                    <div class="qr-box">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${txnId}_JF_${phone.slice(-4)}" alt="QR">
-                        <div style="font-size:10px; margin-top:5px;">Verified Payment</div>
-                    </div>
-                    <div class="footer">Thank you for your business.<br>*** CUSTOMER COPY ***</div>
-                </div>
-                <script>setTimeout(()=>window.print(), 500);<\/script>
-            `);
-        }
-
-        function viewIdCard() {
-            let c = currentCustomer; if(!c) return;
-            let w = window.open('','_blank');
-            w.document.write(`
-                <style>
-                    body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #fff; font-family: 'Open Sans', Arial, sans-serif; margin: 0; }
-                    .id-card { width: 320px; height: 500px; background: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); overflow: hidden; position: relative; border: 1px solid #C0C8D0; }
-                    .header { background: #004C8F; color: white; padding: 25px 20px; text-align: center; border-bottom: 5px solid #ED232A;}
-                    .header h2 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: 1px; }
-                    .header p { margin: 5px 0 0 0; font-size: 10px; opacity: 0.9; text-transform: uppercase; letter-spacing: 2px; }
-                    .photo-container { width: 100px; height: 100px; background: #F4F5F7; border-radius: 50%; margin: -50px auto 0 auto; display: flex; justify-content: center; align-items: center; border: 5px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.15); font-size: 40px; color: #004C8F; font-weight: bold; }
-                    .details { padding: 20px; text-align: center; }
-                    .name { font-size: 20px; font-weight: 800; color: #2C3E50; margin: 5px 0; text-transform: uppercase; }
-                    .id-number { font-size: 13px; font-weight: bold; color: #ED232A; background: #FFF5F5; padding: 5px 15px; border-radius: 4px; display: inline-block; margin-bottom: 20px; border: 1px dashed #F5B7B1; }
-                    .info-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 12px; text-align: left; padding: 0 10px; border-bottom: 1px dashed #EAEDED; padding-bottom: 5px;}
-                    .info-label { color: #6C7A89; font-weight: 700; }
-                    .info-value { color: #2C3E50; font-weight: 800; text-align: right;}
-                    .footer { background: #004C8F; padding: 15px; text-align: center; font-size: 10px; color: white; position: absolute; bottom: 0; width: 100%; }
-                </style>
-                <div class="id-card">
-                    <div class="header"><h2>JESSICA FINANCE</h2><p>Customer ID Card</p></div>
-                    <div class="photo-container">${c.name.substring(0,2).toUpperCase()}</div>
-                    <div class="details">
-                        <div class="name">${c.name}</div>
-                        <div class="id-number">JF-${c.phone.slice(-4)}</div>
-                        <div class="info-row"><span class="info-label">Mobile</span><span class="info-value">${c.phone}</span></div>
-                        <div class="info-row"><span class="info-label">Location</span><span class="info-value">${c.village || 'N/A'}</span></div>
-                    </div>
-                    <div class="footer">If found, please contact Jessica Finance Mgt.</div>
-                </div>
-            `);
-        }
-
-        function printStatement() {
-            let cust = currentCustomer; if(!cust) return;
-            let w = window.open('','_blank');
-            w.document.write(`
-                <style>body { font-family: Arial; padding: 20px; } table { width: 100%; border-collapse: collapse; margin-top:20px;} th, td { border: 1px solid #000; padding: 8px; text-align: left; }</style>
-                <h2 style="text-align:center;">CUSTOMER LEDGER STATEMENT</h2>
-                <div style="margin-bottom:20px;">
-                    <p><b>Name:</b> ${cust.name}<br><b>Account ID:</b> JF-${cust.phone.slice(-4)}<br><b>Total Paid Weeks:</b> ${cust.paidWeeks} / ${cust.duration}</p>
-                </div>
-                <table><tr><th>Week</th><th>Date</th><th>Mode</th><th>Amount Paid</th></tr>
-                ${(cust.history||[]).map(h => `<tr><td>Wk-${h.week}</td><td>${h.date}</td><td>${(h.mode||'N/A').toUpperCase()}</td><td>${formatMoney(h.amount)}</td></tr>`).join('')}
-                </table>
-                <p style="text-align:center; margin-top:30px; font-size:12px;">Generated by Jessica Finance</p>
-                <script>setTimeout(()=>window.print(), 500);<\/script>
-            `);
-        }
-
-        function viewAgreement() {
-            let c = currentCustomer; if(!c) return;
-            let emi = Math.round((Number(c.amount) * 1.2) / c.duration);
-            let w = window.open('','_blank'); 
-            w.document.write(`
-                <style>
-                    body { background: #f4f5f7; font-family: 'Times New Roman', serif; padding: 20px; display:flex; justify-content:center;}
-                    .bond-paper { width: 100%; max-width: 800px; background: white; padding: 50px; border: 15px solid #2C3E50; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.2); }
-                    .bond-paper::before { content: ''; position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; border: 2px solid #2C3E50; pointer-events: none; }
-                    .stamp { text-align: center; color: #2C3E50; margin-bottom: 40px; border-bottom: 3px double #2C3E50; padding-bottom: 20px; }
-                    .stamp h1 { margin: 0; font-size: 32px; letter-spacing: 2px; }
-                    .stamp h3 { margin: 5px 0; font-size: 16px; letter-spacing: 1px; color: #7F8C8D; }
-                    .title { text-align: center; font-size: 22px; font-weight: bold; text-decoration: underline; margin-bottom: 30px; }
-                    .content { font-size: 16px; line-height: 1.8; text-align: justify; }
-                    .highlight { font-weight: bold; font-size: 18px; }
-                    .terms { margin-top: 30px; }
-                    .terms li { margin-bottom: 10px; }
-                    .signatures { display: flex; justify-content: space-between; margin-top: 80px; }
-                    .sig-box { text-align: center; font-weight: bold; border-top: 1px solid black; padding-top: 5px; width: 30%; }
-                </style>
-                <div class="bond-paper">
-                    <div class="stamp">
-                        <h1>NON-JUDICIAL STAMP PAPER</h1>
-                        <h3>JESSICA FINANCE MANAGEMENT</h3>
-                    </div>
-                    <div class="title">LOAN & REPAYMENT AGREEMENT</div>
-                    <div class="content">
-                        This Agreement is made and executed on <b>${c.startDate || new Date().toLocaleDateString('en-GB')}</b> between <b>Jessica Finance</b> (hereinafter referred to as "Lender") and:<br><br>
-                        <b>Borrower Name:</b> <span class="highlight">${c.name}</span><br>
-                        <b>Mobile Number:</b> ${c.phone}<br>
-                        <b>Address / Village:</b> ${c.village || 'N/A'}<br>
-                        <b>KYC / Aadhaar:</b> ${c.aadhaar || 'Verified'}<br>
-                        <b>Guarantor Name:</b> ${c.guarantor && c.guarantor !== 'None' ? c.guarantor : 'Self-Guaranteed'}<br><br>
-                        
-                        The Borrower has requested a principal loan amount of <span class="highlight">Rs. ${formatMoney(c.amount)}</span>. The loan is approved with a total tenure of <b>${c.duration} Weeks</b>. The agreed Weekly EMI to be paid by the Borrower is <span class="highlight">Rs. ${formatMoney(emi)}</span>.
-                        
-                        <div class="terms">
-                            <b>Terms and Conditions:</b>
-                            <ol>
-                                <li>The Borrower agrees to pay the Weekly EMI strictly on or before the due date.</li>
-                                <li>In case of default or delay, a late payment penalty will be added to the outstanding balance.</li>
-                                <li>The Guarantor (if any) holds equal legal liability for the repayment of this loan.</li>
-                                <li>Any security/collateral provided by the Borrower shall remain with the Lender until the loan is settled in full.</li>
-                                <li>The Lender reserves the right to take legal action under the Negotiable Instruments Act in case of intentional default.</li>
-                            </ol>
-                        </div>
-                    </div>
-                    
-                    <div class="signatures">
-                        <div class="sig-box">Borrower Signature</div>
-                        <div class="sig-box">Guarantor Signature</div>
-                        <div class="sig-box">Authorized Signatory<br><span style="font-size:12px; font-weight:normal;">Jessica Finance Mgt.</span></div>
-                    </div>
-                </div>
-            `);
-        }
-
-        // NOC GENERATOR
-        function generateNOC() {
-            let c = currentCustomer; if(!c) return;
-            let w = window.open('','_blank');
-            w.document.write(`
-                <style>
-                    body { display: flex; justify-content: center; align-items: center; background: #f4f5f7; font-family: 'Times New Roman', serif; margin: 0; padding: 20px;}
-                    .noc-card { width: 100%; max-width: 600px; background: white; padding: 40px; border: 8px solid #004C8F; position: relative; }
-                    .noc-card::before { content: ''; position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; border: 2px dashed #004C8F; pointer-events: none; }
-                    h1 { text-align: center; color: #004C8F; font-size: 28px; text-transform: uppercase; margin-bottom: 5px; }
-                    h3 { text-align: center; color: #ED232A; font-size: 18px; margin-top: 0; margin-bottom: 30px; text-decoration: underline; }
-                    .content { font-size: 16px; line-height: 1.8; color: #333; text-align: justify; z-index: 10; position: relative;}
-                    .signature { margin-top: 50px; display: flex; justify-content: space-between; font-weight: bold; }
-                    .stamp { text-align: center; margin-top: 30px; font-size: 12px; color: #7F8C8D; border-top: 1px solid #ccc; padding-top: 10px;}
-                </style>
-                <div class="noc-card">
-                    <h1>Jessica Finance Management</h1>
-                    <h3>NO DUE CERTIFICATE (NOC)</h3>
-                    <div class="content">
-                        <p>Date: <b>${new Date().toLocaleDateString('en-GB')}</b></p>
-                        <p>This is to certify that <b>Mr/Ms. ${c.name}</b> (ID: JF-${c.phone.slice(-4)}), residing at <b>${c.village || 'Registered Address'}</b>, has successfully cleared and settled their entire loan account with Jessica Finance Management.</p>
-                        <p>The total principal amount of <b>Rs.${formatMoney(c.amount)}</b> along with all respective interest and penalties has been paid in full.</p>
-                        <p>There are no outstanding dues pending against this account as of the date mentioned above. We wish them all the best for their future endeavors.</p>
-                    </div>
-                    <div class="signature">
-                        <div>___________________<br>Customer Signature</div>
-                        <div style="text-align: right;">___________________<br>Authorized Signatory<br><span style="font-size:12px; font-weight:normal;">Jessica Finance Mgt.</span></div>
-                    </div>
-                    <div class="stamp">This is a system generated secure certificate.</div>
-                </div>
-                <script>window.onload=window.print<\/script>
-            `);
-        }
-
+        function toggleCustomerDarkMode() { document.body.classList.toggle('dark-mode'); }
+        function logoutCustomer() { localStorage.removeItem('loggedInCustomer'); window.location.reload(); }
     </script>
 </body>
 </html>
