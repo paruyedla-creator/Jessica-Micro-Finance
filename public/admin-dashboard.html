@@ -3,54 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Jessica Finance Management</title>
+    <title>Admin - Jessica Finance</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
-        :root {
-            --primary: #004C8F; --secondary: #ED232A; --success: #27AE60; --warning: #F39C12;
-            --bg-light: #F4F7F6; --card-bg: #FFFFFF; --text-main: #333; --border-color: #E0E0E0;
-        }
-
+        :root { --primary: #004C8F; --secondary: #ED232A; --success: #27AE60; --warning: #F39C12; --bg-light: #F4F7F6; --card-bg: #FFFFFF; --text-main: #333; --border-color: #E0E0E0; }
         body { background-color: var(--bg-light); font-family: 'Poppins', sans-serif; color: var(--text-main); font-size: 13px; }
-        
         .top-navbar { background: linear-gradient(135deg, var(--primary), #002244); color: white; padding: 10px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
-        
         .stat-card { background: var(--card-bg); border-radius: 8px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-bottom: 3px solid var(--primary); }
-        
         .customer-card { background: var(--card-bg); border-radius: 8px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 5px rgba(0,0,0,0.05); border: 1px solid var(--border-color); position: relative; border-left: 4px solid var(--success); }
-        .row-blacklisted { border-left-color: var(--secondary); }
         .row-overdue { border-left-color: var(--warning); }
-        
         .data-block { background: #F8F9FA; padding: 6px; border-radius: 4px; text-align: center; border: 1px solid var(--border-color); flex: 1; }
         .data-label { font-size: 9px; color: #7F8C8D; font-weight: 800; text-transform: uppercase; }
         .data-val { font-size: 14px; font-weight: 800; color: var(--text-main); }
         .data-val-big { font-size: 16px; font-weight: 800; color: var(--primary); }
-
         .progress-bar-custom { height: 6px; background: #EAEDED; border-radius: 3px; overflow: hidden; margin-top: 3px; }
         .progress-fill { height: 100%; background: var(--success); transition: width 1s; }
-
         .action-toolbar { background: #F8F9FA; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); margin-top: 10px; display: flex; justify-content: space-between; align-items: center;}
-        .icon-btn { border: none; background: white; border-radius: 4px; padding: 5px 8px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px; cursor: pointer; border: 1px solid #BDC3C7; transition: 0.2s;}
-        .icon-btn:active { transform: scale(0.95); }
+        .icon-btn { border: none; background: white; border-radius: 4px; padding: 5px 8px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px; cursor: pointer; border: 1px solid #BDC3C7;}
         .btn-pay { color: white; background: var(--success); border:none;} 
         .btn-pen { color: white; background: var(--secondary); border:none;} 
-
         .compact-table th { background: var(--primary); color: white; font-size: 11px; padding: 10px; }
         .compact-table td { font-size: 12px; font-weight: 600; vertical-align: middle; padding: 8px; }
-        
         #lockScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,34,68,0.98); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        
-        .w-20px { width: 20px; text-align: center; }
-        .spin-anim { animation: spin 1s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        
         .last-pay-strip { font-size: 10px; background: #E8F8F5; color: #1E8449; padding: 4px 8px; border-radius: 4px; border: 1px dashed #A9DFBF; margin-bottom: 8px; display: inline-block; width: 100%; }
         .last-pay-strip.no-pay { background: #FDEDEC; color: #C0392B; border-color: #F5B7B1; }
+        .w-20px { width: 20px; text-align: center; }
     </style>
 </head>
 <body>
@@ -75,27 +57,19 @@
     </div>
 
     <div class="container-fluid mt-3 px-3">
-        
-        <!-- TOP ACTIONS & SEARCH -->
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
             <div class="d-flex gap-2">
-                <button class="btn btn-sm btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#addCustomerModal"><i class="fas fa-plus"></i> New Loan</button>
+                <button class="btn btn-sm btn-primary fw-bold" onclick="openModalSafe('addCustomerModal')"><i class="fas fa-plus"></i> New Loan</button>
                 <button class="btn btn-sm btn-dark fw-bold" onclick="toggleView()" id="viewToggleBtn"><i class="fas fa-table"></i> Table</button>
-                <button class="btn btn-sm btn-success fw-bold" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Excel</button>
-                <button class="btn btn-sm btn-info fw-bold text-dark" data-bs-toggle="modal" data-bs-target="#cashCalcModal"><i class="fas fa-calculator"></i> Cash Counter</button>
+                <button class="btn btn-sm btn-info fw-bold text-dark" onclick="openModalSafe('cashCalcModal')"><i class="fas fa-calculator"></i> Cash Counter</button>
             </div>
             
             <div class="d-flex gap-2 align-items-center">
                 <div class="input-group input-group-sm" style="width: 200px;">
                     <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                    <input type="text" id="searchInput" class="form-control border-start-0 fw-bold" placeholder="Search Name or Phone..." onkeyup="renderData()">
+                    <input type="text" id="searchInput" class="form-control border-start-0 fw-bold" placeholder="Search..." onkeyup="renderData()">
                 </div>
-                <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="liveRefresh()"><i class="fas fa-sync-alt" id="refreshIcon"></i> Refresh</button>
-                
-                <select class="form-select form-select-sm fw-bold" style="width: 120px;" id="sortFilter" onchange="renderData()">
-                    <option value="recent">Recent</option>
-                    <option value="name">A-Z</option>
-                </select>
+                <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="liveRefresh()"><i class="fas fa-sync-alt" id="refreshIcon"></i> Sync</button>
             </div>
         </div>
 
@@ -107,16 +81,14 @@
             <div class="col-md-3 col-6"><div class="stat-card"><div style="font-size: 9px; color: #7F8C8D; font-weight: 800;">PROFIT & PENALTY</div><h4 class="fw-bold text-primary m-0" id="statProfit">₹0</h4></div></div>
         </div>
 
-        <!-- FILTERS -->
         <ul class="nav nav-pills mb-3 fw-bold" style="background: white; padding: 5px; border-radius: 6px; font-size: 12px; box-shadow: 0 1px 5px rgba(0,0,0,0.05);">
-            <li class="nav-item"><a class="nav-link active py-1 px-3" href="#" onclick="setFilter('all', this)">All Loans</a></li>
-            <li class="nav-item"><a class="nav-link text-warning py-1 px-3" href="#" onclick="setFilter('pending', this)"><i class="fas fa-bell"></i> App Pay Req</a></li>
-            <li class="nav-item"><a class="nav-link text-success py-1 px-3" href="#" onclick="setFilter('active', this)">Active</a></li>
-            <li class="nav-item"><a class="nav-link text-danger py-1 px-3" href="#" onclick="setFilter('overdue', this)">Overdue</a></li>
-            <li class="nav-item"><a class="nav-link text-secondary py-1 px-3" href="#" onclick="setFilter('cleared', this)">Settled</a></li>
+            <li class="nav-item"><a class="nav-link active py-1 px-3" href="javascript:void(0)" onclick="setFilter('all', this)">All Loans</a></li>
+            <li class="nav-item"><a class="nav-link text-warning py-1 px-3" href="javascript:void(0)" onclick="setFilter('pending', this)"><i class="fas fa-bell"></i> App Pay Req</a></li>
+            <li class="nav-item"><a class="nav-link text-success py-1 px-3" href="javascript:void(0)" onclick="setFilter('active', this)">Active</a></li>
+            <li class="nav-item"><a class="nav-link text-danger py-1 px-3" href="javascript:void(0)" onclick="setFilter('overdue', this)">Overdue</a></li>
+            <li class="nav-item"><a class="nav-link text-secondary py-1 px-3" href="javascript:void(0)" onclick="setFilter('cleared', this)">Settled</a></li>
         </ul>
 
-        <!-- MAIN DATA CONTAINER -->
         <div id="customersListContainer"></div>
         <div id="customersTableContainer" style="display: none;" class="table-responsive bg-white p-2 rounded shadow-sm">
             <table class="table table-bordered table-hover compact-table align-middle mb-0">
@@ -124,17 +96,10 @@
                 <tbody id="tableBody"></tbody>
             </table>
         </div>
-
-        <div id="emptyState" class="text-center py-5" style="display: none;">
-            <i class="fas fa-search text-muted" style="font-size: 40px; opacity: 0.3;"></i>
-            <h6 class="mt-3 text-muted fw-bold">No Records Found</h6>
-        </div>
-
+        <div id="emptyState" class="text-center py-5" style="display: none;"><i class="fas fa-search text-muted" style="font-size: 40px; opacity: 0.3;"></i><h6 class="mt-3 text-muted fw-bold">No Records Found</h6></div>
     </div>
 
-    <!-- =========================================
-         MODALS SECTION 
-         ========================================= -->
+    <!-- MODALS SECTION -->
     
     <!-- PAYMENT CONFIRMATION MODAL -->
     <div class="modal fade" id="paymentModal" tabindex="-1">
@@ -149,22 +114,14 @@
                         <h6 class="fw-bold m-0 text-dark" id="payCustName">Name</h6>
                         <small class="fw-bold text-primary" id="payAccId">JF-0000</small>
                     </div>
-                    
                     <label class="small fw-bold text-muted">Amount Received (₹)</label>
                     <input type="number" id="payAmount" class="form-control fw-bold mb-3 border-success text-success fs-5">
-                    
                     <label class="small fw-bold text-muted">Payment Mode</label>
                     <select id="payMode" class="form-select fw-bold border-dark mb-4">
-                        <option value="Cash">💵 Cash</option>
-                        <option value="PhonePe">📱 PhonePe</option>
-                        <option value="GPay">📱 Google Pay (GPay)</option>
-                        <option value="Bank Transfer">🏦 Bank Transfer</option>
-                        <option value="Other">❓ Other</option>
+                        <option value="Cash">💵 Cash</option><option value="PhonePe">📱 PhonePe</option>
+                        <option value="GPay">📱 Google Pay (GPay)</option><option value="Bank Transfer">🏦 Bank Transfer</option>
                     </select>
-                    
-                    <input type="hidden" id="payType"> 
-                    <input type="hidden" id="payBaseEmi">
-                    
+                    <input type="hidden" id="payType"> <input type="hidden" id="payBaseEmi">
                     <button class="btn btn-success w-100 fw-bold py-2 fs-6" onclick="processPayment()"><i class="fas fa-check-circle me-1"></i> Confirm & Save</button>
                 </div>
             </div>
@@ -175,23 +132,14 @@
     <div class="modal fade" id="cashCalcModal" tabindex="-1">
         <div class="modal-dialog modal-sm">
             <div class="modal-content border-0">
-                <div class="modal-header bg-info text-dark py-2">
-                    <h6 class="modal-title fw-bold"><i class="fas fa-money-bill-wave me-2"></i> Cash Counter</h6>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
+                <div class="modal-header bg-info text-dark py-2"><h6 class="modal-title fw-bold"><i class="fas fa-money-bill-wave me-2"></i> Cash Counter</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body bg-light">
                     <div class="row g-2 text-end fw-bold align-items-center">
                         <div class="col-4">₹ 500 x</div><div class="col-8"><input type="number" id="c500" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div>
                         <div class="col-4">₹ 200 x</div><div class="col-8"><input type="number" id="c200" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div>
                         <div class="col-4">₹ 100 x</div><div class="col-8"><input type="number" id="c100" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div>
-                        <div class="col-4">₹ 50 x</div><div class="col-8"><input type="number" id="c50" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div>
-                        <div class="col-4">₹ 20 x</div><div class="col-8"><input type="number" id="c20" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div>
-                        <div class="col-4">₹ 10 x</div><div class="col-8"><input type="number" id="c10" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div>
                     </div>
-                    <div class="mt-3 p-2 bg-dark text-white text-center rounded">
-                        <div style="font-size: 10px;">TOTAL CASH</div>
-                        <h4 class="m-0 fw-bold text-success" id="cashTotalResult">₹0</h4>
-                    </div>
+                    <div class="mt-3 p-2 bg-dark text-white text-center rounded"><div style="font-size: 10px;">TOTAL CASH</div><h4 class="m-0 fw-bold text-success" id="cashTotalResult">₹0</h4></div>
                     <button class="btn btn-sm btn-secondary w-100 mt-2 fw-bold" onclick="resetCash()">Reset</button>
                 </div>
             </div>
@@ -217,7 +165,6 @@
                             <div class="col-md-4"><label class="small fw-bold">Village/Loc</label><input type="text" id="custVillage" class="form-control form-control-sm fw-bold"></div>
                             <div class="col-md-6"><label class="small fw-bold">Aadhaar/KYC</label><input type="text" id="custAadhaar" class="form-control form-control-sm fw-bold"></div>
                             <div class="col-md-6"><label class="small fw-bold">Guarantor</label><input type="text" id="custGuarantor" class="form-control form-control-sm fw-bold"></div>
-                            <div class="col-md-12"><label class="small fw-bold">Security / Items</label><input type="text" id="custSecurity" class="form-control form-control-sm fw-bold" placeholder="E.g. Blank Cheque"></div>
                         </div>
                         <button type="submit" class="btn btn-primary w-100 fw-bold mt-3"><i class="fas fa-check me-2"></i> Save Loan</button>
                     </form>
@@ -226,41 +173,12 @@
         </div>
     </div>
 
-    <!-- FULL PROFILE MODAL -->
-    <div class="modal fade" id="fullProfileModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content border-0">
-                <div class="modal-header bg-dark text-white py-2">
-                    <h6 class="modal-title fw-bold"><i class="fas fa-address-card me-2"></i> Customer Profile Info</h6>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body bg-light">
-                    <div class="text-center mb-3">
-                        <h5 class="fw-bold text-primary m-0" id="fpName">Name</h5>
-                        <div class="text-muted small fw-bold" id="fpAccId">JF-0000</div>
-                    </div>
-                    <table class="table table-sm table-bordered bg-white" style="font-size: 12px;">
-                        <tbody>
-                            <tr><th class="bg-light" style="width: 40%;">Mobile No</th><td id="fpPhone" class="fw-bold"></td></tr>
-                            <tr><th class="bg-light">Customer App PIN</th><td id="fpPin" class="fw-bold text-danger fs-6"></td></tr>
-                            <tr><th class="bg-light">Aadhaar/KYC</th><td id="fpAadhaar" class="fw-bold"></td></tr>
-                            <tr><th class="bg-light">Village / Loc</th><td id="fpVillage" class="fw-bold"></td></tr>
-                            <tr><th class="bg-light">Guarantor</th><td id="fpGuarantor" class="fw-bold"></td></tr>
-                            <tr><th class="bg-light">Security/Item</th><td id="fpSecurity" class="fw-bold"></td></tr>
-                            <tr><th class="bg-light">Admin Notes</th><td id="fpNotes" class="fw-bold text-warning"></td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- EDIT LOAN MODAL -->
+    <!-- EDIT LOAN MODAL (WITH DATES) -->
     <div class="modal fade" id="editCustomerModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content border-0">
                 <div class="modal-header bg-dark text-white py-2">
-                    <h6 class="modal-title fw-bold">Edit Loan Details</h6>
+                    <h6 class="modal-title fw-bold">Edit Customer & Loan Dates</h6>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body bg-light">
@@ -273,327 +191,141 @@
                             <div class="col-md-4"><label class="small fw-bold">Principal (₹)</label><input type="number" id="editAmount" class="form-control form-control-sm fw-bold"></div>
                             <div class="col-md-4"><label class="small fw-bold">Tenure (Weeks)</label><input type="number" id="editDuration" class="form-control form-control-sm fw-bold"></div>
                             <div class="col-md-4"><label class="small fw-bold">Village/Loc</label><input type="text" id="editVillage" class="form-control form-control-sm fw-bold"></div>
-                            <div class="col-md-6"><label class="small fw-bold">Aadhaar/KYC</label><input type="text" id="editAadhaar" class="form-control form-control-sm fw-bold"></div>
-                            <div class="col-md-6"><label class="small fw-bold">Guarantor</label><input type="text" id="editGuarantor" class="form-control form-control-sm fw-bold"></div>
+                            <div class="col-md-4"><label class="small fw-bold text-primary">Start Date</label><input type="text" id="editStartDate" class="form-control form-control-sm fw-bold border-primary" placeholder="DD/MM/YYYY"></div>
+                            <div class="col-md-4"><label class="small fw-bold text-primary">Last Paid Date</label><input type="text" id="editLastPaid" class="form-control form-control-sm fw-bold border-primary" placeholder="DD/MM/YYYY"></div>
+                            <div class="col-md-4"><label class="small fw-bold">Aadhaar/KYC</label><input type="text" id="editAadhaar" class="form-control form-control-sm fw-bold"></div>
                             <div class="col-md-12"><label class="small fw-bold">Admin Notes</label><input type="text" id="editNotes" class="form-control form-control-sm fw-bold"></div>
                         </div>
-                        <button type="submit" class="btn btn-dark w-100 fw-bold mt-3"><i class="fas fa-save me-2"></i> Update Loan</button>
+                        <button type="submit" class="btn btn-dark w-100 fw-bold mt-3"><i class="fas fa-save me-2"></i> Update Complete Details</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 360 PROFILE (LEDGER) -->
-    <div class="modal fade" id="customer360Modal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content border-0">
-                <div class="modal-header bg-primary text-white py-2">
-                    <h6 class="modal-title fw-bold"><i class="fas fa-book me-2"></i> Repayment Ledger</h6>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body bg-light">
-                    <div class="d-flex justify-content-between mb-3 fw-bold" style="font-size:14px;">
-                        <span class="text-primary" id="prof360Id">JF-0000</span>
-                        <span id="prof360Name">Name</span>
-                    </div>
-                    <table class="table table-bordered bg-white text-center align-middle" style="font-size: 11px;">
-                        <thead class="table-dark"><tr><th>EMI No.</th><th>Date Paid</th><th>Pay Mode</th><th>Amount</th><th>Undo</th></tr></thead>
-                        <tbody id="prof360History"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- FULL PROFILE MODAL -->
+    <div class="modal fade" id="fullProfileModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content border-0"><div class="modal-header bg-dark text-white py-2"><h6 class="modal-title fw-bold"><i class="fas fa-address-card me-2"></i> Profile Info</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light"><div class="text-center mb-3"><h5 class="fw-bold text-primary m-0" id="fpName"></h5><div class="text-muted small fw-bold" id="fpAccId"></div></div><table class="table table-sm table-bordered bg-white" style="font-size: 12px;"><tbody><tr><th class="bg-light">Mobile No</th><td id="fpPhone" class="fw-bold"></td></tr><tr><th class="bg-light">App PIN</th><td id="fpPin" class="fw-bold text-danger"></td></tr><tr><th class="bg-light">Start Date</th><td id="fpStart" class="fw-bold"></td></tr><tr><th class="bg-light">Village / Loc</th><td id="fpVillage" class="fw-bold"></td></tr><tr><th class="bg-light">Aadhaar/KYC</th><td id="fpAadhaar" class="fw-bold"></td></tr><tr><th class="bg-light">Admin Notes</th><td id="fpNotes" class="fw-bold text-warning"></td></tr></tbody></table></div></div></div></div>
+    
+    <!-- 360 PROFILE -->
+    <div class="modal fade" id="customer360Modal" tabindex="-1"><div class="modal-dialog"><div class="modal-content border-0"><div class="modal-header bg-primary text-white py-2"><h6 class="modal-title fw-bold"><i class="fas fa-book me-2"></i> Repayment Ledger</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light"><div class="d-flex justify-content-between mb-3 fw-bold" style="font-size:14px;"><span class="text-primary" id="prof360Id"></span><span id="prof360Name"></span></div><table class="table table-bordered bg-white text-center align-middle" style="font-size: 11px;"><thead class="table-dark"><tr><th>EMI No.</th><th>Date</th><th>Mode</th><th>Amount</th><th>Undo</th></tr></thead><tbody id="prof360History"></tbody></table></div></div></div></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // ☁️ CLOUD DATABASE SETTINGS
+        // ☁️ CLOUD DB SETTINGS
         const BIN_ID = "6a680db5da38895dfe99644c";
         const API_KEY = "$2a$10$hMjC2hJpy4MR4jrFYBGrMeX.3m5olpdY3LgNetbTgdcex3JgQItg6";
-        
-        let globalCustomers = []; 
-        let currentFilter = 'all';
-        let isSyncing = false;
-        let isTableView = false;
-        let currentPayAccId = null;
-
+        let globalCustomers = []; let currentFilter = 'all'; let isSyncing = false; let isTableView = false; let currentPayAccId = null;
         const formatMoney = (amount) => '₹' + Number(amount).toLocaleString('en-IN');
         
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('liveClockDisplay').innerText = now.toLocaleDateString('en-GB') + " " + now.toLocaleTimeString();
-        }, 1000);
-
+        setInterval(() => { const now = new Date(); document.getElementById('liveClockDisplay').innerText = now.toLocaleDateString('en-GB') + " " + now.toLocaleTimeString(); }, 1000);
         function lockSystem() { document.getElementById('lockScreen').style.display = 'flex'; document.getElementById('unlockPin').focus(); }
         function checkUnlock(val) { if(val === '7569') { document.getElementById('lockScreen').style.display = 'none'; document.getElementById('unlockPin').value = ''; } }
 
-        function calcCash() {
-            let t = (Number(document.getElementById('c500').value||0)*500) + (Number(document.getElementById('c200').value||0)*200) + 
-                    (Number(document.getElementById('c100').value||0)*100) + (Number(document.getElementById('c50').value||0)*50) + 
-                    (Number(document.getElementById('c20').value||0)*20) + (Number(document.getElementById('c10').value||0)*10);
-            document.getElementById('cashTotalResult').innerText = formatMoney(t);
+        // ✅ SAFE MODAL OPENER (FIXED BUG)
+        function openModalSafe(id) { 
+            let el = document.getElementById(id); 
+            let m = bootstrap.Modal.getOrCreateInstance(el); 
+            m.show(); 
         }
-        function resetCash() {
-            ['c500','c200','c100','c50','c20','c10'].forEach(id => document.getElementById(id).value = ''); calcCash();
+        function closeModalSafe(id) { 
+            let el = document.getElementById(id); 
+            let m = bootstrap.Modal.getInstance(el); 
+            if(m) m.hide(); 
         }
 
         async function loadCustomers() {
             if(isSyncing) return; isSyncing = true;
-            let statusEl = document.getElementById('networkStatus');
-            statusEl.innerHTML = `<i class="fas fa-sync fa-spin text-warning"></i> SYNCING...`;
-            
+            document.getElementById('networkStatus').innerHTML = `<i class="fas fa-sync fa-spin text-warning"></i> SYNCING...`;
             try {
-                let response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers: { 'X-Master-Key': API_KEY } });
-                if(!response.ok) throw new Error("Network error");
-                let data = await response.json();
-                globalCustomers = data.record || []; 
-                statusEl.innerHTML = `<i class="fas fa-cloud text-success"></i> ONLINE`;
-                localStorage.setItem('jf_offline_backup', JSON.stringify(globalCustomers));
-                renderData(); calculateAnalytics();
-            } catch (error) { 
-                statusEl.innerHTML = `<i class="fas fa-exclamation-triangle text-danger"></i> OFFLINE`;
-                let local = localStorage.getItem('jf_offline_backup');
-                if(local) { globalCustomers = JSON.parse(local); renderData(); calculateAnalytics(); }
-            }
+                let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers: { 'X-Master-Key': API_KEY } });
+                let data = await res.json(); globalCustomers = data.record || []; 
+                document.getElementById('networkStatus').innerHTML = `<i class="fas fa-cloud text-success"></i> ONLINE`;
+                localStorage.setItem('jf_offline_backup', JSON.stringify(globalCustomers)); renderData(); calculateAnalytics();
+            } catch (e) { document.getElementById('networkStatus').innerHTML = `<i class="fas fa-exclamation-triangle text-danger"></i> OFFLINE`; let l = localStorage.getItem('jf_offline_backup'); if(l) { globalCustomers = JSON.parse(l); renderData(); calculateAnalytics(); } }
             isSyncing = false;
         }
 
         async function saveToDB() {
             document.getElementById('networkStatus').innerHTML = `<i class="fas fa-spinner fa-spin text-primary"></i> SAVING...`;
-            localStorage.setItem('jf_offline_backup', JSON.stringify(globalCustomers));
-            renderData(); calculateAnalytics();
-            try {
-                await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY }, body: JSON.stringify(globalCustomers) });
-                document.getElementById('networkStatus').innerHTML = `<i class="fas fa-cloud text-success"></i> SAVED`;
-            } catch (e) { document.getElementById('networkStatus').innerHTML = `<i class="fas fa-save text-warning"></i> SAVED OFFLINE`; }
+            localStorage.setItem('jf_offline_backup', JSON.stringify(globalCustomers)); renderData(); calculateAnalytics();
+            try { await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY }, body: JSON.stringify(globalCustomers) }); document.getElementById('networkStatus').innerHTML = `<i class="fas fa-cloud text-success"></i> SAVED`;
+            } catch (e) { document.getElementById('networkStatus').innerHTML = `<i class="fas fa-save text-warning"></i> OFFLINE`; }
         }
 
-        function liveRefresh() {
-            let icon = document.getElementById('refreshIcon');
-            icon.classList.add('spin-anim'); 
-            loadCustomers().then(() => { setTimeout(() => icon.classList.remove('spin-anim'), 500); });
-        }
-
-        function setFilter(filter, el) {
-            currentFilter = filter;
-            document.querySelectorAll('.nav-pills .nav-link').forEach(n => n.classList.remove('active', 'bg-dark', 'text-white'));
-            el.classList.add('active', 'bg-dark', 'text-white');
-            renderData();
-        }
-
-        function toggleView() {
-            isTableView = !isTableView;
-            document.getElementById('viewToggleBtn').innerHTML = isTableView ? `<i class="fas fa-th-large"></i> Card View` : `<i class="fas fa-table"></i> Table View`;
-            document.getElementById('customersListContainer').style.display = isTableView ? 'none' : 'block';
-            document.getElementById('customersTableContainer').style.display = isTableView ? 'block' : 'none';
-            renderData();
-        }
+        function liveRefresh() { loadCustomers(); }
+        function setFilter(filter, el) { currentFilter = filter; document.querySelectorAll('.nav-pills .nav-link').forEach(n => n.classList.remove('active', 'bg-dark', 'text-white')); el.classList.add('active', 'bg-dark', 'text-white'); renderData(); }
+        function toggleView() { isTableView = !isTableView; document.getElementById('customersListContainer').style.display = isTableView ? 'none' : 'block'; document.getElementById('customersTableContainer').style.display = isTableView ? 'block' : 'none'; renderData(); }
 
         document.getElementById('addCustomerForm').addEventListener('submit', function(e) {
-            e.preventDefault(); 
-            let uniqueId = "JF-" + Math.floor(1000 + Math.random() * 9000);
-            const newLoan = { 
-                accId: uniqueId, name: document.getElementById('custName').value, phone: document.getElementById('custPhone').value, 
-                password: document.getElementById('custPass').value, village: document.getElementById('custVillage').value,
-                aadhaar: document.getElementById('custAadhaar').value || '', amount: Number(document.getElementById('custAmount').value), 
-                duration: Number(document.getElementById('custDuration').value), guarantor: document.getElementById('custGuarantor').value || '',
-                security: document.getElementById('custSecurity').value || '', paidWeeks: 0, penalty: 0, history: [], pendingApproval: false, notes: "",
-                startDate: new Date().toLocaleDateString('en-GB')
-            };
-            globalCustomers.push(newLoan);
-            bootstrap.Modal.getInstance(document.getElementById('addCustomerModal')).hide();
-            document.getElementById('addCustomerForm').reset();
-            saveToDB();
+            e.preventDefault(); let uniqueId = "JF-" + Math.floor(1000 + Math.random() * 9000);
+            globalCustomers.push({ accId: uniqueId, name: document.getElementById('custName').value.trim(), phone: document.getElementById('custPhone').value.trim(), password: document.getElementById('custPass').value.trim(), village: document.getElementById('custVillage').value, aadhaar: document.getElementById('custAadhaar').value, amount: Number(document.getElementById('custAmount').value), duration: Number(document.getElementById('custDuration').value), guarantor: document.getElementById('custGuarantor').value, paidWeeks: 0, penalty: 0, history: [], pendingApproval: false, notes: "", startDate: new Date().toLocaleDateString('en-GB') });
+            closeModalSafe('addCustomerModal'); document.getElementById('addCustomerForm').reset(); saveToDB();
         });
 
-        // ==========================================
-        // 🚀 PAYMENT SYSTEM & APPROVAL MODAL (UPDATED)
-        // ==========================================
+        // 🚀 PAYMENT ACTIONS & MODALS
         function recordCashPayment(accId, name, amount) {
-            currentPayAccId = accId;
-            document.getElementById('payCustName').innerText = name + " (Full EMI)";
-            document.getElementById('payAccId').innerText = accId;
-            document.getElementById('payAmount').value = amount;
-            document.getElementById('payAmount').readOnly = true; 
-            document.getElementById('payType').value = 'full';
-            new bootstrap.Modal(document.getElementById('paymentModal')).show();
+            currentPayAccId = accId; document.getElementById('payCustName').innerText = name + " (Full EMI)"; document.getElementById('payAccId').innerText = accId; document.getElementById('payAmount').value = amount; document.getElementById('payAmount').readOnly = true; document.getElementById('payType').value = 'full'; openModalSafe('paymentModal');
         }
-
         function customPayment(accId, name) {
-            currentPayAccId = accId;
-            document.getElementById('payCustName').innerText = name + " (Part Pay)";
-            document.getElementById('payAccId').innerText = accId;
-            document.getElementById('payAmount').value = "";
-            document.getElementById('payAmount').readOnly = false; 
-            document.getElementById('payType').value = 'part';
-            new bootstrap.Modal(document.getElementById('paymentModal')).show();
+            currentPayAccId = accId; document.getElementById('payCustName').innerText = name + " (Part Pay)"; document.getElementById('payAccId').innerText = accId; document.getElementById('payAmount').value = ""; document.getElementById('payAmount').readOnly = false; document.getElementById('payType').value = 'part'; openModalSafe('paymentModal');
         }
-
         function advancePayment(accId, name, baseEmi) {
             let weeks = prompt(`ADVANCE PAY for ${name}\nHow many weeks?`);
             if(weeks && !isNaN(weeks) && Number(weeks)>1) {
-                currentPayAccId = accId;
-                let amt = Number(weeks) * baseEmi;
-                document.getElementById('payCustName').innerText = name + ` (${weeks} Wks Advance)`;
-                document.getElementById('payAccId').innerText = accId;
-                document.getElementById('payAmount').value = amt;
-                document.getElementById('payAmount').readOnly = true;
-                document.getElementById('payType').value = 'adv';
-                document.getElementById('payBaseEmi').value = baseEmi; 
-                new bootstrap.Modal(document.getElementById('paymentModal')).show();
+                currentPayAccId = accId; document.getElementById('payCustName').innerText = name + ` (${weeks} Wks Advance)`; document.getElementById('payAccId').innerText = accId; document.getElementById('payAmount').value = Number(weeks) * baseEmi; document.getElementById('payAmount').readOnly = true; document.getElementById('payType').value = 'adv'; document.getElementById('payBaseEmi').value = baseEmi; openModalSafe('paymentModal');
             }
         }
-
-        // NEW: Open Modal for App Pay Approval
         function openApproveModal(accId) {
             let idx = globalCustomers.findIndex(c => c.accId === accId);
             if(idx !== -1) {
-                let p = globalCustomers[idx];
-                let emi = Math.round((p.amount * 1.2) / p.duration) + (p.penalty || 0);
-                
-                currentPayAccId = accId;
-                document.getElementById('payCustName').innerText = p.name + " (Verify App Pay)";
-                document.getElementById('payAccId').innerText = accId;
-                document.getElementById('payAmount').value = emi;
-                document.getElementById('payAmount').readOnly = true; // Block edit for verification
-                document.getElementById('payMode').value = "PhonePe"; // Default to PhonePe
-                document.getElementById('payType').value = 'approve';
-                
-                new bootstrap.Modal(document.getElementById('paymentModal')).show();
+                let p = globalCustomers[idx]; let emi = Math.round((p.amount * 1.2) / p.duration) + (p.penalty || 0);
+                currentPayAccId = accId; document.getElementById('payCustName').innerText = p.name + " (Verify App Pay)"; document.getElementById('payAccId').innerText = accId; document.getElementById('payAmount').value = emi; document.getElementById('payAmount').readOnly = true; document.getElementById('payMode').value = "PhonePe"; document.getElementById('payType').value = 'approve'; openModalSafe('paymentModal');
             }
         }
 
         function processPayment() {
-            let amount = Number(document.getElementById('payAmount').value);
-            let mode = document.getElementById('payMode').value;
-            let pType = document.getElementById('payType').value;
-            
-            if(!amount || amount <= 0) return alert("Please enter a valid amount!");
-
+            let amount = Number(document.getElementById('payAmount').value); let mode = document.getElementById('payMode').value; let pType = document.getElementById('payType').value;
+            if(!amount || amount <= 0) return alert("Enter amount!");
             let idx = globalCustomers.findIndex(c => c.accId === currentPayAccId);
             if(idx !== -1) {
-                if(pType === 'full') {
-                    addHistoryRecord(globalCustomers[idx], amount, mode);
-                } else if(pType === 'part') {
-                    addHistoryRecord(globalCustomers[idx], amount, mode + ' (Part)');
-                } else if(pType === 'adv') {
-                    let baseEmi = Number(document.getElementById('payBaseEmi').value);
-                    let weeks = Math.floor(amount / baseEmi);
-                    for(let i=0; i<weeks; i++) addHistoryRecord(globalCustomers[idx], baseEmi, mode + ' (Adv)');
-                } else if(pType === 'approve') {
-                    // This handles the Customer App Payment Approval
-                    addHistoryRecord(globalCustomers[idx], amount, mode + ' (App)');
-                    globalCustomers[idx].paymentSuccessFlag = true;
-                }
-                
-                saveToDB();
-                bootstrap.Modal.getInstance(document.getElementById('paymentModal')).hide();
+                if(pType === 'full') addHistoryRecord(globalCustomers[idx], amount, mode);
+                else if(pType === 'part') addHistoryRecord(globalCustomers[idx], amount, mode + ' (Part)');
+                else if(pType === 'adv') { let baseEmi = Number(document.getElementById('payBaseEmi').value); let weeks = Math.floor(amount/baseEmi); for(let i=0; i<weeks; i++) addHistoryRecord(globalCustomers[idx], baseEmi, mode + ' (Adv)'); }
+                else if(pType === 'approve') { addHistoryRecord(globalCustomers[idx], amount, mode + ' (App)'); globalCustomers[idx].paymentSuccessFlag = true; }
+                saveToDB(); closeModalSafe('paymentModal');
             }
         }
 
         function addHistoryRecord(c, amount, mode) {
-            if(!c.history) c.history = [];
-            c.paidWeeks = (c.paidWeeks || 0) + 1;
-            let today = new Date().toLocaleDateString('en-GB');
+            if(!c.history) c.history = []; c.paidWeeks = (c.paidWeeks || 0) + 1; let today = new Date().toLocaleDateString('en-GB');
             c.history.push({ date: today, week: c.paidWeeks, amount: amount, mode: mode });
-            c.lastPaidDate = today;
-            let d = new Date(); d.setDate(d.getDate() + 7);
-            c.nextDueDate = d.toLocaleDateString('en-GB');
-            c.pendingApproval = false;
+            c.lastPaidDate = today; let d = new Date(); d.setDate(d.getDate() + 7); c.nextDueDate = d.toLocaleDateString('en-GB'); c.pendingApproval = false;
         }
 
-        // ==========================================
-        // 🚀 OTHERS / UTILS
-        // ==========================================
-        function rejectFakePayment(accId) { 
-            let idx = globalCustomers.findIndex(c => c.accId === accId); 
-            if(idx !== -1) { globalCustomers[idx].pendingApproval = false; saveToDB(); } 
-        }
-
-        function settlementCalculator(accId, name, pendingBalance) {
-            let actualPaid = prompt(`SETTLE LOAN: ${name}\nPending: ₹${pendingBalance}\nEnter final amount paid:`, pendingBalance);
-            if(actualPaid) {
-                let idx = globalCustomers.findIndex(c => c.accId === accId);
-                if(idx !== -1) {
-                    globalCustomers[idx].paidWeeks = globalCustomers[idx].duration; 
-                    globalCustomers[idx].history.push({ date: new Date().toLocaleDateString('en-GB'), week: 'Settle', amount: Number(actualPaid), mode: 'Settlement' });
-                    globalCustomers[idx].amount = 0; globalCustomers[idx].penalty = 0;
-                    saveToDB();
-                }
-            }
-        }
-
-        function topUpLoan(accId, name, phone) {
-            if(confirm(`TOP-UP: This will mark ${accId} as SETTLED to create a new loan. Proceed?`)) {
-                let idx = globalCustomers.findIndex(c => c.accId === accId);
-                if(idx !== -1) {
-                    globalCustomers[idx].paidWeeks = globalCustomers[idx].duration;
-                    globalCustomers[idx].amount = 0; saveToDB();
-                    document.getElementById('custName').value = name; document.getElementById('custPhone').value = phone;
-                    new bootstrap.Modal(document.getElementById('addCustomerModal')).show();
-                }
-            }
-        }
-
-        function addPenalty(accId, name) {
-            let amount = prompt(`Add Penalty (₹) for ${name}:`);
-            if (amount && !isNaN(amount) && Number(amount) > 0) {
-                let idx = globalCustomers.findIndex(c => c.accId === accId);
-                if(idx !== -1) { globalCustomers[idx].penalty = (Number(globalCustomers[idx].penalty) || 0) + Number(amount); saveToDB(); }
-            }
-        }
-
-        function waivePenalty(accId, name) {
-            if(confirm(`Remove all penalties for ${name} [${accId}]?`)) {
-                let idx = globalCustomers.findIndex(c => c.accId === accId);
-                if(idx !== -1) { globalCustomers[idx].penalty = 0; saveToDB(); }
-            }
-        }
-
-        function viewFullProfile(accId) {
-            let c = globalCustomers.find(x => x.accId === accId);
-            if(c) {
-                document.getElementById('fpName').innerText = c.name; document.getElementById('fpAccId').innerText = c.accId;
-                document.getElementById('fpPhone').innerText = c.phone; document.getElementById('fpPin').innerText = c.password;
-                document.getElementById('fpAadhaar').innerText = c.aadhaar || 'Not Provided'; document.getElementById('fpVillage').innerText = c.village || 'N/A';
-                document.getElementById('fpGuarantor').innerText = c.guarantor || 'N/A'; document.getElementById('fpSecurity').innerText = c.security || 'N/A';
-                document.getElementById('fpNotes').innerText = c.notes || 'None';
-                new bootstrap.Modal(document.getElementById('fullProfileModal')).show();
-            }
-        }
-
+        // 🚀 EDIT PROFILE WITH DATES
         function openEditModal(accId) {
             let c = globalCustomers.find(x => x.accId === accId); if(!c) return;
-            document.getElementById('editAccId').value = c.accId; document.getElementById('editName').value = c.name;
-            document.getElementById('editPhone').value = c.phone; document.getElementById('editPass').value = c.password;
-            document.getElementById('editAmount').value = c.amount; document.getElementById('editDuration').value = c.duration;
-            document.getElementById('editVillage').value = c.village || ''; document.getElementById('editAadhaar').value = c.aadhaar || '';
-            document.getElementById('editGuarantor').value = c.guarantor || ''; document.getElementById('editNotes').value = c.notes || '';
-            new bootstrap.Modal(document.getElementById('editCustomerModal')).show();
+            document.getElementById('editAccId').value = c.accId; document.getElementById('editName').value = c.name; document.getElementById('editPhone').value = c.phone; document.getElementById('editPass').value = c.password; document.getElementById('editAmount').value = c.amount; document.getElementById('editDuration').value = c.duration; document.getElementById('editVillage').value = c.village || ''; document.getElementById('editAadhaar').value = c.aadhaar || ''; document.getElementById('editNotes').value = c.notes || '';
+            document.getElementById('editStartDate').value = c.startDate || ''; document.getElementById('editLastPaid').value = c.lastPaidDate || '';
+            openModalSafe('editCustomerModal');
         }
 
         document.getElementById('editCustomerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            let accId = document.getElementById('editAccId').value;
-            let idx = globalCustomers.findIndex(c => c.accId === accId);
+            e.preventDefault(); let accId = document.getElementById('editAccId').value; let idx = globalCustomers.findIndex(c => c.accId === accId);
             if(idx !== -1) {
-                globalCustomers[idx].name = document.getElementById('editName').value; globalCustomers[idx].phone = document.getElementById('editPhone').value;
-                globalCustomers[idx].password = document.getElementById('editPass').value; globalCustomers[idx].amount = Number(document.getElementById('editAmount').value);
-                globalCustomers[idx].duration = Number(document.getElementById('editDuration').value); globalCustomers[idx].village = document.getElementById('editVillage').value;
-                globalCustomers[idx].aadhaar = document.getElementById('editAadhaar').value; globalCustomers[idx].guarantor = document.getElementById('editGuarantor').value;
-                globalCustomers[idx].notes = document.getElementById('editNotes').value;
-                bootstrap.Modal.getInstance(document.getElementById('editCustomerModal')).hide();
-                saveToDB();
+                globalCustomers[idx].name = document.getElementById('editName').value; globalCustomers[idx].phone = document.getElementById('editPhone').value; globalCustomers[idx].password = document.getElementById('editPass').value; globalCustomers[idx].amount = Number(document.getElementById('editAmount').value); globalCustomers[idx].duration = Number(document.getElementById('editDuration').value); globalCustomers[idx].village = document.getElementById('editVillage').value; globalCustomers[idx].aadhaar = document.getElementById('editAadhaar').value; globalCustomers[idx].notes = document.getElementById('editNotes').value;
+                globalCustomers[idx].startDate = document.getElementById('editStartDate').value; globalCustomers[idx].lastPaidDate = document.getElementById('editLastPaid').value;
+                closeModalSafe('editCustomerModal'); saveToDB(); alert("Loan Details Updated!");
             }
         });
 
-        function openCustomerApp(accId) {
-            let c = globalCustomers.find(x => x.accId === accId);
-            if(c) { localStorage.setItem('loggedInCustomer', JSON.stringify({ phone: c.phone, password: c.password })); window.open('customer-dashboard.html', '_blank'); }
-        }
-
+        function addPenalty(accId, name) { let amount = prompt(`Add Penalty (₹) for ${name}:`); if (amount && !isNaN(amount) && Number(amount) > 0) { let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1) { globalCustomers[idx].penalty = (Number(globalCustomers[idx].penalty) || 0) + Number(amount); saveToDB(); } } }
+        function waivePenalty(accId, name) { if(confirm(`Remove all penalties for ${name} [${accId}]?`)) { let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1) { globalCustomers[idx].penalty = 0; saveToDB(); } } }
+        function rejectFakePayment(accId) { let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1) { globalCustomers[idx].pendingApproval = false; saveToDB(); } }
         function secureDeleteLoan(accId) { if(prompt("Enter PIN (7569) to delete:") === "7569") { globalCustomers = globalCustomers.filter(c => c.accId !== accId); saveToDB(); } }
+        function openCustomerApp(accId) { let c = globalCustomers.find(x => x.accId === accId); if(c) { localStorage.setItem('loggedInCustomer', JSON.stringify({ phone: c.phone, password: c.password })); window.open('customer-dashboard.html', '_blank'); } }
+        function topUpLoan(accId, name, phone) { if(confirm(`TOP-UP: Mark ${accId} SETTLED & Open New Loan?`)) { let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1) { globalCustomers[idx].paidWeeks = globalCustomers[idx].duration; globalCustomers[idx].amount = 0; saveToDB(); document.getElementById('custName').value = name; document.getElementById('custPhone').value = phone; openModalSafe('addCustomerModal'); } } }
+        function settlementCalculator(accId, name, pendingBalance) { let actualPaid = prompt(`SETTLE LOAN: ${name}\nPending: ₹${pendingBalance}\nEnter final amount paid:`, pendingBalance); if(actualPaid) { let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1) { globalCustomers[idx].paidWeeks = globalCustomers[idx].duration; globalCustomers[idx].history.push({ date: new Date().toLocaleDateString('en-GB'), week: 'Settle', amount: Number(actualPaid), mode: 'Settlement' }); globalCustomers[idx].amount = 0; globalCustomers[idx].penalty = 0; saveToDB(); } } }
 
         function open360Profile(accId) {
             let c = globalCustomers.find(x => x.accId === accId); if(!c) return;
@@ -606,204 +338,82 @@
                     hBody.innerHTML += `<tr><td class="fw-bold text-dark">Wk-${r.week}</td><td class="fw-bold">${r.date}</td><td>${modeIcon} ${r.mode}</td><td class="text-success fw-bold">${formatMoney(r.amount)}</td><td>${undoBtn}</td></tr>`;
                 });
             } else { hBody.innerHTML = `<tr><td colspan="5" class="text-muted">No history.</td></tr>`; }
-            new bootstrap.Modal(document.getElementById('customer360Modal')).show();
+            openModalSafe('customer360Modal');
         }
 
-        function undoTransaction(accId) {
-            if(confirm("UNDO last payment?")) {
-                let idx = globalCustomers.findIndex(c => c.accId === accId);
-                if(idx !== -1 && globalCustomers[idx].history.length > 0) {
-                    globalCustomers[idx].history.pop(); globalCustomers[idx].paidWeeks -= 1; saveToDB();
-                    bootstrap.Modal.getInstance(document.getElementById('customer360Modal')).hide();
-                }
+        function viewFullProfile(accId) {
+            let c = globalCustomers.find(x => x.accId === accId); if(c) {
+                document.getElementById('fpName').innerText = c.name; document.getElementById('fpAccId').innerText = c.accId; document.getElementById('fpPhone').innerText = c.phone; document.getElementById('fpPin').innerText = c.password; document.getElementById('fpAadhaar').innerText = c.aadhaar || 'N/A'; document.getElementById('fpVillage').innerText = c.village || 'N/A'; document.getElementById('fpNotes').innerText = c.notes || 'None'; document.getElementById('fpStart').innerText = c.startDate || 'N/A';
+                openModalSafe('fullProfileModal');
             }
         }
 
-        function printAgreement(accId) {
-            let c = globalCustomers.find(x => x.accId === accId); if(!c) return;
-            let principal = Number(c.amount); let interestAmt = principal * 0.20; let totalRepay = principal + interestAmt;
-            let emi = Math.round(totalRepay / c.duration); let d = new Date(); let dateStr = d.toLocaleDateString('en-GB') + " at " + d.toLocaleTimeString();
-            let w = window.open('','_blank'); 
-            w.document.write(`
-                <style>
-                    body { background: #555; font-family: 'Times New Roman', serif; padding: 20px; display:flex; justify-content:center; margin:0;}
-                    .bond-paper { width: 210mm; min-height: 297mm; background: white; padding: 40px 50px; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.5); box-sizing: border-box;}
-                    .bond-paper::before { content: ''; position: absolute; top: 15px; left: 15px; right: 15px; bottom: 15px; border: 3px double #004C8F; pointer-events: none; }
-                    .stamp { text-align: center; color: #004C8F; margin-bottom: 30px; border-bottom: 4px solid #004C8F; padding-bottom: 20px; }
-                    .stamp h1 { margin: 0; font-size: 28px; letter-spacing: 2px; text-transform: uppercase; }
-                    .stamp h3 { margin: 5px 0 0 0; font-size: 16px; letter-spacing: 1px; color: #333; }
-                    .title { text-align: center; font-size: 20px; font-weight: bold; text-decoration: underline; margin-bottom: 25px; color: #ED232A; }
-                    .content { font-size: 15px; line-height: 1.8; text-align: justify; color: #222; }
-                    table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-                    th, td { border: 1px solid #333; padding: 8px 12px; text-align: left; font-size: 14px; }
-                    th { background: #f0f0f0; width: 40%; }
-                    .terms { margin-top: 25px; font-size: 13px; }
-                    .signatures { display: flex; justify-content: space-between; margin-top: 80px; }
-                    .sig-box { text-align: center; font-weight: bold; border-top: 1px solid black; padding-top: 5px; width: 28%; font-size: 14px; }
-                </style>
-                <div class="bond-paper">
-                    <div class="stamp"><h1>NON-JUDICIAL AGREEMENT BOND</h1><h3>JESSICA FINANCE MANAGEMENT</h3></div>
-                    <div class="title">LOAN SANCTION & REPAYMENT AGREEMENT</div>
-                    <div class="content">
-                        This Loan Agreement is executed on <b>${dateStr}</b> by and between <b>Jessica Finance Management</b> and:<br><br>
-                        <b>Borrower Name:</b> ${c.name}<br><b>Mobile:</b> ${c.phone}<br><b>Address:</b> ${c.village || 'N/A'}<br><b>Guarantor:</b> ${c.guarantor}<br><br>
-                        <table>
-                            <tr><th>Principal Loan Amount</th><td><b>₹${formatMoney(principal)}</b></td></tr>
-                            <tr><th>Total Repayment Value</th><td><b>₹${formatMoney(totalRepay)}</b></td></tr>
-                            <tr><th>Repayment Tenure</th><td><b>${c.duration} Weeks</b></td></tr>
-                            <tr><th>Fixed Weekly EMI</th><td><b>₹${formatMoney(emi)}</b></td></tr>
-                        </table>
-                        <div class="terms">
-                            <b>TERMS & CONDITIONS:</b>
-                            <ol><li>Timely Payment: Weekly EMI must be paid strictly on/before the due date.</li><li>Penalty: Failure to pay will attract late penalty fees.</li><li>Legal Action: Evasion or default may result in legal recovery proceedings.</li></ol>
-                        </div>
-                    </div>
-                    <div class="signatures">
-                        <div class="sig-box">Borrower (${c.name})</div>
-                        <div class="sig-box">Guarantor (${c.guarantor})</div>
-                        <div class="sig-box">Jessica Finance Mgt.</div>
-                    </div>
-                </div>
-                <script>setTimeout(()=>window.print(), 800);<\/script>
-            `);
+        function undoTransaction(accId) {
+            if(confirm("UNDO last payment?")) { let idx = globalCustomers.findIndex(c => c.accId === accId); if(idx !== -1 && globalCustomers[idx].history.length > 0) { globalCustomers[idx].history.pop(); globalCustomers[idx].paidWeeks -= 1; saveToDB(); closeModalSafe('customer360Modal'); } }
         }
 
-        // ==========================================
-        // 🚀 RENDERING & SEARCH
-        // ==========================================
+        // 🚀 RENDERING (FIXED LINKS)
         function renderData() {
-            const cardContainer = document.getElementById('customersListContainer');
-            const tableBody = document.getElementById('tableBody');
-            cardContainer.innerHTML = ''; tableBody.innerHTML = '';
-            let visibleCount = 0; const today = new Date(); today.setHours(0,0,0,0);
+            const cardContainer = document.getElementById('customersListContainer'); const tableBody = document.getElementById('tableBody');
+            cardContainer.innerHTML = ''; tableBody.innerHTML = ''; let visibleCount = 0; const today = new Date(); today.setHours(0,0,0,0);
+            let sq = document.getElementById('searchInput').value.toLowerCase();
+            let dList = globalCustomers.filter(c => c.name.toLowerCase().includes(sq) || c.phone.includes(sq) || c.accId.toLowerCase().includes(sq));
+            let sType = document.getElementById('sortFilter').value; if(sType === 'name') dList.sort((a,b) => a.name.localeCompare(b.name)); if(sType === 'recent') dList.reverse(); 
 
-            let searchQuery = document.getElementById('searchInput').value.toLowerCase();
-            let displayList = globalCustomers.filter(c => c.name.toLowerCase().includes(searchQuery) || c.phone.includes(searchQuery) || c.accId.toLowerCase().includes(searchQuery));
-            let sortType = document.getElementById('sortFilter').value;
-            if(sortType === 'name') displayList.sort((a,b) => a.name.localeCompare(b.name));
-            if(sortType === 'recent') displayList.reverse(); 
-
-            displayList.forEach(function(cust) {
-                let principal = Number(cust.amount); let penalty = Number(cust.penalty || 0);
-                let baseEmi = Math.round((principal + (principal * 0.20)) / Number(cust.duration));
-                let nextEmiToPay = baseEmi + penalty; let paidWeeks = cust.paidWeeks || 0; 
-                let pendingWeeks = Number(cust.duration) - paidWeeks;
-                let progressPercent = Math.min(100, Math.round((paidWeeks / Number(cust.duration)) * 100));
-                let pendingBalance = pendingWeeks * baseEmi + penalty;
-
-                let isOverdue = false; 
-                let dueDate = cust.nextDueDate ? new Date(cust.nextDueDate.split('/').reverse().join('-')) : new Date();
+            dList.forEach(function(cust) {
+                let principal = Number(cust.amount); let penalty = Number(cust.penalty || 0); let baseEmi = Math.round((principal + (principal * 0.20)) / Number(cust.duration));
+                let nextEmiToPay = baseEmi + penalty; let paidWeeks = cust.paidWeeks || 0; let pendingWeeks = Number(cust.duration) - paidWeeks;
+                let progressPercent = Math.min(100, Math.round((paidWeeks / Number(cust.duration)) * 100)); let pendingBalance = pendingWeeks * baseEmi + penalty;
+                let isOverdue = false; let dueDate = cust.nextDueDate ? new Date(cust.nextDueDate.split('/').reverse().join('-')) : new Date();
                 if(dueDate < today && pendingWeeks > 0) isOverdue = true;
 
                 if(currentFilter === 'pending' && !cust.pendingApproval) return;
-                if(currentFilter !== 'pending') {
-                    if(currentFilter === 'active' && pendingWeeks <= 0) return;
-                    if(currentFilter === 'cleared' && pendingWeeks > 0) return;
-                    if(currentFilter === 'overdue' && !isOverdue) return;
-                }
+                if(currentFilter !== 'pending') { if(currentFilter === 'active' && pendingWeeks <= 0) return; if(currentFilter === 'cleared' && pendingWeeks > 0) return; if(currentFilter === 'overdue' && !isOverdue) return; }
                 visibleCount++;
 
-                let lastPayHTML = '';
-                if(cust.history && cust.history.length > 0) {
-                    let last = cust.history[cust.history.length - 1];
-                    let icon = last.mode.toLowerCase().includes('cash') ? '<i class="fas fa-money-bill-wave"></i>' : '<i class="fas fa-mobile-alt"></i>';
-                    lastPayHTML = `<div class="last-pay-strip"><i class="fas fa-check-circle"></i> Paid Week ${last.week} on <b>${last.date}</b> via ${icon} ${last.mode}</div>`;
-                } else {
-                    lastPayHTML = `<div class="last-pay-strip no-pay"><i class="fas fa-times-circle"></i> No EMI Paid Yet</div>`;
-                }
+                let lastPayHTML = cust.history && cust.history.length > 0 ? `<div class="last-pay-strip"><i class="fas fa-check-circle"></i> Wk ${cust.history[cust.history.length - 1].week} on <b>${cust.history[cust.history.length - 1].date}</b> via ${cust.history[cust.history.length - 1].mode}</div>` : `<div class="last-pay-strip no-pay"><i class="fas fa-times-circle"></i> No EMI Paid</div>`;
 
                 let actionMenu = `
                     <div class="d-flex gap-1">
-                        <button class="icon-btn btn-pay" title="Pay EMI" onclick="recordCashPayment('${cust.accId}', '${cust.name}', ${nextEmiToPay})"><i class="fas fa-rupee-sign"></i> Pay</button>
-                        <button class="icon-btn btn-pen" title="Add Penalty" onclick="addPenalty('${cust.accId}', '${cust.name}')"><i class="fas fa-gavel"></i> Pen</button>
-                        <button class="icon-btn" title="Waive Penalty" onclick="waivePenalty('${cust.accId}', '${cust.name}')"><i class="fas fa-magic text-success"></i></button>
+                        <button class="icon-btn btn-pay" title="Pay EMI" onclick="recordCashPayment('${cust.accId}', '${cust.name}', ${nextEmiToPay}); return false;"><i class="fas fa-rupee-sign"></i> Pay</button>
+                        <button class="icon-btn btn-pen" title="Add Penalty" onclick="addPenalty('${cust.accId}', '${cust.name}'); return false;"><i class="fas fa-gavel"></i> Pen</button>
+                        <button class="icon-btn" title="Waive Penalty" onclick="waivePenalty('${cust.accId}', '${cust.name}'); return false;"><i class="fas fa-magic text-success"></i></button>
                     </div>
                     <div class="d-flex gap-1">
-                        <button class="icon-btn" title="Full Profile" onclick="viewFullProfile('${cust.accId}')"><i class="fas fa-user-circle text-primary"></i></button>
-                        <button class="icon-btn" title="Ledger" onclick="open360Profile('${cust.accId}')"><i class="fas fa-book text-info"></i></button>
-                        <button class="icon-btn" title="Open Customer App" onclick="openCustomerApp('${cust.accId}')"><i class="fas fa-mobile-alt text-danger"></i> App</button>
-                        
+                        <button class="icon-btn" title="Full Profile" onclick="viewFullProfile('${cust.accId}'); return false;"><i class="fas fa-user-circle text-primary"></i></button>
+                        <button class="icon-btn" title="Ledger" onclick="open360Profile('${cust.accId}'); return false;"><i class="fas fa-book text-info"></i></button>
+                        <button class="icon-btn" title="Open App" onclick="openCustomerApp('${cust.accId}'); return false;"><i class="fas fa-mobile-alt text-danger"></i> App</button>
                         <div class="dropdown">
                             <button class="icon-btn" data-bs-toggle="dropdown"><i class="fas fa-ellipsis-v px-1"></i></button>
                             <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="font-size:12px;">
-                                <li><a class="dropdown-item fw-bold" href="#" onclick="customPayment('${cust.accId}', '${cust.name}')"><i class="fas fa-adjust text-primary w-20px"></i> Part Payment</a></li>
-                                <li><a class="dropdown-item fw-bold" href="#" onclick="advancePayment('${cust.accId}', '${cust.name}', ${baseEmi})"><i class="fas fa-forward text-info w-20px"></i> Advance Pay</a></li>
-                                <li><a class="dropdown-item fw-bold" href="#" onclick="topUpLoan('${cust.accId}', '${cust.name}', '${cust.phone}')"><i class="fas fa-sync text-success w-20px"></i> Top-Up / Renew</a></li>
-                                <li><a class="dropdown-item fw-bold" href="#" onclick="settlementCalculator('${cust.accId}', '${cust.name}', ${pendingBalance})"><i class="fas fa-handshake text-secondary w-20px"></i> Settlement</a></li>
+                                <li><a class="dropdown-item fw-bold" href="javascript:void(0)" onclick="customPayment('${cust.accId}', '${cust.name}')"><i class="fas fa-adjust text-primary w-20px"></i> Part Payment</a></li>
+                                <li><a class="dropdown-item fw-bold" href="javascript:void(0)" onclick="advancePayment('${cust.accId}', '${cust.name}', ${baseEmi})"><i class="fas fa-forward text-info w-20px"></i> Advance Pay</a></li>
+                                <li><a class="dropdown-item fw-bold" href="javascript:void(0)" onclick="topUpLoan('${cust.accId}', '${cust.name}', '${cust.phone}')"><i class="fas fa-sync text-success w-20px"></i> Top-Up / Renew</a></li>
+                                <li><a class="dropdown-item fw-bold" href="javascript:void(0)" onclick="settlementCalculator('${cust.accId}', '${cust.name}', ${pendingBalance})"><i class="fas fa-handshake text-secondary w-20px"></i> Settlement</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item fw-bold" href="#" onclick="openEditModal('${cust.accId}')"><i class="fas fa-edit text-warning w-20px"></i> Edit Loan</a></li>
-                                <li><a class="dropdown-item fw-bold" href="#" onclick="printAgreement('${cust.accId}')"><i class="fas fa-file-contract text-dark w-20px"></i> Print Bond</a></li>
-                                <li><a class="dropdown-item text-danger fw-bold" href="#" onclick="secureDeleteLoan('${cust.accId}')"><i class="fas fa-trash w-20px"></i> Delete Loan</a></li>
+                                <li><a class="dropdown-item fw-bold" href="javascript:void(0)" onclick="openEditModal('${cust.accId}')"><i class="fas fa-edit text-warning w-20px"></i> Edit Profile/Dates</a></li>
+                                <li><a class="dropdown-item text-danger fw-bold" href="javascript:void(0)" onclick="secureDeleteLoan('${cust.accId}')"><i class="fas fa-trash w-20px"></i> Delete Loan</a></li>
                             </ul>
                         </div>
                     </div>
                 `;
 
                 if(isTableView) {
-                    tableBody.innerHTML += `
-                        <tr class="${isOverdue ? 'table-warning' : (pendingWeeks <= 0 ? 'table-success' : '')}">
-                            <td class="text-primary fw-bold">${cust.accId}</td>
-                            <td>${cust.name}<br><small class="text-muted"><i class="fas fa-mobile-alt"></i> ${cust.phone}</small><br>${lastPayHTML}</td>
-                            <td>${formatMoney(principal)}</td>
-                            <td class="text-danger">${formatMoney(nextEmiToPay)} ${penalty>0?`<small>(+${penalty})</small>`:''}</td>
-                            <td>
-                                <div style="font-size:9px;">${paidWeeks}/${cust.duration} Wks</div>
-                                <div class="progress" style="height: 5px;"><div class="progress-bar bg-success" style="width: ${progressPercent}%"></div></div>
-                            </td>
-                            <td><div class="d-flex gap-1 flex-wrap">${actionMenu}</div></td>
-                        </tr>
-                    `;
+                    tableBody.innerHTML += `<tr class="${isOverdue ? 'table-warning' : (pendingWeeks <= 0 ? 'table-success' : '')}"><td class="text-primary fw-bold">${cust.accId}</td><td>${cust.name}<br><small class="text-muted"><i class="fas fa-mobile-alt"></i> ${cust.phone}</small><br>${lastPayHTML}</td><td>${formatMoney(principal)}</td><td class="text-danger">${formatMoney(nextEmiToPay)} ${penalty>0?`<small>(+${penalty})</small>`:''}</td><td><div style="font-size:9px;">${paidWeeks}/${cust.duration} Wks</div><div class="progress" style="height: 5px;"><div class="progress-bar bg-success" style="width: ${progressPercent}%"></div></div></td><td><div class="d-flex gap-1 flex-wrap">${actionMenu}</div></td></tr>`;
                 } else {
-                    let rowClass = 'customer-card'; if(isOverdue) rowClass += ' row-overdue'; 
-                    // 🟢 NEW: CHANGED "Ok" BUTTON TO "Verify" WHICH OPENS PAYMENT MODAL
-                    let approvalHTML = cust.pendingApproval ? `<div class="bg-warning text-dark p-2 rounded mb-2 d-flex justify-content-between align-items-center" style="font-size:11px;"><b>App Pay Req!</b> <div><button class="btn btn-sm btn-success py-0 px-2 fw-bold" onclick="openApproveModal('${cust.accId}')"><i class="fas fa-check"></i> Verify</button> <button class="btn btn-sm btn-danger py-0 px-2 fw-bold" onclick="rejectFakePayment('${cust.accId}')"><i class="fas fa-times"></i></button></div></div>` : ``;
+                    let rClass = 'customer-card'; if(isOverdue) rClass += ' row-overdue'; 
+                    let appHTML = cust.pendingApproval ? `<div class="bg-warning text-dark p-2 rounded mb-2 d-flex justify-content-between align-items-center" style="font-size:11px;"><b>App Pay Req!</b> <div><button class="btn btn-sm btn-success py-0 px-2 fw-bold" onclick="openApproveModal('${cust.accId}'); return false;"><i class="fas fa-check"></i> Verify</button> <button class="btn btn-sm btn-danger py-0 px-2 fw-bold" onclick="rejectFakePayment('${cust.accId}'); return false;"><i class="fas fa-times"></i></button></div></div>` : ``;
                     
-                    cardContainer.innerHTML += `
-                        <div class="${rowClass}">
-                            ${approvalHTML}
-                            <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
-                                <div><div style="font-size:14px; font-weight:800;">${cust.name}</div><div style="font-size:10px; color:#777;"><i class="fas fa-mobile-alt"></i> ${cust.phone} | <span class="text-primary">${cust.accId}</span></div></div>
-                                <div class="text-end">${pendingWeeks <= 0 ? `<span class="badge bg-success">Settled</span>` : `<span class="badge bg-primary">Active</span>`}</div>
-                            </div>
-                            
-                            ${lastPayHTML}
-
-                            <div class="d-flex gap-1 mb-2">
-                                <div class="data-block"><span class="data-label">Prncpl</span><br><span class="data-val">${formatMoney(principal)}</span></div>
-                                <div class="data-block" style="border-color:var(--primary);"><span class="data-label text-primary">EMI</span><br><span class="data-val-big">${formatMoney(nextEmiToPay)}</span></div>
-                                <div class="data-block"><span class="data-label">Bal</span><br><span class="data-val text-danger">${formatMoney(pendingBalance)}</span></div>
-                                <div class="data-block" style="width:80px;"><span class="data-label">Paid</span><br><span class="data-val text-success">${paidWeeks}/${cust.duration}</span></div>
-                            </div>
-                            <div class="action-toolbar">${actionMenu}</div>
-                        </div>
-                    `;
+                    cardContainer.innerHTML += `<div class="${rClass}">${appHTML}<div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2"><div><div style="font-size:14px; font-weight:800;">${cust.name}</div><div style="font-size:10px; color:#777;"><i class="fas fa-mobile-alt"></i> ${cust.phone} | <span class="text-primary">${cust.accId}</span></div></div><div class="text-end">${pendingWeeks <= 0 ? `<span class="badge bg-success">Settled</span>` : `<span class="badge bg-primary">Active</span>`}</div></div>${lastPayHTML}<div class="d-flex gap-1 mb-2"><div class="data-block"><span class="data-label">Prncpl</span><br><span class="data-val">${formatMoney(principal)}</span></div><div class="data-block" style="border-color:var(--primary);"><span class="data-label text-primary">EMI</span><br><span class="data-val-big">${formatMoney(nextEmiToPay)}</span></div><div class="data-block"><span class="data-label">Bal</span><br><span class="data-val text-danger">${formatMoney(pendingBalance)}</span></div><div class="data-block" style="width:80px;"><span class="data-label">Paid</span><br><span class="data-val text-success">${paidWeeks}/${cust.duration}</span></div></div><div class="action-toolbar">${actionMenu}</div></div>`;
                 }
             });
-
             document.getElementById('emptyState').style.display = visibleCount === 0 ? 'block' : 'none';
         }
 
         function calculateAnalytics() {
-            let tGiven = 0, tCollected = 0, tProfit = 0, tMarketBalance = 0;
-            globalCustomers.forEach(c => {
-                let p = Number(c.amount); tGiven += p; tProfit += (p * 0.20) + Number(c.penalty||0);
-                let emi = Math.round((p + p*0.20) / c.duration); tCollected += ((c.paidWeeks||0) * emi);
-                let pendWk = Number(c.duration) - (c.paidWeeks || 0);
-                if(pendWk > 0) { tMarketBalance += (pendWk * emi) + Number(c.penalty||0); }
-            });
-            document.getElementById('statTotalGiven').innerText = formatMoney(tGiven); document.getElementById('statCollected').innerText = formatMoney(tCollected);
-            document.getElementById('statProfit').innerText = formatMoney(tProfit); document.getElementById('statMarketBalance').innerText = formatMoney(tMarketBalance);
-        }
-
-        function exportToExcel() {
-            let ws_data = [["Acc ID", "Name", "Phone", "Principal", "Duration", "Paid Wks", "Pending Bal"]];
-            globalCustomers.forEach(c => {
-                let p = Number(c.amount); let emi = Math.round((p*1.2)/c.duration);
-                let pendWk = c.duration - (c.paidWeeks||0); let bal = (pendWk*emi) + Number(c.penalty||0);
-                ws_data.push([c.accId, c.name, c.phone, p, c.duration, c.paidWeeks||0, bal]);
-            });
-            let wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(ws_data), "Jessica_Loans");
-            XLSX.writeFile(wb, "Jessica_Finance_Loans.xlsx");
+            let tGiven = 0, tCol = 0, tPro = 0, tBal = 0;
+            globalCustomers.forEach(c => { let p = Number(c.amount); tGiven += p; tPro += (p * 0.20) + Number(c.penalty||0); let emi = Math.round((p*1.2)/c.duration); tCol += ((c.paidWeeks||0)*emi); let pWk = Number(c.duration)-(c.paidWeeks||0); if(pWk > 0) tBal += (pWk*emi)+Number(c.penalty||0); });
+            document.getElementById('statTotalGiven').innerText = formatMoney(tGiven); document.getElementById('statCollected').innerText = formatMoney(tCol); document.getElementById('statProfit').innerText = formatMoney(tPro); document.getElementById('statMarketBalance').innerText = formatMoney(tBal);
         }
 
         loadCustomers();

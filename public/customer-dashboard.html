@@ -159,7 +159,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // ☁️ CLOUD DATABASE SETTINGS (SAME AS ADMIN)
+        // ☁️ CLOUD DATABASE SETTINGS
         const BIN_ID = "6a680db5da38895dfe99644c";
         const API_KEY = "$2a$10$hMjC2hJpy4MR4jrFYBGrMeX.3m5olpdY3LgNetbTgdcex3JgQItg6";
         
@@ -194,16 +194,17 @@
             });
         }
 
+        // 🔥 STRICT LOGIN FILTER (TRIM ADDED) 🔥
         async function customerLogin() {
-            let phone = document.getElementById('loginPhone').value;
-            let pin = document.getElementById('loginPin').value;
+            let phone = String(document.getElementById('loginPhone').value).trim();
+            let pin = String(document.getElementById('loginPin').value).trim();
             if(!phone || !pin) return alert("Enter Mobile and PIN!");
             
             document.getElementById('loginLoading').style.display = 'block';
             
             try {
                 let db = await fetchCloudData();
-                myAllLoans = db.filter(c => c.phone === phone && c.password === pin);
+                myAllLoans = db.filter(c => String(c.phone).trim() === phone && String(c.password).trim() === pin);
                 
                 document.getElementById('loginLoading').style.display = 'none';
 
@@ -306,7 +307,7 @@
                         <div class="text-center text-success fw-bold p-2" style="background:#E8F8F5; border-radius:6px;"><i class="fas fa-check-circle"></i> Loan Settled Successfully</div>
                     `}
                     
-                    <button class="history-btn" onclick="openPassbook('${loan.accId}')"><i class="fas fa-file-invoice me-1"></i> View Repayment Passbook (History)</button>
+                    <button class="history-btn" onclick="openPassbook('${loan.accId}')"><i class="fas fa-file-invoice me-1"></i> View Repayment Passbook</button>
                 </div>
                 `;
                 container.innerHTML += cardHTML;
@@ -323,6 +324,7 @@
             }
         }
 
+        // 🔥 MODAL OPEN FIX 🔥
         function openPassbook(accId) {
             let loan = myAllLoans.find(c => c.accId === accId);
             if(!loan) return;
@@ -337,7 +339,9 @@
             } else {
                 tbody.innerHTML = `<tr><td colspan="4" class="text-muted">No payments made yet.</td></tr>`;
             }
-            new bootstrap.Modal(document.getElementById('passbookModal')).show();
+            let passbookEl = document.getElementById('passbookModal');
+            let pModal = bootstrap.Modal.getInstance(passbookEl) || new bootstrap.Modal(passbookEl);
+            pModal.show();
         }
 
         async function triggerPayment(accId, emiAmount, appName) {
@@ -356,7 +360,7 @@
             if(idx !== -1) {
                 db[idx].pendingApproval = true;
                 await updateCloudData(db); 
-                myAllLoans = db.filter(c => c.phone === myAllLoans[0].phone); 
+                myAllLoans = db.filter(c => String(c.phone).trim() === String(myAllLoans[0].phone).trim()); 
                 renderMyLoans(); 
                 
                 // Redirect to UPI App on phone
@@ -364,6 +368,7 @@
             }
         }
 
+        // 🔥 STRICT FILTER FOR LIVE RADAR 🔥
         function startLiveRadar() {
             if(pollInterval) clearInterval(pollInterval);
             pollInterval = setInterval(async () => {
@@ -371,7 +376,7 @@
                 if(session) {
                     let creds = JSON.parse(session);
                     let db = await fetchCloudData();
-                    myAllLoans = db.filter(c => c.phone === creds.phone && c.password === creds.password);
+                    myAllLoans = db.filter(c => String(c.phone).trim() === String(creds.phone).trim() && String(c.password).trim() === String(creds.password).trim());
                     renderMyLoans(); 
                 }
             }, 5000);
