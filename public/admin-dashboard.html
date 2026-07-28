@@ -76,7 +76,7 @@
 
     <div class="container-fluid mt-3 px-3">
         
-        <!-- TOP ACTIONS & NEW FEATURES -->
+        <!-- TOP ACTIONS & SEARCH -->
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
             <div class="d-flex gap-2">
                 <button class="btn btn-sm btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#addCustomerModal"><i class="fas fa-plus"></i> New Loan</button>
@@ -86,12 +86,10 @@
             </div>
             
             <div class="d-flex gap-2 align-items-center">
-                <!-- LIVE SEARCH BAR -->
                 <div class="input-group input-group-sm" style="width: 200px;">
                     <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
                     <input type="text" id="searchInput" class="form-control border-start-0 fw-bold" placeholder="Search Name or Phone..." onkeyup="renderData()">
                 </div>
-                <!-- REFRESH BUTTON -->
                 <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="liveRefresh()"><i class="fas fa-sync-alt" id="refreshIcon"></i> Refresh</button>
                 
                 <select class="form-select form-select-sm fw-bold" style="width: 120px;" id="sortFilter" onchange="renderData()">
@@ -122,7 +120,7 @@
         <div id="customersListContainer"></div>
         <div id="customersTableContainer" style="display: none;" class="table-responsive bg-white p-2 rounded shadow-sm">
             <table class="table table-bordered table-hover compact-table align-middle mb-0">
-                <thead><tr><th>Acc ID</th><th>Customer Name & Details</th><th>Principal</th><th>EMI / Pen</th><th>Progress</th><th>Actions</th></tr></thead>
+                <thead><tr><th>Acc ID</th><th>Customer Details</th><th>Principal</th><th>EMI / Pen</th><th>Progress</th><th>Actions</th></tr></thead>
                 <tbody id="tableBody"></tbody>
             </table>
         </div>
@@ -138,6 +136,41 @@
          MODALS SECTION 
          ========================================= -->
     
+    <!-- 🟢 NEW: PAYMENT CONFIRMATION MODAL -->
+    <div class="modal fade" id="paymentModal" tabindex="-1">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-success text-white py-2">
+                    <h6 class="modal-title fw-bold"><i class="fas fa-rupee-sign me-1"></i> Collect Payment</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-light">
+                    <div class="text-center mb-3">
+                        <h6 class="fw-bold m-0 text-dark" id="payCustName">Name</h6>
+                        <small class="fw-bold text-primary" id="payAccId">JF-0000</small>
+                    </div>
+                    
+                    <label class="small fw-bold text-muted">Amount Received (₹)</label>
+                    <input type="number" id="payAmount" class="form-control fw-bold mb-3 border-success text-success fs-5">
+                    
+                    <label class="small fw-bold text-muted">Payment Mode</label>
+                    <select id="payMode" class="form-select fw-bold border-dark mb-4">
+                        <option value="Cash">💵 Cash</option>
+                        <option value="PhonePe">📱 PhonePe</option>
+                        <option value="GPay">📱 Google Pay (GPay)</option>
+                        <option value="Bank Transfer">🏦 Bank Transfer</option>
+                        <option value="Other">❓ Other</option>
+                    </select>
+                    
+                    <input type="hidden" id="payType"> 
+                    <input type="hidden" id="payBaseEmi">
+                    
+                    <button class="btn btn-success w-100 fw-bold py-2 fs-6" onclick="processPayment()"><i class="fas fa-check-circle me-1"></i> Confirm & Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- CASH COUNTER MODAL -->
     <div class="modal fade" id="cashCalcModal" tabindex="-1">
         <div class="modal-dialog modal-sm">
@@ -251,7 +284,7 @@
         </div>
     </div>
 
-    <!-- 360 PROFILE (LEDGER) WITH DATE & MODE ENHANCEMENTS -->
+    <!-- 360 PROFILE (LEDGER) -->
     <div class="modal fade" id="customer360Modal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content border-0">
@@ -275,7 +308,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // ☁️ CLOUD DATABASE SETTINGS (JSONBin)
+        // ☁️ CLOUD DATABASE SETTINGS
         const BIN_ID = "6a680db5da38895dfe99644c";
         const API_KEY = "$2a$10$hMjC2hJpy4MR4jrFYBGrMeX.3m5olpdY3LgNetbTgdcex3JgQItg6";
         
@@ -283,6 +316,7 @@
         let currentFilter = 'all';
         let isSyncing = false;
         let isTableView = false;
+        let currentPayAccId = null;
 
         const formatMoney = (amount) => '₹' + Number(amount).toLocaleString('en-IN');
         
@@ -373,34 +407,69 @@
             saveToDB();
         });
 
-        function openEditModal(accId) {
-            let c = globalCustomers.find(x => x.accId === accId); if(!c) return;
-            document.getElementById('editAccId').value = c.accId; document.getElementById('editName').value = c.name;
-            document.getElementById('editPhone').value = c.phone; document.getElementById('editPass').value = c.password;
-            document.getElementById('editAmount').value = c.amount; document.getElementById('editDuration').value = c.duration;
-            document.getElementById('editVillage').value = c.village || ''; document.getElementById('editAadhaar').value = c.aadhaar || '';
-            document.getElementById('editGuarantor').value = c.guarantor || ''; document.getElementById('editNotes').value = c.notes || '';
-            new bootstrap.Modal(document.getElementById('editCustomerModal')).show();
+        // ==========================================
+        // 🚀 NEW: MODAL BASED PAYMENT SYSTEM
+        // ==========================================
+        function recordCashPayment(accId, name, amount) {
+            currentPayAccId = accId;
+            document.getElementById('payCustName').innerText = name + " (Full EMI)";
+            document.getElementById('payAccId').innerText = accId;
+            document.getElementById('payAmount').value = amount;
+            document.getElementById('payAmount').readOnly = true; // Block editing
+            document.getElementById('payType').value = 'full';
+            new bootstrap.Modal(document.getElementById('paymentModal')).show();
         }
 
-        document.getElementById('editCustomerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            let accId = document.getElementById('editAccId').value;
-            let idx = globalCustomers.findIndex(c => c.accId === accId);
-            if(idx !== -1) {
-                globalCustomers[idx].name = document.getElementById('editName').value; globalCustomers[idx].phone = document.getElementById('editPhone').value;
-                globalCustomers[idx].password = document.getElementById('editPass').value; globalCustomers[idx].amount = Number(document.getElementById('editAmount').value);
-                globalCustomers[idx].duration = Number(document.getElementById('editDuration').value); globalCustomers[idx].village = document.getElementById('editVillage').value;
-                globalCustomers[idx].aadhaar = document.getElementById('editAadhaar').value; globalCustomers[idx].guarantor = document.getElementById('editGuarantor').value;
-                globalCustomers[idx].notes = document.getElementById('editNotes').value;
-                bootstrap.Modal.getInstance(document.getElementById('editCustomerModal')).hide();
-                saveToDB();
-            }
-        });
+        function customPayment(accId, name) {
+            currentPayAccId = accId;
+            document.getElementById('payCustName').innerText = name + " (Part Pay)";
+            document.getElementById('payAccId').innerText = accId;
+            document.getElementById('payAmount').value = "";
+            document.getElementById('payAmount').readOnly = false; // Allow typing amount
+            document.getElementById('payType').value = 'part';
+            new bootstrap.Modal(document.getElementById('paymentModal')).show();
+        }
 
-        // ==========================================
-        // 🚀 PAYMENT ACTIONS WITH MODE SELECTION
-        // ==========================================
+        function advancePayment(accId, name, baseEmi) {
+            let weeks = prompt(`ADVANCE PAY for ${name}\nHow many weeks?`);
+            if(weeks && !isNaN(weeks) && Number(weeks)>1) {
+                currentPayAccId = accId;
+                let amt = Number(weeks) * baseEmi;
+                document.getElementById('payCustName').innerText = name + ` (${weeks} Wks Advance)`;
+                document.getElementById('payAccId').innerText = accId;
+                document.getElementById('payAmount').value = amt;
+                document.getElementById('payAmount').readOnly = true;
+                document.getElementById('payType').value = 'adv';
+                document.getElementById('payBaseEmi').value = baseEmi; // Save base EMI to calc weeks later
+                new bootstrap.Modal(document.getElementById('paymentModal')).show();
+            }
+        }
+
+        // Processing the modal form
+        function processPayment() {
+            let amount = Number(document.getElementById('payAmount').value);
+            let mode = document.getElementById('payMode').value;
+            let pType = document.getElementById('payType').value;
+            
+            if(!amount || amount <= 0) return alert("Please enter a valid amount!");
+
+            let idx = globalCustomers.findIndex(c => c.accId === currentPayAccId);
+            if(idx !== -1) {
+                if(pType === 'full') {
+                    addHistoryRecord(globalCustomers[idx], amount, mode);
+                } else if(pType === 'part') {
+                    addHistoryRecord(globalCustomers[idx], amount, mode + ' (Part)');
+                } else if(pType === 'adv') {
+                    let baseEmi = Number(document.getElementById('payBaseEmi').value);
+                    let weeks = Math.floor(amount / baseEmi);
+                    for(let i=0; i<weeks; i++) addHistoryRecord(globalCustomers[idx], baseEmi, mode + ' (Adv)');
+                }
+                
+                saveToDB();
+                bootstrap.Modal.getInstance(document.getElementById('paymentModal')).hide();
+            }
+        }
+
         function addHistoryRecord(c, amount, mode) {
             if(!c.history) c.history = [];
             c.paidWeeks = (c.paidWeeks || 0) + 1;
@@ -410,42 +479,6 @@
             let d = new Date(); d.setDate(d.getDate() + 7);
             c.nextDueDate = d.toLocaleDateString('en-GB');
             c.pendingApproval = false;
-        }
-
-        function recordCashPayment(accId, name, amount) {
-            let mode = prompt(`Receive ₹${amount} for ${name} [${accId}]\nEnter Mode (Cash / PhonePe / GPay):`, "Cash");
-            if(mode !== null && mode.trim() !== "") {
-                let idx = globalCustomers.findIndex(c => c.accId === accId);
-                if(idx !== -1) { addHistoryRecord(globalCustomers[idx], amount, mode); saveToDB(); }
-            }
-        }
-
-        function customPayment(accId, name) {
-            let amt = prompt(`PARTIAL PAY for ${name} [${accId}]\nEnter amount:`);
-            if(amt && !isNaN(amt) && Number(amt)>0) {
-                let mode = prompt(`Enter Mode (Cash / PhonePe / GPay):`, "Cash");
-                if(mode !== null) {
-                    let idx = globalCustomers.findIndex(c => c.accId === accId);
-                    if(idx !== -1) { addHistoryRecord(globalCustomers[idx], Number(amt), mode + ' (Part)'); saveToDB(); }
-                }
-            }
-        }
-
-        function advancePayment(accId, name, baseEmi) {
-            let weeks = prompt(`ADVANCE PAY for ${name}\nHow many weeks?`);
-            if(weeks && !isNaN(weeks) && Number(weeks)>1) {
-                let mode = prompt(`Enter Mode for Advance (Cash / PhonePe / GPay):`, "Cash");
-                if(mode !== null) {
-                    let amt = Number(weeks) * baseEmi;
-                    if(confirm(`Confirm advance payment of ₹${amt}?`)) {
-                        let idx = globalCustomers.findIndex(c => c.accId === accId);
-                        if(idx !== -1) {
-                            for(let i=0; i<Number(weeks); i++) addHistoryRecord(globalCustomers[idx], baseEmi, mode + ' (Adv)');
-                            saveToDB();
-                        }
-                    }
-                }
-            }
         }
 
         function settlementCalculator(accId, name, pendingBalance) {
@@ -488,6 +521,9 @@
             }
         }
 
+        // ==========================================
+        // 🚀 OTHERS / UTILS
+        // ==========================================
         function viewFullProfile(accId) {
             let c = globalCustomers.find(x => x.accId === accId);
             if(c) {
@@ -499,6 +535,31 @@
                 new bootstrap.Modal(document.getElementById('fullProfileModal')).show();
             }
         }
+
+        function openEditModal(accId) {
+            let c = globalCustomers.find(x => x.accId === accId); if(!c) return;
+            document.getElementById('editAccId').value = c.accId; document.getElementById('editName').value = c.name;
+            document.getElementById('editPhone').value = c.phone; document.getElementById('editPass').value = c.password;
+            document.getElementById('editAmount').value = c.amount; document.getElementById('editDuration').value = c.duration;
+            document.getElementById('editVillage').value = c.village || ''; document.getElementById('editAadhaar').value = c.aadhaar || '';
+            document.getElementById('editGuarantor').value = c.guarantor || ''; document.getElementById('editNotes').value = c.notes || '';
+            new bootstrap.Modal(document.getElementById('editCustomerModal')).show();
+        }
+
+        document.getElementById('editCustomerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let accId = document.getElementById('editAccId').value;
+            let idx = globalCustomers.findIndex(c => c.accId === accId);
+            if(idx !== -1) {
+                globalCustomers[idx].name = document.getElementById('editName').value; globalCustomers[idx].phone = document.getElementById('editPhone').value;
+                globalCustomers[idx].password = document.getElementById('editPass').value; globalCustomers[idx].amount = Number(document.getElementById('editAmount').value);
+                globalCustomers[idx].duration = Number(document.getElementById('editDuration').value); globalCustomers[idx].village = document.getElementById('editVillage').value;
+                globalCustomers[idx].aadhaar = document.getElementById('editAadhaar').value; globalCustomers[idx].guarantor = document.getElementById('editGuarantor').value;
+                globalCustomers[idx].notes = document.getElementById('editNotes').value;
+                bootstrap.Modal.getInstance(document.getElementById('editCustomerModal')).hide();
+                saveToDB();
+            }
+        });
 
         function openCustomerApp(accId) {
             let c = globalCustomers.find(x => x.accId === accId);
@@ -583,7 +644,7 @@
         }
 
         // ==========================================
-        // 🚀 RENDERING & SEARCH
+        // 🚀 RENDERING 
         // ==========================================
         function renderData() {
             const cardContainer = document.getElementById('customersListContainer');
@@ -617,7 +678,6 @@
                 }
                 visibleCount++;
 
-                // LAST PAY STRIP LOGIC
                 let lastPayHTML = '';
                 if(cust.history && cust.history.length > 0) {
                     let last = cust.history[cust.history.length - 1];
