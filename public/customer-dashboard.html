@@ -11,76 +11,52 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* CORPORATE BANKING THEME (HDFC STYLE) */
         :root { 
             --primary: #004C8F; --secondary: #ED232A; --success: #27AE60; --warning: #F39C12;
             --bg: #F4F5F7; --card-border: #E0E4E9; --text-dark: #2C3E50;
         }
 
-        body { background-color: var(--bg); font-family: 'Open Sans', sans-serif; padding-bottom: 80px; color: var(--text-dark); transition: 0.3s; }
+        body { background-color: var(--bg); font-family: 'Open Sans', sans-serif; padding-bottom: 80px; color: var(--text-dark); }
         
-        body.dark-mode { background-color: #121212; color: #E0E4E9; }
-        body.dark-mode .app-card, body.dark-mode .info-box { background: #1E1E1E; border-color: #333; color: white; }
-        body.dark-mode .bg-light { background-color: #2A2A2A !important; }
-
         .app-header { 
-            background: linear-gradient(135deg, var(--primary), #003666); color: white; 
-            padding: 25px 20px 65px 20px; border-bottom: 5px solid var(--secondary);
-            border-radius: 0 0 20px 20px; box-shadow: 0 4px 15px rgba(0, 76, 143, 0.3); 
+            background: linear-gradient(135deg, var(--primary), #002244); color: white; 
+            padding: 25px 20px 80px 20px; border-bottom: 5px solid var(--secondary);
+            border-radius: 0 0 25px 25px; box-shadow: 0 4px 15px rgba(0, 76, 143, 0.3); 
         }
 
-        .profile-pic { 
-            width: 55px; height: 55px; background: white; color: var(--primary); 
-            border-radius: 50%; display: flex; justify-content: center; align-items: center; 
-            font-size: 24px; font-weight: 800; border: 3px solid #BDC3C7; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        .summary-card {
+            background: white; border-radius: 12px; padding: 20px; margin-top: -60px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1); border: 1px solid var(--card-border);
+            text-align: center; position: relative; z-index: 10;
         }
+
+        .app-card { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--card-border); border-left: 5px solid var(--primary); }
+        .card-settled { border-left-color: var(--success); background: #FAFAFA; opacity: 0.9; }
+
+        .info-box { background: #F8F9FA; border: 1px solid var(--card-border); border-radius: 8px; padding: 10px; text-align: center; }
         
-        .app-card { 
-            background: white; border-radius: 8px; padding: 20px; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 15px; 
-            border: 1px solid var(--card-border); position: relative;
-        }
-        .card-overlap { margin-top: -40px; z-index: 10; }
-
-        .info-box { background: #FAFBFC; border: 1px solid var(--card-border); border-radius: 6px; padding: 12px; text-align: center; }
+        .trust-score-box { background: linear-gradient(135deg, #1E8449, #27AE60); color: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3); }
         
-        .trust-meter { height: 6px; background: #EAEDED; border-radius: 3px; width: 100px; margin-top: 5px; overflow: hidden; }
-        .trust-fill { height: 100%; width: 100%; background: var(--success); transition: 1s;}
+        .referral-box { background: #FFF9E6; border: 1px dashed #F39C12; border-radius: 10px; padding: 15px; text-align: center; margin-bottom: 15px; }
 
-        .pay-btn-main { 
-            background: var(--primary); color: white; border: none; padding: 15px; 
-            border-radius: 6px; font-weight: 800; font-size: 15px; width: 100%; 
-            display: flex; align-items: center; justify-content: center; gap: 10px; 
-            box-shadow: 0 4px 10px rgba(0, 76, 143, 0.2); text-transform: uppercase;
-        }
-        .pay-btn-main:active { transform: scale(0.98); }
+        .pay-btn-pe { background: #5F259F; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 800; width: 48%; font-size: 13px; box-shadow: 0 3px 8px rgba(95,37,159,0.3); transition: 0.2s; }
+        .pay-btn-gpay { background: #1A73E8; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 800; width: 48%; font-size: 13px; box-shadow: 0 3px 8px rgba(26,115,232,0.3); transition: 0.2s; }
+        .pay-btn-pe:active, .pay-btn-gpay:active { transform: scale(0.95); }
 
-        .progress-bar-custom { height: 6px; border-radius: 3px; background: #EAEDED; margin-top: 10px; overflow: hidden;}
-        .progress-fill { height: 100%; background: var(--secondary); transition: 1s; }
-
-        .float-support {
-            position: fixed; bottom: 20px; right: 20px; z-index: 1000;
-            background: #25D366; color: white; width: 60px; height: 60px; 
-            border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
-            display: flex; justify-content: center; align-items: center; 
-            font-size: 30px; cursor: pointer; transition: 0.3s;
-        }
-
-        #successScreen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); z-index: 9999;
-            display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center;
-        }
-        .tick-circle { width: 100px; height: 100px; background: var(--success); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 50px; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        .history-btn { background: #F1F2F4; color: var(--text-dark); border: 1px solid #BDC3C7; padding: 8px; width: 100%; border-radius: 6px; font-weight: 700; font-size: 12px; margin-top: 10px; transition: 0.2s;}
+        
+        /* Modal Passbook */
+        .passbook-table th { background: var(--primary); color: white; font-size: 11px; }
+        .passbook-table td { font-size: 12px; font-weight: 600; }
     </style>
 </head>
 <body>
 
     <!-- SUCCESS OVERLAY -->
-    <div id="successScreen">
-        <div class="tick-circle"><i class="fas fa-check"></i></div>
-        <div class="mt-3" style="font-size: 24px; font-weight: 800; color: var(--success);">Payment Approved!</div>
-        <div style="font-size: 14px; color: #7F8C8D; font-weight: 600;">Your EMI has been securely updated.</div>
+    <div id="successScreen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:9999; display:none; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+        <div style="width:80px; height:80px; background:var(--success); border-radius:50%; display:flex; justify-content:center; align-items:center; color:white; font-size:40px; animation: popIn 0.5s;"><i class="fas fa-check"></i></div>
+        <h3 class="mt-3 fw-bold text-success">Payment Approved!</h3>
+        <p class="text-muted fw-bold">Your EMI has been updated in the passbook.</p>
     </div>
 
     <!-- LOGIN SCREEN -->
@@ -92,11 +68,11 @@
             <h3 class="fw-bold mb-1" style="color: var(--primary); font-weight: 900;">JESSICA FINANCE</h3>
             <p class="text-muted small mb-4 fw-bold">Customer Secure Login</p>
             
-            <input type="tel" id="loginPhone" class="form-control mb-3 p-3 bg-light text-center fw-bold" placeholder="Mobile Number" style="border-radius:6px;">
-            <input type="password" id="loginPin" class="form-control mb-4 p-3 bg-light text-center fw-bold" placeholder="4-Digit PIN" style="border-radius:6px;">
+            <input type="tel" id="loginPhone" class="form-control mb-3 p-3 bg-light text-center fw-bold" placeholder="Mobile Number (e.g. 9999999999)" style="border-radius:8px;">
+            <input type="password" id="loginPin" class="form-control mb-4 p-3 bg-light text-center fw-bold text-danger" placeholder="4-Digit PIN" style="border-radius:8px; letter-spacing: 5px;">
             
-            <button class="btn w-100 p-3 fw-bold text-white" style="border-radius:6px; background: var(--primary);" onclick="customerLogin()">SECURE LOGIN <i class="fas fa-lock ms-2"></i></button>
-            <div id="loginLoading" style="display: none;" class="mt-3 fw-bold text-primary"><i class="fas fa-circle-notch fa-spin"></i> Connecting to Secure Server...</div>
+            <button class="btn w-100 p-3 fw-bold text-white" style="border-radius:8px; background: var(--primary);" onclick="customerLogin()">SECURE LOGIN <i class="fas fa-lock ms-2"></i></button>
+            <div id="loginLoading" style="display: none;" class="mt-3 fw-bold text-primary"><i class="fas fa-circle-notch fa-spin"></i> Connecting to Admin Server...</div>
         </div>
     </div>
 
@@ -105,32 +81,80 @@
         
         <div class="app-header d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center gap-3">
-                <div class="profile-pic"><i class="fas fa-user"></i></div>
+                <div style="width:45px; height:45px; background:white; color:var(--primary); border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:20px; font-weight:800; border:2px solid #BDC3C7;"><i class="fas fa-user"></i></div>
                 <div>
                     <div style="font-size: 10px; color: #BDC3C7; font-weight: 700;" id="greetingText">WELCOME</div>
-                    <h5 class="fw-bold mb-0" id="cName" style="text-transform: uppercase;">Name</h5>
-                    <div class="mt-1" style="font-size: 11px; font-weight: 700;"><i class="fas fa-shield-alt text-success"></i> Account Verified</div>
+                    <h6 class="fw-bold mb-0 text-white" id="cName" style="text-transform: uppercase;">Name</h6>
                 </div>
             </div>
-            <div class="d-flex gap-3">
-                <i class="fas fa-moon fs-5" onclick="toggleCustomerDarkMode()" style="cursor: pointer; color: #BDC3C7;"></i>
-                <i class="fas fa-sign-out-alt fs-5 text-white" onclick="logoutCustomer()" style="cursor: pointer;"></i>
-            </div>
+            <i class="fas fa-sign-out-alt fs-5 text-white" onclick="logoutCustomer()" style="cursor: pointer;"></i>
         </div>
 
-        <div class="container" style="margin-top: -40px; position: relative; z-index: 10;">
+        <div class="container px-3">
             
-            <div id="noticeArea"></div> <!-- Admin Notices will appear here -->
+            <!-- TOTAL SUMMARY CARD -->
+            <div class="summary-card mb-4">
+                <div style="font-size: 11px; color: #7F8C8D; font-weight: 800; letter-spacing: 1px;">TOTAL PENDING BALANCE</div>
+                <h1 class="fw-bold text-primary m-0" id="globalPendingBal">₹0</h1>
+                <hr style="border-color: #EAEDED;">
+                <div class="d-flex justify-content-between">
+                    <div class="text-start">
+                        <div style="font-size: 10px; color: #7F8C8D; font-weight: 800;">TOTAL EMI DUE</div>
+                        <h4 class="fw-bold text-danger m-0" id="globalEmiDue">₹0</h4>
+                    </div>
+                    <div class="text-end">
+                        <div style="font-size: 10px; color: #7F8C8D; font-weight: 800;">ACTIVE LOANS</div>
+                        <h4 class="fw-bold text-dark m-0" id="globalActiveCount">0</h4>
+                    </div>
+                </div>
+            </div>
 
-            <!-- LOANS CONTAINER (Will loop and show all active loans) -->
+            <div id="noticeArea"></div> <!-- Admin Notices -->
+
+            <!-- TRUST SCORE (GAMIFICATION) -->
+            <div class="trust-score-box">
+                <div>
+                    <div style="font-size: 11px; font-weight: 700; opacity: 0.9;">Jessica Trust Score</div>
+                    <h3 class="m-0 fw-bold">EXCELLENT <i class="fas fa-star text-warning" style="font-size:16px;"></i></h3>
+                </div>
+                <div style="text-align: right;">
+                    <i class="fas fa-shield-alt" style="font-size: 35px; opacity: 0.8;"></i>
+                </div>
+            </div>
+
+            <!-- REFERRAL BANNER -->
+            <div class="referral-box">
+                <h6 class="fw-bold text-dark m-0"><i class="fas fa-gift text-danger me-2"></i> Refer a Friend & Get Offers!</h6>
+                <p class="small text-muted m-0 mt-1">Tell your friends about Jessica Finance. If they take a loan, you get a penalty waiver!</p>
+            </div>
+
+            <h6 class="fw-bold text-muted mb-3" style="font-size: 12px; letter-spacing: 1px;">YOUR LOAN ACCOUNTS</h6>
+
+            <!-- LOANS CONTAINER -->
             <div id="myLoansContainer"></div>
 
         </div>
     </div>
 
-    <!-- FLOATING WHATSAPP -->
-    <div class="float-support" onclick="window.open('https://wa.me/917569532152?text=Hi%20Admin,%20I%20need%20help%20with%20my%20loan%20account.', '_blank')">
-        <i class="fab fa-whatsapp"></i>
+    <!-- PASSBOOK MODAL (HISTORY) -->
+    <div class="modal fade" id="passbookModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0">
+                <div class="modal-header bg-dark text-white py-2">
+                    <h6 class="modal-title fw-bold"><i class="fas fa-book me-2"></i> Loan Passbook</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-light">
+                    <div class="d-flex justify-content-between fw-bold text-primary mb-2" style="font-size:14px;">
+                        <span id="pbAccId">JF-0000</span>
+                    </div>
+                    <table class="table table-bordered bg-white text-center passbook-table">
+                        <thead><tr><th>No.</th><th>Date</th><th>Mode</th><th>Paid</th></tr></thead>
+                        <tbody id="pbHistoryBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -140,7 +164,7 @@
         const API_KEY = "$2a$10$hMjC2hJpy4MR4jrFYBGrMeX.3m5olpdY3LgNetbTgdcex3JgQItg6";
         
         const formatMoney = (amount) => '₹' + Number(amount).toLocaleString('en-IN');
-        let myActiveLoans = []; 
+        let myAllLoans = []; 
         let pollInterval = null;
 
         // Auto Login
@@ -179,13 +203,13 @@
             
             try {
                 let db = await fetchCloudData();
-                myActiveLoans = db.filter(c => c.phone === phone && c.password === pin);
+                myAllLoans = db.filter(c => c.phone === phone && c.password === pin);
                 
                 document.getElementById('loginLoading').style.display = 'none';
 
-                if(myActiveLoans.length > 0) {
+                if(myAllLoans.length > 0) {
                     localStorage.setItem('loggedInCustomer', JSON.stringify({ phone, password: pin }));
-                    document.getElementById('cName').innerText = myActiveLoans[0].name;
+                    document.getElementById('cName').innerText = myAllLoans[0].name;
                     document.getElementById('loginScreen').style.display = 'none';
                     document.getElementById('dashboardScreen').style.display = 'block';
                     
@@ -205,7 +229,11 @@
             let noticeArea = document.getElementById('noticeArea');
             container.innerHTML = ''; noticeArea.innerHTML = '';
             
-            myActiveLoans.forEach((loan, index) => {
+            let totalPendingBal = 0;
+            let totalEmiDue = 0;
+            let activeLoansCount = 0;
+
+            myAllLoans.forEach((loan) => {
                 let principal = Number(loan.amount);
                 let penalty = Number(loan.penalty || 0);
                 let duration = Number(loan.duration);
@@ -213,94 +241,129 @@
                 let pendingWeeks = duration - paidWeeks;
                 
                 let baseEmi = Math.round((principal + (principal * 0.20)) / duration);
-                let totalEmiDue = baseEmi + penalty;
+                let currentEmiDue = baseEmi + penalty;
                 let pendingBalance = (pendingWeeks * baseEmi) + penalty;
-                let progressPercent = Math.min(100, Math.round((paidWeeks / duration) * 100));
+                
+                let isSettled = pendingWeeks <= 0;
 
-                // Notices Check
-                if(loan.notes && loan.notes.includes("Notice:")) {
-                    let msg = loan.notes.split("Notice:")[1].trim();
-                    noticeArea.innerHTML += `<div class="app-card" style="background:#EBF5FB; border-left:4px solid var(--primary); padding:12px; margin-bottom:15px; z-index:11;"><i class="fas fa-bullhorn text-primary me-2"></i> <b>Admin Notice:</b> ${msg}</div>`;
+                // Calculate Global Totals only for ACTIVE loans
+                if(!isSettled) {
+                    totalPendingBal += pendingBalance;
+                    totalEmiDue += currentEmiDue;
+                    activeLoansCount++;
                 }
 
-                // Check for Success Flag (Admin Approved Payment)
+                // Notices Check (Show only once at top)
+                if(loan.notes && loan.notes.includes("Notice:") && noticeArea.innerHTML === '') {
+                    let msg = loan.notes.split("Notice:")[1].trim();
+                    noticeArea.innerHTML = `<div class="app-card" style="background:#EBF5FB; border-left:4px solid var(--primary); padding:12px; margin-bottom:15px;"><i class="fas fa-bullhorn text-primary me-2"></i> <b>Admin Notice:</b> ${msg}</div>`;
+                }
+
+                // Success Animation Trigger
                 if(loan.paymentSuccessFlag) {
                     clearSuccessFlag(loan.accId);
                     showSuccessAnimation();
                 }
 
-                let dueDate = loan.nextDueDate || 'Pending';
+                let cardClass = isSettled ? "app-card card-settled" : "app-card";
                 
-                let isSettled = pendingWeeks <= 0;
-
                 let cardHTML = `
-                <div class="app-card ${index === 0 ? 'card-overlap' : ''}">
-                    <div class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-3">
+                <div class="${cardClass}">
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
                         <div>
-                            <div style="font-size: 10px; color: #7F8C8D; font-weight: 800;">LOAN ACCOUNT ID</div>
-                            <h5 class="fw-bold text-primary m-0">${loan.accId}</h5>
+                            <div style="font-size: 10px; color: #7F8C8D; font-weight: 800;">LOAN ACCOUNT</div>
+                            <h5 class="fw-bold text-dark m-0">${loan.accId}</h5>
                         </div>
                         <div class="text-end">
-                            ${isSettled ? `<span class="badge bg-success">Settled & Closed</span>` : `<span class="badge bg-primary">Active Loan</span>`}
+                            ${isSettled ? `<span class="badge bg-success">Closed</span>` : `<span class="badge bg-primary">Active</span>`}
                         </div>
                     </div>
 
                     <div class="row g-2 mb-3">
-                        <div class="col-4"><div class="info-box"><div style="font-size: 9px; color: #7F8C8D; font-weight: 800;">TENURE</div><div class="fw-bold fs-5">${duration}W</div></div></div>
-                        <div class="col-4"><div class="info-box"><div style="font-size: 9px; color: var(--success); font-weight: 800;">PAID</div><div class="fw-bold fs-5 text-success">${paidWeeks}W</div></div></div>
-                        <div class="col-4"><div class="info-box"><div style="font-size: 9px; color: var(--secondary); font-weight: 800;">PENDING</div><div class="fw-bold fs-5 text-danger">${pendingWeeks}W</div></div></div>
+                        <div class="col-4"><div class="info-box"><div style="font-size: 9px; color: #7F8C8D; font-weight: 800;">LOAN (₹)</div><div class="fw-bold fs-6">${formatMoney(principal)}</div></div></div>
+                        <div class="col-4"><div class="info-box"><div style="font-size: 9px; color: var(--success); font-weight: 800;">PAID WEEKS</div><div class="fw-bold fs-6 text-success">${paidWeeks} / ${duration}</div></div></div>
+                        <div class="col-4"><div class="info-box"><div style="font-size: 9px; color: var(--secondary); font-weight: 800;">BAL (₹)</div><div class="fw-bold fs-6 text-danger">${formatMoney(pendingBalance)}</div></div></div>
                     </div>
 
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between" style="font-size: 11px; font-weight: 800; color: #7F8C8D;"><span>Recovery Progress</span> <span style="color: var(--primary);">${progressPercent}%</span></div>
-                        <div class="progress-bar-custom"><div class="progress-fill" style="width:${progressPercent}%"></div></div>
-                    </div>
-
-                    ${isSettled ? `
-                        <div class="text-center p-3" style="background:#E8F8F5; border:1px solid #A9DFBF; border-radius:6px; color:#1E8449;">
-                            <i class="fas fa-check-circle fs-2 mb-2"></i><br><b>Account Settled in Full</b>
-                        </div>
-                    ` : `
-                        <div class="d-flex justify-content-between align-items-center p-3 rounded-2 mb-3" style="background: #F8F9FA; border: 1px solid #EAEDED;">
+                    ${!isSettled ? `
+                        <div class="d-flex justify-content-between align-items-center p-3 rounded-2 mb-3" style="background: #F8F9FA; border: 1px dashed #BDC3C7;">
                             <div>
-                                <div style="font-size: 10px; color: #7F8C8D; font-weight: 800;">WEEKLY EMI DUE</div>
-                                <div class="fw-bold fs-3 text-dark">${formatMoney(totalEmiDue)}</div>
-                                ${penalty > 0 ? `<div style="font-size: 10px; color: var(--secondary); font-weight: 800;">+ ${formatMoney(penalty)} Late Penalty</div>` : ''}
-                            </div>
-                            <div class="text-end">
-                                <div style="font-size: 10px; color: #7F8C8D; font-weight: 800;">DUE DATE</div>
-                                <div class="fw-bold fs-5 text-dark">${dueDate}</div>
+                                <div style="font-size: 10px; color: #7F8C8D; font-weight: 800;">THIS WEEK EMI</div>
+                                <div class="fw-bold fs-4 text-dark">${formatMoney(currentEmiDue)}</div>
+                                ${penalty > 0 ? `<div style="font-size: 10px; color: var(--secondary); font-weight: 800;">Includes +${formatMoney(penalty)} Penalty</div>` : ''}
                             </div>
                         </div>
 
                         ${loan.pendingApproval ? `
-                            <div class="text-center fw-bold text-warning p-3" style="background:#FFF9E6; border-radius:6px;"><i class="fas fa-spinner fa-spin"></i> Payment Verification Pending with Admin...</div>
+                            <div class="text-center fw-bold text-warning p-2" style="background:#FFF9E6; border-radius:6px; font-size:12px;"><i class="fas fa-spinner fa-spin"></i> Payment Verification Pending with Admin...</div>
                         ` : `
-                            <button class="pay-btn-main" onclick="triggerUPIApp('${loan.accId}', ${totalEmiDue})"><i class="fas fa-rupee-sign"></i> PAY EMI SECURELY</button>
+                            <div class="d-flex justify-content-between gap-2">
+                                <button class="pay-btn-pe" onclick="triggerPayment('${loan.accId}', ${currentEmiDue}, 'PhonePe')"><i class="fas fa-rupee-sign"></i> Pay PhonePe</button>
+                                <button class="pay-btn-gpay" onclick="triggerPayment('${loan.accId}', ${currentEmiDue}, 'GPay')"><i class="fab fa-google"></i> Pay GPay</button>
+                            </div>
                         `}
+                    ` : `
+                        <div class="text-center text-success fw-bold p-2" style="background:#E8F8F5; border-radius:6px;"><i class="fas fa-check-circle"></i> Loan Settled Successfully</div>
                     `}
+                    
+                    <button class="history-btn" onclick="openPassbook('${loan.accId}')"><i class="fas fa-file-invoice me-1"></i> View Repayment Passbook (History)</button>
                 </div>
                 `;
                 container.innerHTML += cardHTML;
             });
+
+            // Update Top Summary
+            document.getElementById('globalPendingBal').innerText = formatMoney(totalPendingBal);
+            document.getElementById('globalEmiDue').innerText = formatMoney(totalEmiDue);
+            document.getElementById('globalActiveCount').innerText = activeLoansCount;
+            
+            // If all settled
+            if(myAllLoans.length === 0) {
+                container.innerHTML = `<div class="text-center text-muted py-5"><i class="fas fa-box-open fs-1 mb-2"></i><br>No Loans Found</div>`;
+            }
         }
 
-        // Send payment request to JSONBin
-        async function triggerUPIApp(accId, emiAmount) {
-            let intentUrl = `upi://pay?pa=7569532152@ybl&pn=Jessica%20Finance&am=${emiAmount}&cu=INR&tn=Repay_${accId}`;
+        function openPassbook(accId) {
+            let loan = myAllLoans.find(c => c.accId === accId);
+            if(!loan) return;
+            document.getElementById('pbAccId').innerText = `Account: ${loan.accId}`;
+            let tbody = document.getElementById('pbHistoryBody');
+            tbody.innerHTML = '';
+            if(loan.history && loan.history.length > 0) {
+                [...loan.history].reverse().forEach(r => {
+                    let modeIcon = r.mode.toLowerCase().includes('cash') ? '<i class="fas fa-money-bill-wave text-success"></i>' : '<i class="fas fa-mobile-alt text-primary"></i>';
+                    tbody.innerHTML += `<tr><td>Wk ${r.week}</td><td>${r.date}</td><td style="font-size:10px;">${modeIcon} ${r.mode}</td><td class="text-success fw-bold">${formatMoney(r.amount)}</td></tr>`;
+                });
+            } else {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-muted">No payments made yet.</td></tr>`;
+            }
+            new bootstrap.Modal(document.getElementById('passbookModal')).show();
+        }
+
+        async function triggerPayment(accId, emiAmount, appName) {
+            let confirmation = confirm(`Pay ₹${emiAmount} for Loan ${accId} via ${appName}?`);
+            if(!confirmation) return;
+
+            // Admin Number fixed for UPI
+            let adminUPI = "7569532152@ybl"; // Default Generic/PhonePe
+            if(appName === 'GPay') adminUPI = "7569532152@okaxis"; // Generic GPay format
             
+            let intentUrl = `upi://pay?pa=${adminUPI}&pn=Jessica%20Finance&am=${emiAmount}&cu=INR&tn=Repay_${accId}`;
+            
+            // Notify Admin App
             let db = await fetchCloudData();
             let idx = db.findIndex(c => c.accId === accId);
             if(idx !== -1) {
                 db[idx].pendingApproval = true;
-                await updateCloudData(db); // Save to cloud
-                myActiveLoans = db.filter(c => c.phone === myActiveLoans[0].phone); // refresh local
-                renderMyLoans(); // refresh UI
-                window.location.href = intentUrl; // Open PhonePe/GPay
+                await updateCloudData(db); 
+                myAllLoans = db.filter(c => c.phone === myAllLoans[0].phone); 
+                renderMyLoans(); 
+                
+                // Redirect to UPI App on phone
+                window.location.href = intentUrl; 
             }
         }
 
-        // Silent refresh every 5 seconds to check if Admin approved
         function startLiveRadar() {
             if(pollInterval) clearInterval(pollInterval);
             pollInterval = setInterval(async () => {
@@ -308,8 +371,8 @@
                 if(session) {
                     let creds = JSON.parse(session);
                     let db = await fetchCloudData();
-                    myActiveLoans = db.filter(c => c.phone === creds.phone && c.password === creds.password);
-                    renderMyLoans(); // Will trigger success animation if approved
+                    myAllLoans = db.filter(c => c.phone === creds.phone && c.password === creds.password);
+                    renderMyLoans(); 
                 }
             }, 5000);
         }
@@ -337,7 +400,6 @@
             setTimeout(() => { screen.style.display = 'none'; }, 4000);
         }
 
-        function toggleCustomerDarkMode() { document.body.classList.toggle('dark-mode'); }
         function logoutCustomer() { localStorage.removeItem('loggedInCustomer'); window.location.reload(); }
     </script>
 </body>
