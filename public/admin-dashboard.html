@@ -8,7 +8,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
@@ -23,7 +22,6 @@
         
         .stat-card { background: var(--card-bg); border-radius: 8px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-bottom: 3px solid var(--primary); }
         
-        /* Compact Customer Card */
         .customer-card { background: var(--card-bg); border-radius: 8px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 5px rgba(0,0,0,0.05); border: 1px solid var(--border-color); position: relative; border-left: 4px solid var(--success); }
         .row-blacklisted { border-left-color: var(--secondary); }
         .row-overdue { border-left-color: var(--warning); }
@@ -42,13 +40,16 @@
         .btn-pay { color: white; background: var(--success); border:none;} 
         .btn-pen { color: white; background: var(--secondary); border:none;} 
 
-        /* Compact Table View */
         .compact-table th { background: var(--primary); color: white; font-size: 11px; padding: 10px; }
         .compact-table td { font-size: 12px; font-weight: 600; vertical-align: middle; padding: 8px; }
         
         #lockScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,34,68,0.98); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         
         .w-20px { width: 20px; text-align: center; }
+        
+        /* Spin Animation for Refresh */
+        .spin-anim { animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -64,7 +65,7 @@
     <div class="top-navbar d-flex justify-content-between align-items-center">
         <div>
             <h5 class="m-0 fw-bold">JESSICA FINANCE</h5>
-            <div style="font-size: 10px; color: #BDC3C7;" id="liveClockDisplay">Loading Date & Time...</div>
+            <div style="font-size: 10px; color: #BDC3C7;" id="liveClockDisplay">Loading...</div>
         </div>
         <div class="d-flex align-items-center gap-2">
             <span id="networkStatus" class="fw-bold bg-white text-dark px-2 py-1 rounded" style="font-size: 10px;"><i class="fas fa-sync fa-spin"></i> SYNCING...</span>
@@ -74,18 +75,27 @@
 
     <div class="container-fluid mt-3 px-3">
         
-        <!-- TOP ACTIONS -->
+        <!-- TOP ACTIONS & NEW FEATURES -->
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
             <div class="d-flex gap-2">
                 <button class="btn btn-sm btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#addCustomerModal"><i class="fas fa-plus"></i> New Loan</button>
-                <button class="btn btn-sm btn-dark fw-bold" onclick="toggleView()" id="viewToggleBtn"><i class="fas fa-table"></i> Table View</button>
+                <button class="btn btn-sm btn-dark fw-bold" onclick="toggleView()" id="viewToggleBtn"><i class="fas fa-table"></i> Table</button>
                 <button class="btn btn-sm btn-success fw-bold" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Excel</button>
+                <button class="btn btn-sm btn-info fw-bold text-dark" data-bs-toggle="modal" data-bs-target="#cashCalcModal"><i class="fas fa-calculator"></i> Cash Counter</button>
             </div>
+            
             <div class="d-flex gap-2 align-items-center">
-                <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="liveRefresh()"><i class="fas fa-sync-alt"></i> Sync</button>
-                <select class="form-select form-select-sm fw-bold" style="width: 150px;" id="sortFilter" onchange="renderData()">
-                    <option value="recent">Recent First</option>
-                    <option value="name">Name (A-Z)</option>
+                <!-- LIVE SEARCH BAR -->
+                <div class="input-group input-group-sm" style="width: 200px;">
+                    <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                    <input type="text" id="searchInput" class="form-control border-start-0 fw-bold" placeholder="Search Name or Phone..." onkeyup="renderData()">
+                </div>
+                <!-- REFRESH BUTTON -->
+                <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="liveRefresh()"><i class="fas fa-sync-alt" id="refreshIcon"></i> Refresh</button>
+                
+                <select class="form-select form-select-sm fw-bold" style="width: 120px;" id="sortFilter" onchange="renderData()">
+                    <option value="recent">Recent</option>
+                    <option value="name">A-Z</option>
                 </select>
             </div>
         </div>
@@ -100,8 +110,8 @@
 
         <!-- FILTERS -->
         <ul class="nav nav-pills mb-3 fw-bold" style="background: white; padding: 5px; border-radius: 6px; font-size: 12px; box-shadow: 0 1px 5px rgba(0,0,0,0.05);">
-            <li class="nav-item"><a class="nav-link active py-1 px-3" href="#" onclick="setFilter('all', this)">All</a></li>
-            <li class="nav-item"><a class="nav-link text-warning py-1 px-3" href="#" onclick="setFilter('pending', this)"><i class="fas fa-bell"></i> App Pay</a></li>
+            <li class="nav-item"><a class="nav-link active py-1 px-3" href="#" onclick="setFilter('all', this)">All Loans</a></li>
+            <li class="nav-item"><a class="nav-link text-warning py-1 px-3" href="#" onclick="setFilter('pending', this)"><i class="fas fa-bell"></i> App Pay Req</a></li>
             <li class="nav-item"><a class="nav-link text-success py-1 px-3" href="#" onclick="setFilter('active', this)">Active</a></li>
             <li class="nav-item"><a class="nav-link text-danger py-1 px-3" href="#" onclick="setFilter('overdue', this)">Overdue</a></li>
             <li class="nav-item"><a class="nav-link text-secondary py-1 px-3" href="#" onclick="setFilter('cleared', this)">Settled</a></li>
@@ -117,7 +127,7 @@
         </div>
 
         <div id="emptyState" class="text-center py-5" style="display: none;">
-            <i class="fas fa-folder-open text-muted" style="font-size: 40px; opacity: 0.3;"></i>
+            <i class="fas fa-search text-muted" style="font-size: 40px; opacity: 0.3;"></i>
             <h6 class="mt-3 text-muted fw-bold">No Records Found</h6>
         </div>
 
@@ -127,6 +137,33 @@
          MODALS SECTION 
          ========================================= -->
     
+    <!-- CASH COUNTER MODAL (NEW) -->
+    <div class="modal fade" id="cashCalcModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content border-0">
+                <div class="modal-header bg-info text-dark py-2">
+                    <h6 class="modal-title fw-bold"><i class="fas fa-money-bill-wave me-2"></i> Cash Counter</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-light">
+                    <div class="row g-2 text-end fw-bold align-items-center">
+                        <div class="col-4">₹ 500 x</div><div class="col-8"><input type="number" id="c500" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div>
+                        <div class="col-4">₹ 200 x</div><div class="col-8"><input type="number" id="c200" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div>
+                        <div class="col-4">₹ 100 x</div><div class="col-8"><input type="number" id="c100" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div>
+                        <div class="col-4">₹ 50 x</div><div class="col-8"><input type="number" id="c50" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div>
+                        <div class="col-4">₹ 20 x</div><div class="col-8"><input type="number" id="c20" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div>
+                        <div class="col-4">₹ 10 x</div><div class="col-8"><input type="number" id="c10" class="form-control form-control-sm text-center fw-bold" oninput="calcCash()"></div>
+                    </div>
+                    <div class="mt-3 p-2 bg-dark text-white text-center rounded">
+                        <div style="font-size: 10px;">TOTAL CASH</div>
+                        <h4 class="m-0 fw-bold text-success" id="cashTotalResult">₹0</h4>
+                    </div>
+                    <button class="btn btn-sm btn-secondary w-100 mt-2 fw-bold" onclick="resetCash()">Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ADD LOAN MODAL -->
     <div class="modal fade" id="addCustomerModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
@@ -155,7 +192,7 @@
         </div>
     </div>
 
-    <!-- FULL PROFILE MODAL (NEW) -->
+    <!-- FULL PROFILE MODAL -->
     <div class="modal fade" id="fullProfileModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content border-0">
@@ -257,6 +294,19 @@
         function checkUnlock(val) { if(val === '7569') { document.getElementById('lockScreen').style.display = 'none'; document.getElementById('unlockPin').value = ''; } }
 
         // ==========================================
+        // 🚀 CASH COUNTER (NEW)
+        // ==========================================
+        function calcCash() {
+            let t = (Number(document.getElementById('c500').value||0)*500) + (Number(document.getElementById('c200').value||0)*200) + 
+                    (Number(document.getElementById('c100').value||0)*100) + (Number(document.getElementById('c50').value||0)*50) + 
+                    (Number(document.getElementById('c20').value||0)*20) + (Number(document.getElementById('c10').value||0)*10);
+            document.getElementById('cashTotalResult').innerText = formatMoney(t);
+        }
+        function resetCash() {
+            ['c500','c200','c100','c50','c20','c10'].forEach(id => document.getElementById(id).value = ''); calcCash();
+        }
+
+        // ==========================================
         // 🚀 CLOUD SYNC & CORE
         // ==========================================
         async function loadCustomers() {
@@ -290,7 +340,14 @@
             } catch (e) { document.getElementById('networkStatus').innerHTML = `<i class="fas fa-save text-warning"></i> SAVED OFFLINE`; }
         }
 
-        function liveRefresh() { loadCustomers(); }
+        // REFRESH BUTTON ACTION
+        function liveRefresh() {
+            let icon = document.getElementById('refreshIcon');
+            icon.classList.add('spin-anim'); // Start spinning
+            loadCustomers().then(() => {
+                setTimeout(() => icon.classList.remove('spin-anim'), 500); // Stop spinning after sync
+            });
+        }
 
         function setFilter(filter, el) {
             currentFilter = filter;
@@ -301,7 +358,7 @@
 
         function toggleView() {
             isTableView = !isTableView;
-            document.getElementById('viewToggleBtn').innerHTML = isTableView ? `<i class="fas fa-th-large"></i> Card View` : `<i class="fas fa-table"></i> Table View`;
+            document.getElementById('viewToggleBtn').innerHTML = isTableView ? `<i class="fas fa-th-large"></i> Card` : `<i class="fas fa-table"></i> Table`;
             document.getElementById('customersListContainer').style.display = isTableView ? 'none' : 'block';
             document.getElementById('customersTableContainer').style.display = isTableView ? 'block' : 'none';
             renderData();
@@ -444,7 +501,6 @@
             }
         }
 
-        // --- NEW FEATURES ---
         function waivePenalty(accId, name) {
             if(confirm(`Remove all penalties for ${name} [${accId}]?`)) {
                 let idx = globalCustomers.findIndex(c => c.accId === accId);
@@ -471,7 +527,6 @@
         function openCustomerApp(accId) {
             let c = globalCustomers.find(x => x.accId === accId);
             if(c) {
-                // Set fake session to auto-login customer
                 localStorage.setItem('loggedInCustomer', JSON.stringify({ phone: c.phone, password: c.password }));
                 window.open('customer-dashboard.html', '_blank');
             }
@@ -508,78 +563,53 @@
             let c = globalCustomers.find(x => x.accId === accId); if(!c) return;
             let principal = Number(c.amount); let interestAmt = principal * 0.20; let totalRepay = principal + interestAmt;
             let emi = Math.round(totalRepay / c.duration); let d = new Date(); let dateStr = d.toLocaleDateString('en-GB') + " at " + d.toLocaleTimeString();
-            let maskedKyc = c.aadhaar && c.aadhaar !== 'Not Provided' ? "XXXX-XXXX-" + c.aadhaar.slice(-4) : 'Pending Verification';
             let w = window.open('','_blank'); 
             w.document.write(`
                 <style>
                     body { background: #555; font-family: 'Times New Roman', serif; padding: 20px; display:flex; justify-content:center; margin:0;}
                     .bond-paper { width: 210mm; min-height: 297mm; background: white; padding: 40px 50px; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.5); box-sizing: border-box;}
                     .bond-paper::before { content: ''; position: absolute; top: 15px; left: 15px; right: 15px; bottom: 15px; border: 3px double #004C8F; pointer-events: none; }
-                    .bond-paper::after { content: 'JESSICA FINANCE'; position: absolute; top: 45%; left: 15%; font-size: 80px; color: rgba(0, 76, 143, 0.05); transform: rotate(-30deg); pointer-events: none; white-space: nowrap; font-weight: bold;}
                     .stamp { text-align: center; color: #004C8F; margin-bottom: 30px; border-bottom: 4px solid #004C8F; padding-bottom: 20px; }
                     .stamp h1 { margin: 0; font-size: 28px; letter-spacing: 2px; text-transform: uppercase; }
                     .stamp h3 { margin: 5px 0 0 0; font-size: 16px; letter-spacing: 1px; color: #333; }
-                    .stamp p { margin: 2px 0; font-size: 12px; color: #555; }
                     .title { text-align: center; font-size: 20px; font-weight: bold; text-decoration: underline; margin-bottom: 25px; color: #ED232A; }
                     .content { font-size: 15px; line-height: 1.8; text-align: justify; color: #222; }
-                    .highlight { font-weight: bold; }
                     table { width: 100%; border-collapse: collapse; margin: 20px 0; }
                     th, td { border: 1px solid #333; padding: 8px 12px; text-align: left; font-size: 14px; }
                     th { background: #f0f0f0; width: 40%; }
                     .terms { margin-top: 25px; font-size: 13px; }
-                    .terms li { margin-bottom: 8px; }
                     .signatures { display: flex; justify-content: space-between; margin-top: 80px; }
                     .sig-box { text-align: center; font-weight: bold; border-top: 1px solid black; padding-top: 5px; width: 28%; font-size: 14px; }
-                    .footer-note { text-align: center; font-size: 10px; color: #777; margin-top: 40px; border-top: 1px dashed #ccc; padding-top: 10px; }
                 </style>
                 <div class="bond-paper">
-                    <div class="stamp"><h1>NON-JUDICIAL AGREEMENT BOND</h1><h3>JESSICA FINANCE MANAGEMENT</h3><p>Authorized Corporate Lending Partner</p></div>
+                    <div class="stamp"><h1>NON-JUDICIAL AGREEMENT BOND</h1><h3>JESSICA FINANCE MANAGEMENT</h3></div>
                     <div class="title">LOAN SANCTION & REPAYMENT AGREEMENT</div>
                     <div class="content">
-                        This Loan Agreement is made and executed on <span class="highlight">${dateStr}</span> by and between <b>Jessica Finance Management</b> (hereinafter referred to as the "Lender") AND:<br><br>
-                        <b>Borrower Name:</b> <span class="highlight">${c.name}</span><br>
-                        <b>Mobile Number:</b> ${c.phone}<br>
-                        <b>Resident Of:</b> ${c.village || 'Registered Address'}<br>
-                        <b>KYC Reference:</b> ${maskedKyc}<br>
-                        <b>Guarantor Name:</b> ${c.guarantor}<br><br>
-                        
-                        The Lender has agreed to sanction a loan under <b>Account ID: ${c.accId}</b>. The Borrower agrees to the repayment schedule as detailed below:
-                        
+                        This Loan Agreement is executed on <b>${dateStr}</b> by and between <b>Jessica Finance Management</b> and:<br><br>
+                        <b>Borrower Name:</b> ${c.name}<br><b>Mobile:</b> ${c.phone}<br><b>Address:</b> ${c.village || 'N/A'}<br><b>Guarantor:</b> ${c.guarantor}<br><br>
                         <table>
                             <tr><th>Principal Loan Amount</th><td><b>₹${formatMoney(principal)}</b></td></tr>
-                            <tr><th>Finance Interest Applied</th><td><b>₹${formatMoney(interestAmt)}</b></td></tr>
                             <tr><th>Total Repayment Value</th><td><b>₹${formatMoney(totalRepay)}</b></td></tr>
                             <tr><th>Repayment Tenure</th><td><b>${c.duration} Weeks</b></td></tr>
                             <tr><th>Fixed Weekly EMI</th><td><b>₹${formatMoney(emi)}</b></td></tr>
-                            <tr><th>Security / Collateral Provided</th><td><b>${c.security || 'Self Guaranteed / None'}</b></td></tr>
                         </table>
-
                         <div class="terms">
-                            <b>STRICT TERMS & CONDITIONS (Enforceable by Law):</b>
-                            <ol>
-                                <li><b>Timely Payment:</b> The Borrower must pay the Fixed Weekly EMI strictly on or before the due date.</li>
-                                <li><b>Multiple Loans Clause:</b> This specific agreement pertains ONLY to Account ID ${c.accId}. Any other active loans by the borrower are maintained under separate schedules and liabilities.</li>
-                                <li><b>Penalty for Default:</b> Failure to pay the weekly installment will attract a definite late penalty fee which will be added to the principal outstanding.</li>
-                                <li><b>Legal Action:</b> In the event of intentional evasion or continuous default, Jessica Finance Management reserves the right to initiate legal recovery proceedings, including utilizing the security/collateral provided.</li>
-                                <li><b>Guarantor Liability:</b> The Guarantor (if named above) holds equal co-liability for the settlement of this loan account in full.</li>
-                            </ol>
+                            <b>TERMS & CONDITIONS:</b>
+                            <ol><li>Timely Payment: Weekly EMI must be paid strictly on/before the due date.</li><li>Penalty: Failure to pay will attract late penalty fees.</li><li>Legal Action: Evasion or default may result in legal recovery proceedings.</li></ol>
                         </div>
                     </div>
-                    
                     <div class="signatures">
-                        <div class="sig-box">Signature of Borrower<br><span style="font-size:11px;font-weight:normal;">(${c.name})</span></div>
-                        <div class="sig-box">Signature of Guarantor<br><span style="font-size:11px;font-weight:normal;">(${c.guarantor})</span></div>
-                        <div class="sig-box">Authorized Signatory<br><span style="font-size:11px;font-weight:normal;">Jessica Finance Mgt.</span></div>
+                        <div class="sig-box">Borrower (${c.name})</div>
+                        <div class="sig-box">Guarantor (${c.guarantor})</div>
+                        <div class="sig-box">Jessica Finance Mgt.</div>
                     </div>
-                    
-                    <div class="footer-note">This document is system-generated and logged under Jessica Finance Digital Records. Generated on: ${dateStr}</div>
                 </div>
                 <script>setTimeout(()=>window.print(), 800);<\/script>
             `);
         }
 
         // ==========================================
-        // 🚀 RENDERING (CARDS & TABLE)
+        // 🚀 RENDERING & SEARCH (NEW)
         // ==========================================
         function renderData() {
             const cardContainer = document.getElementById('customersListContainer');
@@ -587,7 +617,14 @@
             cardContainer.innerHTML = ''; tableBody.innerHTML = '';
             let visibleCount = 0; const today = new Date(); today.setHours(0,0,0,0);
 
-            let displayList = [...globalCustomers];
+            // SEARCH FILTER LOGIC
+            let searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            let displayList = globalCustomers.filter(c => 
+                c.name.toLowerCase().includes(searchQuery) || 
+                c.phone.includes(searchQuery) || 
+                c.accId.toLowerCase().includes(searchQuery)
+            );
+
             let sortType = document.getElementById('sortFilter').value;
             if(sortType === 'name') displayList.sort((a,b) => a.name.localeCompare(b.name));
             if(sortType === 'recent') displayList.reverse(); 
@@ -612,7 +649,6 @@
                 }
                 visibleCount++;
 
-                // NEW ACTION MENU WITH DROP DOWN
                 let actionMenu = `
                     <div class="d-flex gap-1">
                         <button class="icon-btn btn-pay" title="Pay EMI" onclick="recordCashPayment('${cust.accId}', '${cust.name}', ${nextEmiToPay})"><i class="fas fa-rupee-sign"></i> Pay</button>
